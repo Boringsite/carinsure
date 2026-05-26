@@ -2,6 +2,116 @@ import { useState, useEffect, useRef } from "react";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
+
+// ── City-Level Premium Data ────────────────────────────────────────────────────
+const CA_CITY_RATES = {
+  // Ontario
+  "Brampton": { province: "ON", avgPremium: 2900, note: "Highest in Canada. High fraud, theft, and accident claims." },
+  "Vaughan": { province: "ON", avgPremium: 2178, note: "York Region, high density suburb with elevated theft rates." },
+  "Mississauga": { province: "ON", avgPremium: 2531, note: "Second highest in province. Dense urban area near Toronto." },
+  "Toronto": { province: "ON", avgPremium: 2400, note: "High fraud, congestion, and accident claims drive cost." },
+  "Markham": { province: "ON", avgPremium: 2200, note: "York Region, elevated vehicle theft rates." },
+  "Scarborough": { province: "ON", avgPremium: 2300, note: "Toronto suburb, 23% above city average." },
+  "Etobicoke": { province: "ON", avgPremium: 2100, note: "Toronto suburb, 18% above city average." },
+  "Hamilton": { province: "ON", avgPremium: 2396, note: "Higher than provincial average. Rising fraud rates." },
+  "North York": { province: "ON", avgPremium: 2200, note: "Dense urban area, elevated theft and fraud." },
+  "Ajax": { province: "ON", avgPremium: 2050, note: "Durham Region, slightly above provincial average." },
+  "Oshawa": { province: "ON", avgPremium: 1950, note: "Durham Region, moderate rates." },
+  "Whitby": { province: "ON", avgPremium: 1900, note: "Durham Region, near provincial average." },
+  "Pickering": { province: "ON", avgPremium: 2000, note: "Durham Region, moderate urban rates." },
+  "Richmond Hill": { province: "ON", avgPremium: 2150, note: "York Region, above average due to theft rates." },
+  "Newmarket": { province: "ON", avgPremium: 1950, note: "York Region, moderate rates." },
+  "Burlington": { province: "ON", avgPremium: 1850, note: "Halton Region, below GTA average." },
+  "Oakville": { province: "ON", avgPremium: 1809, note: "Consistently below GTA average despite affluence." },
+  "Guelph": { province: "ON", avgPremium: 1750, note: "Below provincial average. Lower claims frequency." },
+  "Kitchener": { province: "ON", avgPremium: 1341, note: "One of the most affordable cities in Ontario." },
+  "Waterloo": { province: "ON", avgPremium: 1350, note: "Low rates, university town, lower risk profile." },
+  "Cambridge": { province: "ON", avgPremium: 1400, note: "Below provincial average. Moderate risk." },
+  "London": { province: "ON", avgPremium: 2100, note: "Near provincial average. Rising in recent years." },
+  "Windsor": { province: "ON", avgPremium: 1412, note: "Below provincial average despite cross-border traffic." },
+  "Ottawa": { province: "ON", avgPremium: 1213, note: "Cheapest major Ontario city. Low fraud, less congestion." },
+  "Kingston": { province: "ON", avgPremium: 1700, note: "Below provincial average. Lower traffic density." },
+  "Belleville": { province: "ON", avgPremium: 1600, note: "Eastern Ontario, below provincial average." },
+  "Barrie": { province: "ON", avgPremium: 1800, note: "Near provincial average. Growing city." },
+  "Sudbury": { province: "ON", avgPremium: 1500, note: "Northern Ontario, lower than southern cities." },
+  "Thunder Bay": { province: "ON", avgPremium: 1400, note: "Northern Ontario, significantly below provincial average." },
+  "Owen Sound": { province: "ON", avgPremium: 1450, note: "Southern Georgian Bay area, below provincial average." },
+  "Peterborough": { province: "ON", avgPremium: 1650, note: "Below provincial average. Lower urban density." },
+  "St. Catharines": { province: "ON", avgPremium: 1800, note: "Niagara region, near provincial average." },
+  "Niagara Falls": { province: "ON", avgPremium: 1750, note: "Niagara region, moderate rates." },
+  "Brantford": { province: "ON", avgPremium: 1700, note: "Southwestern Ontario, below average." },
+  "Sarnia": { province: "ON", avgPremium: 1600, note: "Below provincial average. Smaller city." },
+  "Cornwall": { province: "ON", avgPremium: 1400, note: "Eastern Ontario, well below provincial average." },
+  // BC
+  "Vancouver": { province: "BC", avgPremium: 1950, note: "Highest in BC. ICBC, urban density, theft, weather." },
+  "Surrey": { province: "BC", avgPremium: 1700, note: "High theft rates in parts. Above BC average." },
+  "Burnaby": { province: "BC", avgPremium: 1650, note: "Dense suburb. Above BC average." },
+  "Richmond": { province: "BC", avgPremium: 1600, note: "Above BC average. Flood risk area." },
+  "Victoria": { province: "BC", avgPremium: 1350, note: "Below BC average. Less congestion than Vancouver." },
+  "Kelowna": { province: "BC", avgPremium: 1300, note: "Interior BC, below average. Fire risk affects comp." },
+  "Abbotsford": { province: "BC", avgPremium: 1400, note: "Fraser Valley, moderate rates." },
+  "Prince George": { province: "BC", avgPremium: 1250, note: "Northern BC, below BC average." },
+  // Alberta
+  "Calgary": { province: "AB", avgPremium: 1850, note: "Hailstorm capital of Canada. High comprehensive claims." },
+  "Edmonton": { province: "AB", avgPremium: 1750, note: "Near Alberta average. Cold weather claims." },
+  "Red Deer": { province: "AB", avgPremium: 1600, note: "Below Alberta average. Lower density." },
+  "Lethbridge": { province: "AB", avgPremium: 1550, note: "Southern Alberta, below average." },
+  // Quebec
+  "Montreal": { province: "QC", avgPremium: 1050, note: "Above Quebec average but still cheap vs other provinces." },
+  "Quebec City": { province: "QC", avgPremium: 850, note: "One of the cheapest cities in Canada." },
+  "Laval": { province: "QC", avgPremium: 980, note: "Montreal suburb, slightly above Quebec average." },
+  // Manitoba
+  "Winnipeg": { province: "MB", avgPremium: 1400, note: "Manitoba average. MPI public insurance." },
+  // Saskatchewan
+  "Saskatoon": { province: "SK", avgPremium: 1300, note: "SGI public insurance. Moderate rates." },
+  "Regina": { province: "SK", avgPremium: 1250, note: "SGI public insurance. Below national average." },
+  // Nova Scotia
+  "Halifax": { province: "NS", avgPremium: 1200, note: "Competitive private market. Below national average." },
+};
+
+const US_CITY_RATES = {
+  // Florida
+  "Miami": { state: "FL", avgPremium: 4200, note: "Highest in the US. High fraud, no-fault abuse, hurricane risk." },
+  "Orlando": { state: "FL", avgPremium: 2800, note: "Above state average. High accident rates." },
+  "Tampa": { state: "FL", avgPremium: 2900, note: "Above state average. Flood and storm risk." },
+  "Jacksonville": { state: "FL", avgPremium: 2600, note: "Below Miami but still high for the state." },
+  // New York
+  "New York City": { state: "NY", avgPremium: 4500, note: "Among the most expensive in the US. Density, fraud, no-fault." },
+  "Buffalo": { state: "NY", avgPremium: 2200, note: "Well below NYC. Upstate rates far more reasonable." },
+  "Albany": { state: "NY", avgPremium: 2000, note: "Upstate NY, much lower than NYC." },
+  // Michigan
+  "Detroit": { state: "MI", avgPremium: 4800, note: "Historically most expensive in US. Unlimited PIP reform helping." },
+  "Grand Rapids": { state: "MI", avgPremium: 2400, note: "Well below Detroit. Reform has reduced rates." },
+  // California
+  "Los Angeles": { state: "CA", avgPremium: 3200, note: "High traffic density, fraud, expensive repairs." },
+  "San Francisco": { state: "CA", avgPremium: 2800, note: "Urban density and expensive vehicles drive costs." },
+  "San Diego": { state: "CA", avgPremium: 2200, note: "Below LA. Less congestion and lower fraud." },
+  "Sacramento": { state: "CA", avgPremium: 2000, note: "Inland, below coastal California averages." },
+  // Texas
+  "Houston": { state: "TX", avgPremium: 2800, note: "Severe weather and high traffic. Above TX average." },
+  "Austin": { state: "TX", avgPremium: 2500, note: "Growing rapidly, rates rising with population." },
+  "Dallas": { state: "TX", avgPremium: 2600, note: "Hail risk and traffic drive above-average rates." },
+  "San Antonio": { state: "TX", avgPremium: 2100, note: "Below TX urban average." },
+  // Illinois
+  "Chicago": { state: "IL", avgPremium: 2400, note: "Well above state average. Urban density and fraud." },
+  // Georgia
+  "Atlanta": { state: "GA", avgPremium: 2800, note: "Highest in state. Urban density and traffic." },
+  // Ohio
+  "Columbus": { state: "OH", avgPremium: 1200, note: "Affordable. One of cheapest major US cities." },
+  "Cleveland": { state: "OH", avgPremium: 1300, note: "Affordable Midwest rates." },
+  // Washington
+  "Seattle": { state: "WA", avgPremium: 1900, note: "Above state average. Urban density and tech wealth." },
+  // Colorado
+  "Denver": { state: "CO", avgPremium: 2800, note: "Hailstorm risk drives high comprehensive claims." },
+  // Arizona
+  "Phoenix": { state: "AZ", avgPremium: 2200, note: "High heat affects vehicles. Rising theft rates." },
+  // North Carolina
+  "Charlotte": { state: "NC", avgPremium: 1600, note: "Moderate rates. Below national average." },
+  "Raleigh": { state: "NC", avgPremium: 1400, note: "One of the most affordable major cities." },
+  // Wisconsin
+  "Milwaukee": { state: "WI", avgPremium: 1400, note: "Affordable Midwest rates." },
+};
+
 const CA_PROVINCES = {
   ON: {
     name: "Ontario", system: "private", avgPremium: 1920, minLiability: 200000,
@@ -249,9 +359,53 @@ export default function CarInsuranceGuide() {
   const [coverageLevel, setCoverageLevel] = useState("full");
   const [deductible, setDeductible] = useState(500);
   const [copied, setCopied] = useState(false);
+  const [citySearchQuery, setCitySearchQuery] = useState("");
+  const [citySearchResults, setCitySearchResults] = useState([]);
+  const [cityLoading, setCityLoading] = useState(false);
+  const [selectedCityData, setSelectedCityData] = useState(null);
+  const [coverageGapTab, setCoverageGapTab] = useState("rideshare");
   const lm = lightMode;
 
   useEffect(() => { localStorage.setItem("cig_theme", lm ? "light" : "dark"); }, [lm]);
+
+  // GeoNames city search with local rate lookup
+  const searchCityRates = async (query) => {
+    if (query.length < 2) { setCitySearchResults([]); return; }
+    setCityLoading(true);
+    // First check local database
+    const localCA = Object.entries(CA_CITY_RATES).filter(([name]) =>
+      name.toLowerCase().startsWith(query.toLowerCase())
+    ).map(([name, data]) => ({ name, ...data, source: "local" }));
+    const localUS = Object.entries(US_CITY_RATES).filter(([name]) =>
+      name.toLowerCase().startsWith(query.toLowerCase())
+    ).map(([name, data]) => ({ name, ...data, source: "local" }));
+    const local = [...localCA, ...localUS];
+    if (local.length > 0) {
+      setCitySearchResults(local.slice(0, 8));
+      setCityLoading(false);
+      return;
+    }
+    // Fall back to GeoNames for cities not in local DB
+    try {
+      const cc = country === "CA" ? "CA" : "US";
+      const res = await fetch(`https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&country=${cc}&maxRows=6&featureClass=P&orderby=population&style=SHORT&username=docvault`);
+      const data = await res.json();
+      if (data.geonames) {
+        const results = data.geonames.map(g => ({
+          name: g.name,
+          province: g.adminCode1,
+          state: g.adminCode1,
+          adminName: g.adminName1,
+          avgPremium: null,
+          note: "Rate data not available for this city, use province/state average as a guide.",
+          source: "geonames",
+          pop: g.population,
+        }));
+        setCitySearchResults(results);
+      }
+    } catch (e) { setCitySearchResults([]); }
+    setCityLoading(false);
+  };
 
   // URL params
   useEffect(() => {
@@ -431,11 +585,13 @@ export default function CarInsuranceGuide() {
         {/* Tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--border2)", paddingBottom: 10, overflowX: "auto" }}>
           {[
+            ["city", "📍 City Rates"],
             ["guide", "🗺️ Province Guide"],
             ["estimate", "🧮 Rate Estimator"],
             ["vehicles", "🚗 Insurance by Vehicle"],
             ["coverage", "🛡️ Coverage Explainer"],
-            ["discounts", "💰 Discounts Finder"],
+            ["gaps", "⚠️ Coverage Gaps"],
+            ["discounts", "💰 Discounts"],
             ["factors", "📊 Rating Factors"],
             ["switching", "🔄 Switching Guide"],
             ["glossary", "📖 Glossary"],
@@ -443,6 +599,299 @@ export default function CarInsuranceGuide() {
             <button key={id} className={`tab-btn ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>{label}</button>
           ))}
         </div>
+
+        {/* ── CITY RATES TAB ── */}
+        {tab === "city" && (
+          <div className="fade-in">
+            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Car Insurance Rates by City</div>
+            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 16 }}>
+              Your city matters as much as your province. In Ontario alone, Brampton drivers pay $2,900/year while Ottawa drivers pay $1,213, the same car, same driver, $1,687 difference.
+            </p>
+
+            {/* City search */}
+            <div style={{ position: "relative", marginBottom: 16, maxWidth: 420 }}>
+              <input
+                className="num-input"
+                placeholder="Search any city (e.g. Toronto, Calgary, Miami...)"
+                value={citySearchQuery}
+                onChange={e => { setCitySearchQuery(e.target.value); searchCityRates(e.target.value); }}
+                style={{ fontFamily: "'Outfit',system-ui", fontSize: 14, paddingLeft: 14 }}
+              />
+              {cityLoading && <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>Searching...</div>}
+              {citySearchResults.length > 0 && (
+                <div style={{ position: "absolute", top: "105%", left: 0, right: 0, zIndex: 50, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 24px rgba(0,0,0,0.3)", maxHeight: 280, overflowY: "auto" }}>
+                  {citySearchResults.map((city, i) => (
+                    <div key={i}
+                      style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "1px solid var(--border2)", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "var(--bg3)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      onClick={() => { setSelectedCityData(city); setCitySearchResults([]); setCitySearchQuery(city.name); }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{city.name}</div>
+                        <div style={{ fontSize: 11, color: "var(--text3)" }}>{city.adminName || city.province || city.state}</div>
+                      </div>
+                      {city.avgPremium ? (
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 16, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(city.avgPremium)}/yr</div>
+                          <div style={{ fontSize: 10, color: "var(--text3)" }}>{fmtC(Math.round(city.avgPremium / 12))}/mo avg</div>
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 11, color: "var(--text3)" }}>Rate data varies</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Selected city result */}
+            {selectedCityData && (
+              <div className="fade-in card" style={{ marginBottom: 20, border: "1px solid var(--border)", background: lm ? "linear-gradient(135deg,#fef2f2,#fff)" : "linear-gradient(135deg,#1a0a0a,#0e1420)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+                  <div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "var(--text)", marginBottom: 4 }}>{selectedCityData.name}</div>
+                    <div style={{ fontSize: 13, color: "var(--text2)", maxWidth: 500, lineHeight: 1.65 }}>{selectedCityData.note}</div>
+                    {selectedCityData.province && (
+                      <div style={{ marginTop: 8, fontSize: 12, color: "var(--text3)" }}>
+                        Province: <strong style={{ color: "var(--text)" }}>{CA_PROVINCES[selectedCityData.province]?.name || selectedCityData.province}</strong> · System: <strong style={{ color: "var(--text)" }}>{CA_PROVINCES[selectedCityData.province]?.system || "private"}</strong>
+                      </div>
+                    )}
+                  </div>
+                  {selectedCityData.avgPremium && (
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 2 }}>Average annual premium</div>
+                      <div style={{ fontSize: 40, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(selectedCityData.avgPremium)}</div>
+                      <div style={{ fontSize: 12, color: "var(--text3)" }}>{fmtC(Math.round(selectedCityData.avgPremium / 12))}/month</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Ontario city comparison, most searched */}
+            <div className="card" style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 4 }}>🇨🇦 Ontario Cities, Rates Vary Up to 3x</div>
+              <p style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12 }}>Same driver, same car, different city means drastically different premium. All estimates for a 35-year-old with a clean record driving a Honda Civic.</p>
+              <div style={{ overflowX: "auto" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px", gap: 8, padding: "5px 8px", fontSize: 10, color: "var(--text3)", fontWeight: 700, textTransform: "uppercase", minWidth: 360 }}>
+                  <div>City</div><div>Annual avg</div><div>vs Provincial</div>
+                </div>
+                {Object.entries(CA_CITY_RATES).filter(([, d]) => d.province === "ON").sort((a, b) => b[1].avgPremium - a[1].avgPremium).map(([name, data]) => {
+                  const prov = CA_PROVINCES["ON"].avgPremium;
+                  const diff = ((data.avgPremium - prov) / prov * 100).toFixed(0);
+                  const color = data.avgPremium > prov * 1.15 ? "var(--red)" : data.avgPremium < prov * 0.85 ? "var(--green)" : "var(--gold)";
+                  return (
+                    <div key={name} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px", gap: 8, padding: "7px 8px", borderRadius: 6, minWidth: 360, fontSize: 13, cursor: "pointer" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "var(--bg3)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      onClick={() => { setSelectedCityData({ name, ...data }); setCitySearchQuery(name); }}>
+                      <div style={{ fontWeight: 600, color: "var(--text)" }}>{name}</div>
+                      <div style={{ fontFamily: "'Space Mono',monospace", fontWeight: 700, color }}>{fmtC(data.avgPremium)}</div>
+                      <div style={{ color, fontWeight: 600 }}>{diff > 0 ? "+" : ""}{diff}%</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* US city highlights */}
+            <div className="card" style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>🇺🇸 US City Rates, Miami vs Columbus</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 8 }}>
+                {[["Miami, FL", 4200, "var(--red)"],["Detroit, MI", 4800, "var(--red)"],["New York City", 4500, "var(--red)"],["Los Angeles", 3200, "var(--red)"],["Denver, CO", 2800, "var(--gold)"],["Austin, TX", 2500, "var(--gold)"],["Charlotte, NC", 1600, "var(--green)"],["Columbus, OH", 1200, "var(--green)"]].map(([city, rate, color]) => (
+                  <div key={city} style={{ background: "var(--bg3)", borderRadius: 10, padding: "12px 14px" }}>
+                    <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}>{city}</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color, fontFamily: "'Space Mono',monospace" }}>{fmtC(rate)}/yr</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ padding: "14px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, fontSize: 13, color: "var(--text2)" }}>
+              <strong style={{ color: "var(--text)" }}>Rate data is approximate</strong>, actual rates vary by insurer, your specific address (postal/ZIP code), vehicle, age, and driving record. These are averages for a clean-record adult driver. Get a personalized quote to see your actual rate.
+              <div style={{ marginTop: 8 }}>
+                <a href={country === "CA" ? "https://www.ratehub.ca/car-insurance" : "https://www.insurify.com"} target="_blank" rel="noopener noreferrer sponsored" style={{ color: "var(--red)", fontWeight: 700, textDecoration: "none" }}>Get your personalized rate now →</a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── COVERAGE GAPS TAB ── */}
+        {tab === "gaps" && (
+          <div className="fade-in">
+            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Coverage Gaps, What Your Policy May NOT Cover</div>
+            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 16 }}>
+              Most drivers only discover these gaps after an accident. Read this before you assume you're covered.
+            </p>
+
+            {/* Sub-tabs */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
+              {[["rideshare","🚗 Rideshare/Delivery"],["lifeevents","🔄 Life Events"],["renewal","🔁 Renewal Trap"],["excluded","👤 Excluded Drivers"],["truecost","💸 True Ownership Cost"]].map(([id, label]) => (
+                <button key={id} className={`tab-btn ${coverageGapTab === id ? "active" : ""}`} onClick={() => setCoverageGapTab(id)}>{label}</button>
+              ))}
+            </div>
+
+            {/* Rideshare gap */}
+            {coverageGapTab === "rideshare" && (
+              <div className="fade-in">
+                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.04)", marginBottom: 12 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
+                    ⚠️ Uber, Lyft, DoorDash, Instacart drivers: your personal policy probably does NOT cover you while working
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
+                    Personal auto insurance policies exclude coverage for commercial use. The moment you log into the Uber or DoorDash app, your personal policy stops applying in most cases, creating a dangerous gap that could leave you personally liable for an accident.
+                  </p>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 10 }}>The 3 Coverage Periods (Uber/Lyft model)</div>
+                  {[
+                    { period: "Period 0", label: "App is OFF", personal: "Your personal policy", rideshare: "No rideshare coverage", color: "var(--green)", risk: "No gap, fully covered by personal policy" },
+                    { period: "Period 1", label: "App ON, waiting for ride request", personal: "Personal policy EXCLUDED", rideshare: "Platform provides limited liability only (Uber: $50K/$100K). NO collision or comprehensive.", color: "var(--red)", risk: "HIGHEST RISK. If you hit someone while waiting, your personal insurer will deny the claim. Platform only covers liability, not your car." },
+                    { period: "Period 2", label: "Ride accepted, en route to pickup", personal: "Personal policy excluded", rideshare: "Platform coverage: $1M liability + collision/comprehensive (with $2,500 deductible)", color: "var(--gold)", risk: "Better coverage but $2,500 deductible for your vehicle is very high." },
+                    { period: "Period 3", label: "Passenger in car", personal: "Personal policy excluded", rideshare: "Full platform coverage: $1M liability + collision/comprehensive", color: "var(--green)", risk: "Best coverage period, you're most protected while actively carrying a passenger." },
+                  ].map(p => (
+                    <div key={p.period} style={{ padding: "12px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8, borderLeft: `3px solid ${p.color}` }}>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
+                        <span className={`badge ${p.color === "var(--green)" ? "b-green" : p.color === "var(--red)" ? "b-red" : "b-gold"}`}>{p.period}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{p.label}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}><strong style={{ color: "var(--text)" }}>Personal policy:</strong> {p.personal}</div>
+                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 6 }}><strong style={{ color: "var(--text)" }}>Platform coverage:</strong> {p.rideshare}</div>
+                      <div style={{ fontSize: 12, color: p.color, fontWeight: 600 }}>Risk: {p.risk}</div>
+                    </div>
+                  ))}
+                  <div style={{ marginTop: 12, padding: "10px 14px", background: "var(--bg3)", borderRadius: 8, fontSize: 12, color: "var(--text2)", lineHeight: 1.7 }}>
+                    <strong style={{ color: "var(--text)" }}>The fix:</strong> Ask your insurer for a rideshare endorsement ($10-30/mo extra) or switch to a provider with built-in rideshare coverage (Intact, Aviva in Canada offer this). This fills Period 1 and gives you proper protection throughout.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Life events */}
+            {coverageGapTab === "lifeevents" && (
+              <div className="fade-in">
+                <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 16, lineHeight: 1.7 }}>
+                  These life changes can affect your coverage, and if you don't notify your insurer, a claim could be denied.
+                </p>
+                {[
+                  { event: "You moved to a new address", risk: "Your postal/ZIP code is a major rating factor. Moving to a higher-risk area without updating your policy could mean your insurer denies a claim for non-disclosure. Update immediately, it may change your premium.", action: "Call or update online within 30 days of moving." },
+                  { event: "Someone else drives your car regularly", risk: "Any household member with a driver's license who regularly drives your car must be listed on your policy. If an unlisted household member causes an accident, your insurer can deny the claim entirely.", action: "List ALL household drivers, even occasional ones." },
+                  { event: "You started driving for work or deliveries", risk: "Using your personal vehicle for any commercial purpose (deliveries, client visits, Uber/Lyft) is typically excluded from personal auto policies. One accident while working and your claim could be denied.", action: "Add a business use endorsement or get a commercial policy." },
+                  { event: "You added a teen driver", risk: "A teen driver in the household who is not listed on your policy is a serious gap. If they cause an accident, the insurer may deny coverage or pursue you for the full cost.", action: "Add them immediately. Yes, premiums go up, but the alternative is catastrophic." },
+                  { event: "You started working from home (less driving)", risk: "Positive life event for insurance! If your annual mileage dropped significantly, notify your insurer. You may qualify for a low-mileage discount.", action: "Report reduced mileage, could save 5-15%." },
+                  { event: "You financed or leased a new vehicle", risk: "Your lender requires you to carry collision and comprehensive coverage. If you only have liability and the car is totaled, you're still on the hook for the loan.", action: "Ensure collision and comprehensive are on your policy before driving off the lot." },
+                  { event: "Your vehicle's value dropped significantly", risk: "If your car is worth less than $4,000, carrying collision and comprehensive may cost more per year than the car is worth.", action: "Review annually, consider dropping collision on old vehicles." },
+                ].map((item, i) => (
+                  <div key={i} className="card" style={{ marginBottom: 10, borderLeft: "3px solid var(--red)" }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>🔴 {item.event}</div>
+                    <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 8, lineHeight: 1.65 }}>{item.risk}</div>
+                    <div style={{ fontSize: 12, color: "var(--green)", fontWeight: 600, padding: "6px 10px", background: "rgba(74,222,128,0.08)", borderRadius: 6 }}>
+                      ✅ Action: {item.action}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Renewal trap */}
+            {coverageGapTab === "renewal" && (
+              <div className="fade-in">
+                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.04)", marginBottom: 12 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
+                    🔁 The Renewal Trap, Loyalty is Often Punished
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
+                    Insurers rely on customer inertia at renewal time. Many quietly raise rates each year knowing most customers won't shop around. Long-term loyal customers frequently pay more than new customers for identical coverage.
+                  </p>
+                  {[
+                    { title: "The loyalty penalty", detail: "Studies consistently show long-term policyholders pay 10-40% more than new customers with the same insurer. You are essentially being charged for the convenience of not switching." },
+                    { title: "The introductory rate trap", detail: "Some insurers offer below-market rates for the first year to acquire you as a customer, then raise rates significantly at renewal. The renewal notice arrives and it's 20-30% higher." },
+                    { title: "Automatic renewal without review", detail: "Auto-renewal is convenient but means you may be carrying outdated coverage limits, paying for coverage you no longer need (collision on a 15-year-old car), or missing new discounts." },
+                    { title: "How to fight back", detail: "Start shopping 30-45 days before renewal. Get 3+ quotes. Call your current insurer with the best competing quote and ask them to match it. About 60% of the time they will, or at least reduce the increase. If not, switch without guilt." },
+                  ].map((item, i) => (
+                    <div key={i} style={{ padding: "10px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{i + 1}. {item.title}</div>
+                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.65 }}>{item.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Excluded drivers */}
+            {coverageGapTab === "excluded" && (
+              <div className="fade-in">
+                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", marginBottom: 12 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
+                    👤 Excluded Driver Endorsements, A Dangerous Trap
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
+                    Some households exclude a high-risk driver (teenager, new driver, someone with a bad record) from the policy to save money. This is legal, but the excluded driver creates serious risk for everyone in the household.
+                  </p>
+                  {[
+                    { title: "What excluded means exactly", detail: "An excluded driver endorsement means that person is explicitly removed from your policy. If they ever drive your car, even in an emergency, there is zero coverage. The insurer can and will deny the claim entirely." },
+                    { title: "The emergency exception myth", detail: "Many people believe there is an emergency exception. There is not. If your excluded teen driver takes the car to the hospital in a genuine emergency and causes an accident, your insurer still denies the claim." },
+                    { title: "Hidden household members", detail: "Any licensed driver who lives in your household is assumed to have access to your vehicle by insurers. If you don't disclose a household driver, your insurer can deny claims as non-disclosure. You must disclose everyone." },
+                    { title: "The solution", detail: "The only safe option is to list all drivers and pay the higher premium, or ensure excluded drivers have their own separate vehicle with their own policy. Never lend your car to an excluded driver, for any reason." },
+                  ].map((item, i) => (
+                    <div key={i} style={{ padding: "10px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8, borderLeft: "3px solid var(--red)" }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{item.title}</div>
+                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.65 }}>{item.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* True cost of ownership */}
+            {coverageGapTab === "truecost" && (
+              <div className="fade-in">
+                <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>
+                  💸 True Cost of Car Ownership Calculator
+                </div>
+                <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 16, lineHeight: 1.7 }}>
+                  Insurance is just one piece. The average hidden car ownership costs total $6,894/year in the US, insurance is the biggest single expense. Here is everything combined.
+                </p>
+                {(() => {
+                  const sel = selectedCityData || (country === "CA" ? { avgPremium: CA_PROVINCES[province]?.avgPremium || 1920 } : { avgPremium: US_STATES[usState]?.avgPremium || 2000 });
+                  const insurance = sel.avgPremium || 1920;
+                  const gasMonthly = country === "CA" ? 200 : 150;
+                  const maintenance = 1200;
+                  const depreciation = 3500;
+                  const parking = country === "CA" && (province === "ON") ? 1800 : 600;
+                  const registration = country === "CA" ? 120 : 200;
+                  const total = insurance + gasMonthly * 12 + maintenance + depreciation + parking + registration;
+                  return (
+                    <div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 10, marginBottom: 16 }}>
+                        {[
+                          { label: "Car insurance", val: insurance, color: "var(--red)", pct: (insurance / total * 100).toFixed(0) },
+                          { label: "Gas/fuel (est.)", val: gasMonthly * 12, color: "var(--gold)", pct: (gasMonthly * 12 / total * 100).toFixed(0) },
+                          { label: "Maintenance & repairs", val: maintenance, color: "#60a5fa", pct: (maintenance / total * 100).toFixed(0) },
+                          { label: "Depreciation (est.)", val: depreciation, color: "#a78bfa", pct: (depreciation / total * 100).toFixed(0) },
+                          { label: "Parking & tolls", val: parking, color: "#34d399", pct: (parking / total * 100).toFixed(0) },
+                          { label: "Registration & taxes", val: registration, color: "var(--text2)", pct: (registration / total * 100).toFixed(0) },
+                        ].map(item => (
+                          <div key={item.label} style={{ background: "var(--bg3)", borderRadius: 10, padding: "12px 14px" }}>
+                            <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 4 }}>{item.label}</div>
+                            <div style={{ fontSize: 20, fontWeight: 900, color: item.color, fontFamily: "'Space Mono',monospace" }}>{fmtC(item.val)}</div>
+                            <div style={{ fontSize: 10, color: "var(--text3)", marginTop: 2 }}>{item.pct}% of total</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ padding: "14px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+                        <div>
+                          <div style={{ fontSize: 13, color: "var(--text2)", fontWeight: 700 }}>Estimated total annual cost of car ownership</div>
+                          <div style={{ fontSize: 11, color: "var(--text3)" }}>Based on {selectedCityData?.name || locationData?.name} rates + average expenses</div>
+                        </div>
+                        <div style={{ fontSize: 36, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(total)}/yr</div>
+                      </div>
+                      <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 10 }}>Depreciation, gas, and maintenance are estimates. Actual costs vary significantly by vehicle type, age, and driving habits.</p>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── PROVINCE GUIDE TAB ── */}
         {tab === "guide" && (
