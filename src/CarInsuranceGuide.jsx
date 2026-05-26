@@ -1,455 +1,401 @@
 import { useState, useEffect, useRef } from "react";
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ── Premium calculation engine ─────────────────────────────────────────────────
+function calcPremium(profile) {
+  const {
+    country, province, usState, city, cityRate,
+    age, gender, maritalStatus, yearsLicensed, occupation,
+    vehicleYear, vehicleMake, vehicleModel, vehicleValue, vehicleUse,
+    annualKm, parkingType, winterTires,
+    atFaultAccidents, notAtFaultAccidents, tickets, dui, lapseMonths,
+    coverageLevel, liabilityLimit, deductible,
+    bundleHome, telematics, multiVehicle,
+    rideshare, financed, newDriver, studentDiscount,
+  } = profile;
 
-
-// ── City-Level Premium Data ────────────────────────────────────────────────────
-const CA_CITY_RATES = {
-  // Ontario
-  "Brampton": { province: "ON", avgPremium: 2900, note: "Highest in Canada. High fraud, theft, and accident claims." },
-  "Vaughan": { province: "ON", avgPremium: 2178, note: "York Region, high density suburb with elevated theft rates." },
-  "Mississauga": { province: "ON", avgPremium: 2531, note: "Second highest in province. Dense urban area near Toronto." },
-  "Toronto": { province: "ON", avgPremium: 2400, note: "High fraud, congestion, and accident claims drive cost." },
-  "Markham": { province: "ON", avgPremium: 2200, note: "York Region, elevated vehicle theft rates." },
-  "Scarborough": { province: "ON", avgPremium: 2300, note: "Toronto suburb, 23% above city average." },
-  "Etobicoke": { province: "ON", avgPremium: 2100, note: "Toronto suburb, 18% above city average." },
-  "Hamilton": { province: "ON", avgPremium: 2396, note: "Higher than provincial average. Rising fraud rates." },
-  "North York": { province: "ON", avgPremium: 2200, note: "Dense urban area, elevated theft and fraud." },
-  "Ajax": { province: "ON", avgPremium: 2050, note: "Durham Region, slightly above provincial average." },
-  "Oshawa": { province: "ON", avgPremium: 1950, note: "Durham Region, moderate rates." },
-  "Whitby": { province: "ON", avgPremium: 1900, note: "Durham Region, near provincial average." },
-  "Pickering": { province: "ON", avgPremium: 2000, note: "Durham Region, moderate urban rates." },
-  "Richmond Hill": { province: "ON", avgPremium: 2150, note: "York Region, above average due to theft rates." },
-  "Newmarket": { province: "ON", avgPremium: 1950, note: "York Region, moderate rates." },
-  "Burlington": { province: "ON", avgPremium: 1850, note: "Halton Region, below GTA average." },
-  "Oakville": { province: "ON", avgPremium: 1809, note: "Consistently below GTA average despite affluence." },
-  "Guelph": { province: "ON", avgPremium: 1750, note: "Below provincial average. Lower claims frequency." },
-  "Kitchener": { province: "ON", avgPremium: 1341, note: "One of the most affordable cities in Ontario." },
-  "Waterloo": { province: "ON", avgPremium: 1350, note: "Low rates, university town, lower risk profile." },
-  "Cambridge": { province: "ON", avgPremium: 1400, note: "Below provincial average. Moderate risk." },
-  "London": { province: "ON", avgPremium: 2100, note: "Near provincial average. Rising in recent years." },
-  "Windsor": { province: "ON", avgPremium: 1412, note: "Below provincial average despite cross-border traffic." },
-  "Ottawa": { province: "ON", avgPremium: 1213, note: "Cheapest major Ontario city. Low fraud, less congestion." },
-  "Kingston": { province: "ON", avgPremium: 1700, note: "Below provincial average. Lower traffic density." },
-  "Belleville": { province: "ON", avgPremium: 1600, note: "Eastern Ontario, below provincial average." },
-  "Barrie": { province: "ON", avgPremium: 1800, note: "Near provincial average. Growing city." },
-  "Sudbury": { province: "ON", avgPremium: 1500, note: "Northern Ontario, lower than southern cities." },
-  "Thunder Bay": { province: "ON", avgPremium: 1400, note: "Northern Ontario, significantly below provincial average." },
-  "Owen Sound": { province: "ON", avgPremium: 1450, note: "Southern Georgian Bay area, below provincial average." },
-  "Peterborough": { province: "ON", avgPremium: 1650, note: "Below provincial average. Lower urban density." },
-  "St. Catharines": { province: "ON", avgPremium: 1800, note: "Niagara region, near provincial average." },
-  "Niagara Falls": { province: "ON", avgPremium: 1750, note: "Niagara region, moderate rates." },
-  "Brantford": { province: "ON", avgPremium: 1700, note: "Southwestern Ontario, below average." },
-  "Sarnia": { province: "ON", avgPremium: 1600, note: "Below provincial average. Smaller city." },
-  "Cornwall": { province: "ON", avgPremium: 1400, note: "Eastern Ontario, well below provincial average." },
-  // BC
-  "Vancouver": { province: "BC", avgPremium: 1950, note: "Highest in BC. ICBC, urban density, theft, weather." },
-  "Surrey": { province: "BC", avgPremium: 1700, note: "High theft rates in parts. Above BC average." },
-  "Burnaby": { province: "BC", avgPremium: 1650, note: "Dense suburb. Above BC average." },
-  "Richmond": { province: "BC", avgPremium: 1600, note: "Above BC average. Flood risk area." },
-  "Victoria": { province: "BC", avgPremium: 1350, note: "Below BC average. Less congestion than Vancouver." },
-  "Kelowna": { province: "BC", avgPremium: 1300, note: "Interior BC, below average. Fire risk affects comp." },
-  "Abbotsford": { province: "BC", avgPremium: 1400, note: "Fraser Valley, moderate rates." },
-  "Prince George": { province: "BC", avgPremium: 1250, note: "Northern BC, below BC average." },
-  // Alberta
-  "Calgary": { province: "AB", avgPremium: 1850, note: "Hailstorm capital of Canada. High comprehensive claims." },
-  "Edmonton": { province: "AB", avgPremium: 1750, note: "Near Alberta average. Cold weather claims." },
-  "Red Deer": { province: "AB", avgPremium: 1600, note: "Below Alberta average. Lower density." },
-  "Lethbridge": { province: "AB", avgPremium: 1550, note: "Southern Alberta, below average." },
-  // Quebec
-  "Montreal": { province: "QC", avgPremium: 1050, note: "Above Quebec average but still cheap vs other provinces." },
-  "Quebec City": { province: "QC", avgPremium: 850, note: "One of the cheapest cities in Canada." },
-  "Laval": { province: "QC", avgPremium: 980, note: "Montreal suburb, slightly above Quebec average." },
-  // Manitoba
-  "Winnipeg": { province: "MB", avgPremium: 1400, note: "Manitoba average. MPI public insurance." },
-  // Saskatchewan
-  "Saskatoon": { province: "SK", avgPremium: 1300, note: "SGI public insurance. Moderate rates." },
-  "Regina": { province: "SK", avgPremium: 1250, note: "SGI public insurance. Below national average." },
-  // Nova Scotia
-  "Halifax": { province: "NS", avgPremium: 1200, note: "Competitive private market. Below national average." },
-};
-
-const US_CITY_RATES = {
-  // Florida
-  "Miami": { state: "FL", avgPremium: 4200, note: "Highest in the US. High fraud, no-fault abuse, hurricane risk." },
-  "Orlando": { state: "FL", avgPremium: 2800, note: "Above state average. High accident rates." },
-  "Tampa": { state: "FL", avgPremium: 2900, note: "Above state average. Flood and storm risk." },
-  "Jacksonville": { state: "FL", avgPremium: 2600, note: "Below Miami but still high for the state." },
-  // New York
-  "New York City": { state: "NY", avgPremium: 4500, note: "Among the most expensive in the US. Density, fraud, no-fault." },
-  "Buffalo": { state: "NY", avgPremium: 2200, note: "Well below NYC. Upstate rates far more reasonable." },
-  "Albany": { state: "NY", avgPremium: 2000, note: "Upstate NY, much lower than NYC." },
-  // Michigan
-  "Detroit": { state: "MI", avgPremium: 4800, note: "Historically most expensive in US. Unlimited PIP reform helping." },
-  "Grand Rapids": { state: "MI", avgPremium: 2400, note: "Well below Detroit. Reform has reduced rates." },
-  // California
-  "Los Angeles": { state: "CA", avgPremium: 3200, note: "High traffic density, fraud, expensive repairs." },
-  "San Francisco": { state: "CA", avgPremium: 2800, note: "Urban density and expensive vehicles drive costs." },
-  "San Diego": { state: "CA", avgPremium: 2200, note: "Below LA. Less congestion and lower fraud." },
-  "Sacramento": { state: "CA", avgPremium: 2000, note: "Inland, below coastal California averages." },
-  // Texas
-  "Houston": { state: "TX", avgPremium: 2800, note: "Severe weather and high traffic. Above TX average." },
-  "Austin": { state: "TX", avgPremium: 2500, note: "Growing rapidly, rates rising with population." },
-  "Dallas": { state: "TX", avgPremium: 2600, note: "Hail risk and traffic drive above-average rates." },
-  "San Antonio": { state: "TX", avgPremium: 2100, note: "Below TX urban average." },
-  // Illinois
-  "Chicago": { state: "IL", avgPremium: 2400, note: "Well above state average. Urban density and fraud." },
-  // Georgia
-  "Atlanta": { state: "GA", avgPremium: 2800, note: "Highest in state. Urban density and traffic." },
-  // Ohio
-  "Columbus": { state: "OH", avgPremium: 1200, note: "Affordable. One of cheapest major US cities." },
-  "Cleveland": { state: "OH", avgPremium: 1300, note: "Affordable Midwest rates." },
-  // Washington
-  "Seattle": { state: "WA", avgPremium: 1900, note: "Above state average. Urban density and tech wealth." },
-  // Colorado
-  "Denver": { state: "CO", avgPremium: 2800, note: "Hailstorm risk drives high comprehensive claims." },
-  // Arizona
-  "Phoenix": { state: "AZ", avgPremium: 2200, note: "High heat affects vehicles. Rising theft rates." },
-  // North Carolina
-  "Charlotte": { state: "NC", avgPremium: 1600, note: "Moderate rates. Below national average." },
-  "Raleigh": { state: "NC", avgPremium: 1400, note: "One of the most affordable major cities." },
-  // Wisconsin
-  "Milwaukee": { state: "WI", avgPremium: 1400, note: "Affordable Midwest rates." },
-};
-
-const CA_PROVINCES = {
-  ON: {
-    name: "Ontario", system: "private", avgPremium: 1920, minLiability: 200000,
-    tort: "modified", noFault: true, mandatoryCoverage: ["Third-party liability ($200K min)", "Accident benefits", "Uninsured motorist", "Direct compensation property damage"],
-    optionalCoverage: ["Collision", "Comprehensive", "DCPD waiver", "Loss of use", "OPCF endorsements"],
-    notes: "Highest premiums in Canada. Regulated by FSRA. No-fault accident benefits mandatory. Can shop around, many private insurers compete.",
-    firstTimeSavings: "New to Ontario? Ask about 'newcomer discounts' and use your international driving record.",
-    regulator: "FSRA (Financial Services Regulatory Authority of Ontario)",
-    link: "https://www.fsrao.ca",
-    insurers: ["Intact", "TD Insurance", "Aviva", "Desjardins", "Sonnet", "Belairdirect", "CAA", "Economical"],
-  },
-  AB: {
-    name: "Alberta", system: "private", avgPremium: 1735, minLiability: 200000,
-    tort: "full", noFault: false, mandatoryCoverage: ["Third-party liability ($200K min)", "Accident benefits", "Uninsured motorist"],
-    optionalCoverage: ["Collision", "Comprehensive", "All perils", "Specified perils", "Loss of use", "Roadside assistance"],
-    notes: "Second highest premiums. Full tort system, you can sue at-fault drivers. Rates rising due to hailstorm claims, car theft, and inflation.",
-    firstTimeSavings: "Alberta has no rate cap since 2019, shop aggressively at renewal time.",
-    regulator: "AIRB (Automobile Insurance Rate Board)",
-    link: "https://www.airb.ab.ca",
-    insurers: ["Intact", "TD Insurance", "Aviva", "Wawanesa", "Economical", "CAA", "Sonnet"],
-  },
-  BC: {
-    name: "British Columbia", system: "public", avgPremium: 1450, minLiability: 200000,
-    tort: "no-fault", noFault: true, mandatoryCoverage: ["Basic Autoplan (ICBC)", "Third-party liability ($200K)", "Accident benefits", "Uninsured motorist"],
-    optionalCoverage: ["Enhanced accident benefits", "Extended third party", "Collision", "Comprehensive", "Additional towing"],
-    notes: "Public insurance through ICBC. Cannot shop around for basic coverage. Optional collision and comprehensive can be added through ICBC or private insurers.",
-    firstTimeSavings: "New to BC? Your out-of-province driving record transfers to ICBC's Claim-Free Discount ladder.",
-    regulator: "ICBC (Insurance Corporation of BC)",
-    link: "https://www.icbc.com",
-    insurers: ["ICBC (basic)", "Intact (optional)", "Aviva (optional)", "Wawanesa (optional)"],
-  },
-  QC: {
-    name: "Quebec", system: "hybrid", avgPremium: 900, minLiability: 50000,
-    tort: "no-fault", noFault: true, mandatoryCoverage: ["SAAQ (bodily injury, government)", "Civil liability (private insurer)", "Uninsured motorist"],
-    optionalCoverage: ["Collision", "Comprehensive", "All perils", "Replacement cost", "Road assistance"],
-    notes: "Lowest premiums in Canada. Hybrid system: SAAQ covers all bodily injuries (no-fault), private insurers cover property damage. Very competitive market.",
-    firstTimeSavings: "Quebec's SAAQ bodily injury is automatically included in your driver's license fee, you only need private insurance for property damage.",
-    regulator: "AMF (Autorité des marchés financiers)",
-    link: "https://www.autorite.qc.ca",
-    insurers: ["Intact", "Desjardins", "Belairdirect", "La Personnelle", "TD Insurance", "Sonnet"],
-  },
-  MB: {
-    name: "Manitoba", system: "public", avgPremium: 1350, minLiability: 500000,
-    tort: "no-fault", noFault: true, mandatoryCoverage: ["MPI Basic (Autopac)", "$500K third-party liability", "Personal injury protection", "Uninsured motorist"],
-    optionalCoverage: ["Extension (higher liability)", "Collision", "Comprehensive", "Rental vehicle"],
-    notes: "Public insurance through Manitoba Public Insurance. Rates set by PUB (Public Utilities Board). One of the best accident benefit systems in Canada.",
-    firstTimeSavings: "MPI offers usage-based insurance discounts, ask about the Autopac Telematics program.",
-    regulator: "MPI (Manitoba Public Insurance)",
-    link: "https://www.mpi.mb.ca",
-    insurers: ["MPI (Autopac, mandatory)", "Private for optional coverage"],
-  },
-  SK: {
-    name: "Saskatchewan", system: "public", avgPremium: 1235, minLiability: 200000,
-    tort: "no-fault", noFault: true, mandatoryCoverage: ["SGI PLATE Coverage", "Third-party liability ($200K)", "Accident benefits"],
-    optionalCoverage: ["SGI Canada (optional extras)", "Collision", "Comprehensive", "Extension packages"],
-    notes: "Public insurance through SGI. No-fault system covers injuries. Optional coverages available through SGI Canada and private brokers.",
-    regulator: "SGI (Saskatchewan Government Insurance)",
-    link: "https://www.sgi.sk.ca",
-    insurers: ["SGI (mandatory)", "SGI Canada (optional)", "Private brokers for additional"],
-  },
-  NS: { name: "Nova Scotia", system: "private", avgPremium: 1150, minLiability: 500000, tort: "modified", noFault: false, mandatoryCoverage: ["Third-party liability ($500K min)", "Accident benefits", "Uninsured motorist"], optionalCoverage: ["Collision", "Comprehensive", "SEF endorsements"], notes: "Competitive private market. Higher minimum liability than most provinces at $500K.", regulator: "NSURI (Nova Scotia Utility and Review Board)", link: "https://nsuarb.novascotia.ca", insurers: ["Intact", "Aviva", "TD Insurance", "Wawanesa", "Economical"] },
-  NB: { name: "New Brunswick", system: "private", avgPremium: 1120, minLiability: 200000, tort: "modified", noFault: false, mandatoryCoverage: ["Third-party liability ($200K min)", "Accident benefits", "Uninsured motorist"], optionalCoverage: ["Collision", "Comprehensive", "SEF endorsements"], notes: "Private competitive market with fewer claims than Ontario. Relatively stable rates.", regulator: "FCNB (Financial and Consumer Services Commission)", link: "https://fcnb.ca", insurers: ["Intact", "Aviva", "TD Insurance", "Sonnet"] },
-  NL: { name: "Newfoundland", system: "private", avgPremium: 1270, minLiability: 200000, tort: "full", noFault: false, mandatoryCoverage: ["Third-party liability ($200K min)", "Accident benefits", "Uninsured motorist"], optionalCoverage: ["Collision", "Comprehensive"], notes: "Full tort system. Fewer insurers than mainland provinces but stable market.", regulator: "PUB NL", link: "https://pub.nl.ca", insurers: ["Intact", "Aviva", "TD Insurance"] },
-  PE: { name: "PEI", system: "private", avgPremium: 1080, minLiability: 200000, tort: "modified", noFault: false, mandatoryCoverage: ["Third-party liability ($200K min)", "Accident benefits", "Uninsured motorist"], optionalCoverage: ["Collision", "Comprehensive"], notes: "Lowest premiums among private insurance provinces. Small market, low claim frequency.", regulator: "IRAC (Island Regulatory and Appeals Commission)", link: "https://www.irac.pe.ca", insurers: ["Intact", "Aviva", "TD Insurance"] },
-};
-
-const US_STATES = {
-  CA: { name: "California", avgPremium: 2450, minLiability: "15/30/5", noFault: false, tort: "full", notes: "One of the highest premiums in the US. Cannot use gender as a rating factor. Good Driver Discount mandatory for eligible drivers.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Mercury", "Farmers"] },
-  TX: { name: "Texas", avgPremium: 2310, minLiability: "30/60/25", noFault: false, tort: "full", notes: "Rising premiums due to severe weather events. Strong competition among insurers. Personal auto policies regulated by TDI.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "USAA", "Farmers"] },
-  FL: { name: "Florida", avgPremium: 3183, minLiability: "10/20/10", noFault: true, tort: "no-fault", notes: "Highest premiums in the US. No-fault PIP required. High fraud rates and hurricane risk drive costs. Consider insurer financial strength carefully.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Citizens"] },
-  NY: { name: "New York", avgPremium: 2994, minLiability: "25/50/10", noFault: true, tort: "no-fault", notes: "Second highest US premiums. No-fault PIP required. NYC drivers pay significantly more than upstate. High fraud rates.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "NY Central Mutual"] },
-  IL: { name: "Illinois", avgPremium: 1566, minLiability: "25/50/20", noFault: false, tort: "full", notes: "Moderate premiums with strong competition. Chicago drivers pay significantly more than rural areas.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Erie"] },
-  PA: { name: "Pennsylvania", avgPremium: 1478, minLiability: "15/30/5", noFault: "choice", tort: "choice", notes: "Choice no-fault state, choose limited tort (lower premium) or full tort (sue for any injury). Full tort recommended.", insurers: ["State Farm", "GEICO", "Progressive", "Erie", "Nationwide"] },
-  OH: { name: "Ohio", avgPremium: 1034, minLiability: "25/50/25", noFault: false, tort: "full", notes: "Among the lowest premiums in the US. Strong competition, low fraud rates, moderate weather risk.", insurers: ["State Farm", "GEICO", "Progressive", "Nationwide", "Erie"] },
-  GA: { name: "Georgia", avgPremium: 2359, minLiability: "25/50/25", noFault: false, tort: "full", notes: "Rising premiums due to severe weather and high accident rates. Atlanta metro significantly more expensive than rural areas.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Farmers"] },
-  NC: { name: "North Carolina", avgPremium: 1392, minLiability: "30/60/25", noFault: false, tort: "full", notes: "NCRB (Rate Bureau) regulates rates tightly. Competitive market with strong regional insurers. Relatively affordable.", insurers: ["State Farm", "GEICO", "Progressive", "North Carolina Farm Bureau", "Erie"] },
-  WA: { name: "Washington", avgPremium: 1701, minLiability: "25/50/10", noFault: false, tort: "full", notes: "Moderate premiums. Seattle metro significantly more expensive. Cannot use credit score as of 2025.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Pemco"] },
-  AZ: { name: "Arizona", avgPremium: 2026, minLiability: "25/50/15", noFault: false, tort: "full", notes: "Rising premiums due to car theft and severe weather. Phoenix metro among most expensive in state.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Farmers"] },
-  CO: { name: "Colorado", avgPremium: 2568, minLiability: "25/50/15", noFault: false, tort: "full", notes: "Sharply rising premiums due to hailstorms and high accident rates. Comprehensive especially important for hail damage.", insurers: ["State Farm", "GEICO", "Progressive", "Allstate", "Farmers"] },
-  MI: { name: "Michigan", avgPremium: 2864, minLiability: "50/100/10", noFault: true, tort: "no-fault", notes: "Third highest US premiums. Unlimited PIP medical historically drove costs. 2019 reform allows PIP limits, choose carefully.", insurers: ["State Farm", "Progressive", "Allstate", "Farm Bureau", "Auto-Owners"] },
-  WI: { name: "Wisconsin", avgPremium: 1087, minLiability: "25/50/10", noFault: false, tort: "full", notes: "Among the most affordable US states. Low population density, low fraud rates, moderate weather.", insurers: ["State Farm", "GEICO", "Progressive", "American Family", "Erie"] },
-};
-
-// Vehicle cost to insure (monthly full coverage estimates)
-const VEHICLE_COSTS = {
-  "Honda Civic": { ca: 145, us: 110, theft: "High", rating: "Good", notes: "Most stolen car in Canada 2024. Consider comprehensive carefully." },
-  "Honda CR-V": { ca: 158, us: 104, theft: "Medium", rating: "Excellent", notes: "Strong safety ratings reduce collision premium." },
-  "Toyota Corolla": { ca: 138, us: 107, theft: "Low", rating: "Excellent", notes: "Low repair costs and excellent safety = one of cheapest to insure." },
-  "Toyota RAV4": { ca: 162, us: 113, theft: "Very High", rating: "Good", notes: "Top 3 stolen vehicles in Canada. Comprehensive premium will be high." },
-  "Ford F-150": { ca: 175, us: 131, theft: "High", rating: "Good", notes: "Trucks have lower collision risk but higher repair costs." },
-  "Dodge RAM 1500": { ca: 182, us: 138, theft: "High", rating: "Good", notes: "Higher repair costs than F-150. Consider deductible carefully." },
-  "Tesla Model Y": { ca: 285, us: 241, theft: "Low", rating: "Good", notes: "Expensive to repair, even minor fender benders cost $5,000+. Premium reflects repair cost." },
-  "Tesla Model 3": { ca: 262, us: 218, theft: "Low", rating: "Excellent", notes: "Strong safety ratings but very expensive parts. Monthly premium reflects this." },
-  "Subaru Outback": { ca: 142, us: 96, theft: "Low", rating: "Excellent", notes: "One of cheapest mid-size SUVs to insure. Strong safety + low theft + affordable parts." },
-  "BMW 3 Series": { ca: 218, us: 175, theft: "Medium", rating: "Good", notes: "Luxury vehicles cost more to repair. Even OEM parts are expensive." },
-  "Mercedes C-Class": { ca: 235, us: 188, theft: "Medium", rating: "Good", notes: "High parts cost and specialized repair shops drive premium up." },
-  "Ford Mustang": { ca: 245, us: 201, theft: "Low", rating: "Below Average", notes: "Sports cars carry higher statistical accident risk. Young male drivers pay premium price." },
-  "Chevrolet Silverado": { ca: 172, us: 127, theft: "Medium", rating: "Good", notes: "Large pickup, affordable parts vs F-150 but similar theft exposure." },
-  "Hyundai Tucson": { ca: 155, us: 108, theft: "High", rating: "Good", notes: "Hyundai vehicles had high theft rates 2022-2024. Software fix available, get it installed." },
-  "Kia Sorento": { ca: 158, us: 112, theft: "High", rating: "Good", notes: "Same Kia/Hyundai theft vulnerability. Confirm software update with dealer." },
-  "Nissan Sentra": { ca: 141, us: 103, theft: "Low", rating: "Good", notes: "Affordable to insure. Low repair costs and low theft risk." },
-  "Jeep Grand Cherokee": { ca: 192, us: 154, theft: "Medium", rating: "Below Average", notes: "Higher rollover risk historically. Premium reflects this." },
-  "GMC Sierra": { ca: 178, us: 134, theft: "Medium", rating: "Good", notes: "Similar to Silverado, solid value for truck insurance." },
-  "Volkswagen Golf": { ca: 152, us: 109, theft: "Low", rating: "Excellent", notes: "European build but affordable parts. Strong safety ratings." },
-  "Mazda CX-5": { ca: 148, us: 101, theft: "Low", rating: "Excellent", notes: "Consistently one of the cheapest SUVs to insure. Excellent safety, low theft." },
-};
-
-// Rating factors
-const RATING_FACTORS = [
-  { factor: "Driving record", impact: "Very High", detail: "One at-fault accident can raise your premium 20-40% for 6 years in Ontario. Tickets (speeding 20km+ over) add 5-25%. A clean record is worth protecting, consider accident forgiveness." },
-  { factor: "Age and experience", impact: "Very High", detail: "Drivers under 25 pay 2-4x more than experienced adults. A 20-year-old pays ~$393/mo vs $187 for a 40-year-old. Rates drop significantly at 25." },
-  { factor: "Vehicle make and model", impact: "High", detail: "The car you drive can change your premium by $100-200/month. A Tesla Model Y costs $145 more/month to insure than a Subaru Outback, both mid-size SUVs." },
-  { factor: "Where you live", impact: "High", detail: "Your postal/ZIP code matters enormously. Downtown Toronto drivers pay 40-60% more than Sudbury drivers. Urban density, theft rates, and accident frequency all factor in." },
-  { factor: "Coverage limits and deductibles", impact: "High", detail: "A $500 deductible vs $2,000 deductible can save 20-30% on collision premium. Higher liability limits add relatively little to premium but protect your assets significantly." },
-  { factor: "Annual mileage", impact: "Medium", detail: "Low-mileage drivers (<10,000 km/yr) often qualify for discounts. Telematics programs can verify this and save 10-30%." },
-  { factor: "Credit score (US only)", impact: "Medium", detail: "Most US states allow credit score as a rating factor. A poor credit score can increase premiums 40-80% in some states. California, Hawaii, and Washington prohibit this." },
-  { factor: "Marital status", impact: "Low-Medium", detail: "Married drivers statistically have fewer accidents. Premium reduction is modest (3-7%) but applies in most jurisdictions." },
-  { factor: "Bundling (home + auto)", impact: "Medium", detail: "Bundling home and auto insurance typically saves 10-25%. Most major insurers offer multi-policy discounts." },
-  { factor: "Winter tires (Canada)", impact: "Medium", detail: "Most Canadian insurers offer 5-15% discount for winter tires. Quebec mandates them Dec 1-Mar 15. Mandatory in most of BC in winter conditions." },
-];
-
-const DISCOUNTS = [
-  { name: "Multi-vehicle", savings: "10-20%", desc: "Insure 2+ vehicles with the same company" },
-  { name: "Bundle home + auto", savings: "10-25%", desc: "Home and auto with same insurer" },
-  { name: "Winter tires (Canada)", savings: "5-15%", desc: "Most CA insurers discount for winter tires" },
-  { name: "Telematics / usage-based", savings: "10-30%", desc: "App tracks driving habits and rewards safe drivers" },
-  { name: "Loyalty", savings: "3-10%", desc: "Staying with same insurer 3+ years" },
-  { name: "Winter storage", savings: "15-25%", desc: "Storing vehicle seasonally (no driving Nov-Mar)" },
-  { name: "Good student", savings: "5-15%", desc: "Full-time students with B+ average" },
-  { name: "Mature driver course", savings: "5-10%", desc: "Defensive driving course (55+ drivers)" },
-  { name: "New vehicle", savings: "5-10%", desc: "New cars have better safety tech" },
-  { name: "Accident-free", savings: "5-20%", desc: "Clean record for 3-6+ years" },
-  { name: "Winter storage", savings: "15-25%", desc: "Seasonal storage, comprehensive only Nov-Apr" },
-  { name: "Paperless / autopay", savings: "2-5%", desc: "Small discount for digital billing" },
-];
-
-const COVERAGE_TYPES = [
-  {
-    name: "Third-Party Liability", required: true, ca: true, us: true,
-    what: "Pays for damage you cause to other people's property and bodily injury. This is the most important coverage you can have.",
-    caMin: "$200,000 minimum in most provinces. Experts recommend $1M-$2M, a serious accident lawsuit can easily exceed $200K.",
-    usMin: "Varies by state (e.g., 25/50/25 means $25K/person, $50K/accident, $25K property). Experts recommend 100/300/100.",
-    riskOfSkipping: "You could be personally liable for hundreds of thousands of dollars if you seriously injure someone.",
-  },
-  {
-    name: "Accident Benefits (CA) / PIP (US)", required: true, ca: true, us: "some",
-    what: "Pays your medical expenses, income replacement, and rehabilitation costs regardless of who caused the accident.",
-    caMin: "Mandatory in all provinces. Amounts vary, Ontario statutory benefits start at $3,500 for minor injuries.",
-    usMin: "Required in no-fault states. Minimum limits often inadequate, consider higher amounts.",
-    riskOfSkipping: "Required by law in Canada. In the US, if you're in a no-fault state, you must carry it.",
-  },
-  {
-    name: "Collision", required: false, ca: true, us: true,
-    what: "Pays to repair or replace your car if you hit another vehicle or object, regardless of fault.",
-    caMin: "Optional but required by lenders/lessors if you finance or lease your vehicle.",
-    usMin: "Optional unless required by lender. Worth carrying if your car is worth more than $4,000.",
-    riskOfSkipping: "You pay 100% of repair costs if you cause an accident. On a $40,000 car this could be devastating.",
-  },
-  {
-    name: "Comprehensive", required: false, ca: true, us: true,
-    what: "Covers theft, vandalism, fire, flooding, hail, hitting an animal, and other non-collision damage.",
-    caMin: "Optional but highly recommended in Canada given extreme weather and high theft rates (especially Honda Civic, Toyota RAV4).",
-    usMin: "Optional. Essential in states with severe weather (FL, CO, TX) and high theft areas.",
-    riskOfSkipping: "Your car is stolen = you get nothing. Your car is destroyed by a hailstorm = you pay full replacement.",
-  },
-  {
-    name: "Uninsured Motorist", required: true, ca: true, us: "most",
-    what: "Protects you if you're hit by a driver with no insurance or insufficient insurance.",
-    caMin: "Mandatory in all Canadian provinces.",
-    usMin: "Required in many states. About 12% of US drivers are uninsured, essential protection.",
-    riskOfSkipping: "If an uninsured driver totals your car and injures you, you may have no recourse.",
-  },
-  {
-    name: "Accident Forgiveness", required: false, ca: true, us: true,
-    what: "Protects your premium from increasing after your first at-fault accident.",
-    caMin: "Available as an add-on from most major Canadian insurers. Very worthwhile after 5+ years of clean record.",
-    usMin: "Available from most major US insurers as a policy feature or endorsement.",
-    riskOfSkipping: "One at-fault accident can raise your premium 20-40% for 6 years in Ontario. Forgiveness is often worth the cost.",
-  },
-  {
-    name: "Replacement Cost", required: false, ca: true, us: true,
-    what: "Pays to replace your vehicle with a brand-new equivalent, not the depreciated value.",
-    caMin: "Usually available for vehicles under 2 years old. Without it, a $40,000 car written off after 2 years might only get you $28,000.",
-    usMin: "Called 'new car replacement' in the US. Usually available for vehicles under 2 years old.",
-    riskOfSkipping: "Standard collision/comprehensive only pays depreciated value, could be thousands less than what you need to replace the car.",
-  },
-];
-
-const SWITCHING_TIPS = [
-  { tip: "Start shopping 30 days before renewal", detail: "Your insurer relies on inertia. 30 days gives you time to compare without a coverage gap. Most insurers will match a competitor's quote if you ask directly." },
-  { tip: "Never cancel before you have a new policy", detail: "A lapse in coverage, even 1 day, can be rated as 'no prior insurance' and increase your premium significantly. Always have overlap." },
-  { tip: "Check your new policy starts the day your old one ends", detail: "Coordinate exact dates. Your new insurer needs your old policy's expiry date." },
-  { tip: "Get at least 3 quotes", detail: "Comparing 3 companies saves an average of $709/year. The same coverage can vary by $1,000+ between insurers for the same driver profile." },
-  { tip: "Ask about early cancellation fees", detail: "Some insurers charge a short-rate penalty for cancelling mid-term. Others use pro-rata (you get back exactly the unused portion). Know before you cancel." },
-  { tip: "Tell your new insurer about all vehicles and drivers", detail: "Failure to disclose household drivers, even occasional ones, can void your coverage at claim time. Disclose everyone in your household with a license." },
-  { tip: "Update your mortgage lender if you have a home", detail: "If you bundle home and auto, your mortgage lender is listed on your home policy. When you switch, send proof of new coverage within 30 days." },
-  { tip: "Transfer your claims history, not just your rating", detail: "In Canada, your insurance history follows your Ontario/provincial policy number. Ask your new insurer how to transfer your experience properly." },
-];
-
-const FAQ = [
-  { q: "What factors affect my car insurance rate the most?", a: "Your driving record has the single biggest impact, one at-fault accident can raise premiums 20-40% for up to 6 years. Your age (under 25 means 2-4x higher rates), vehicle choice (a Tesla costs $145/month more than a Subaru Outback), and where you live (downtown Toronto vs. Sudbury) are the other major factors. Bundling home and auto, installing winter tires, and choosing a higher deductible are the fastest ways to reduce your premium." },
-  { q: "Why is Ontario the most expensive province for car insurance?", a: "Ontario's high premiums stem from several factors: dense traffic leading to more accidents, high rates of insurance fraud (estimated $1.6 billion annually), a regulated tort system that allows injury lawsuits, and some of North America's highest accident benefit payouts. Ontario drivers pay roughly $1,920/year on average, twice what Quebec drivers pay for equivalent coverage." },
-  { q: "Why does BC, Manitoba, and Saskatchewan use public car insurance?", a: "These provinces use government-run insurance monopolies, ICBC (BC), MPI (Manitoba), and SGI (Saskatchewan). The theory is that removing profit motive lowers rates. In practice, BC and Manitoba rates are moderate, while Saskatchewan is among Canada's most affordable. BC switched to a no-fault system in 2021 to reduce costs. Drivers in these provinces cannot shop around for basic coverage." },
-  { q: "What is the difference between no-fault and tort car insurance?", a: "In a no-fault system (BC, Manitoba, Saskatchewan, Quebec, and some US states), you claim from your own insurer regardless of who caused the accident. This speeds up claims but limits your right to sue for pain and suffering. In a tort system (Ontario, Alberta, Atlantic provinces, most US states), you can sue the at-fault driver for damages. Tort systems typically have higher premiums but more compensation options for serious injuries." },
-  { q: "How much liability insurance do I really need?", a: "The legal minimum ($200K in most Canadian provinces, 25/50/25 in most US states) is dangerously low. A serious accident can result in millions in medical costs and lawsuits. Most insurance professionals recommend at least $1 million in liability coverage in Canada and 100/300/100 in the US. The cost difference between minimum and $1M is often only $5-15/month, a small price for enormous protection." },
-  { q: "Should I choose a higher or lower deductible?", a: "A higher deductible ($1,000-$2,000) lowers your monthly premium but means you pay more out of pocket after a claim. If you have a solid emergency fund and are a safe driver, a higher deductible makes sense. If an unexpected $2,000 expense would be a hardship, stick with a lower deductible. Calculate the annual premium savings and divide by the deductible difference to find your break-even point." },
-  { q: "Does my credit score affect car insurance in Canada?", a: "In Canada, insurers are generally prohibited from using credit score as a rating factor in most provinces, unlike the US where it is widely used. However, insurers may use credit information for payment plans and administrative purposes. In the US, a poor credit score can increase your car insurance premium by 40-80% in most states. California, Hawaii, Massachusetts, and Washington prohibit credit-based insurance scoring." },
-  { q: "How do I get a discount for being a new Canadian driver?", a: "Your driving experience from another country can often be recognized by Canadian insurers. Bring your foreign driver's license, your international driving record (obtained from your home country's DMV/transport authority), and any proof of no-claims history. Some insurers (particularly Intact and Aviva) have specific newcomer programs. ICBC in BC has a formal International Driver Experience Program." },
-];
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function fmtC(n) { return "$" + Math.round(n).toLocaleString(); }
-
-function getPremiumColor(premium, avg) {
-  const ratio = premium / avg;
-  if (ratio <= 0.85) return "#22c55e";
-  if (ratio <= 1.15) return "#f59e0b";
-  return "#ef4444";
-}
-
-function calcSavings(current, newPremium) {
-  return current - newPremium;
-}
-
-// ── Main Component ─────────────────────────────────────────────────────────────
-export default function CarInsuranceGuide() {
-  const [country, setCountry] = useState("CA");
-  const [province, setProvince] = useState("ON");
-  const [usState, setUsState] = useState("CA");
-  const [tab, setTab] = useState("guide");
-  const [lightMode, setLightMode] = useState(() => localStorage.getItem("cig_theme") === "light");
-  const [openFaq, setOpenFaq] = useState(null);
-  const [openCoverage, setOpenCoverage] = useState(null);
-  const [openFactor, setOpenFactor] = useState(null);
-  const [vehicleSearch, setVehicleSearch] = useState("");
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
-  const [currentPremium, setCurrentPremium] = useState(1800);
-  const [driverAge, setDriverAge] = useState(35);
-  const [driverRecord, setDriverRecord] = useState("clean");
-  const [annualKm, setAnnualKm] = useState(15000);
-  const [hasWinterTires, setHasWinterTires] = useState(false);
-  const [hasBundle, setHasBundle] = useState(false);
-  const [hasTelematics, setHasTelematics] = useState(false);
-  const [vehicleAge, setVehicleAge] = useState(3);
-  const [coverageLevel, setCoverageLevel] = useState("full");
-  const [deductible, setDeductible] = useState(500);
-  const [copied, setCopied] = useState(false);
-  const [citySearchQuery, setCitySearchQuery] = useState("");
-  const [citySearchResults, setCitySearchResults] = useState([]);
-  const [cityLoading, setCityLoading] = useState(false);
-  const [selectedCityData, setSelectedCityData] = useState(null);
-  const [coverageGapTab, setCoverageGapTab] = useState("rideshare");
-  const lm = lightMode;
-
-  useEffect(() => { localStorage.setItem("cig_theme", lm ? "light" : "dark"); }, [lm]);
-
-  // GeoNames city search with local rate lookup
-  const searchCityRates = async (query) => {
-    if (query.length < 2) { setCitySearchResults([]); return; }
-    setCityLoading(true);
-    // First check local database
-    const localCA = Object.entries(CA_CITY_RATES).filter(([name]) =>
-      name.toLowerCase().startsWith(query.toLowerCase())
-    ).map(([name, data]) => ({ name, ...data, source: "local" }));
-    const localUS = Object.entries(US_CITY_RATES).filter(([name]) =>
-      name.toLowerCase().startsWith(query.toLowerCase())
-    ).map(([name, data]) => ({ name, ...data, source: "local" }));
-    const local = [...localCA, ...localUS];
-    if (local.length > 0) {
-      setCitySearchResults(local.slice(0, 8));
-      setCityLoading(false);
-      return;
-    }
-    // Fall back to GeoNames for cities not in local DB
-    try {
-      const cc = country === "CA" ? "CA" : "US";
-      const res = await fetch(`https://secure.geonames.org/searchJSON?q=${encodeURIComponent(query)}&country=${cc}&maxRows=6&featureClass=P&orderby=population&style=SHORT&username=docvault`);
-      const data = await res.json();
-      if (data.geonames) {
-        const results = data.geonames.map(g => ({
-          name: g.name,
-          province: g.adminCode1,
-          state: g.adminCode1,
-          adminName: g.adminName1,
-          avgPremium: null,
-          note: "Rate data not available for this city, use province/state average as a guide.",
-          source: "geonames",
-          pop: g.population,
-        }));
-        setCitySearchResults(results);
-      }
-    } catch (e) { setCitySearchResults([]); }
-    setCityLoading(false);
+  // Base from location
+  const CA_BASE = {
+    ON: 1920, BC: 1450, AB: 1735, QC: 900, MB: 1350, SK: 1235,
+    NS: 1150, NB: 1120, NL: 1270, PE: 1080, NT: 1200, NU: 1200, YT: 1200,
+  };
+  const US_BASE = {
+    CA: 2450, TX: 2310, FL: 3183, NY: 2994, IL: 1566, PA: 1478,
+    OH: 1034, GA: 2359, NC: 1392, WA: 1701, AZ: 2026, CO: 2568,
+    MI: 2864, WI: 1087, NV: 2100, NJ: 2800, MA: 2000, MD: 1900,
+    TN: 1600, VA: 1400, MO: 1300, IN: 1200, KY: 1500, SC: 1400,
+    AL: 1400, MN: 1400, OR: 1600, CT: 1800, OK: 1800, UT: 1400,
+    IA: 1100, KS: 1300, NE: 1500, AR: 1600, MS: 1500, LA: 2400,
+    ID: 1200, MT: 1600, WY: 1300, ND: 1100, SD: 1200, NM: 1500,
+    VT: 1200, NH: 1100, ME: 1100, RI: 1800, DE: 1500, HI: 1100,
+    AK: 1400, DC: 2200, WV: 1400
   };
 
-  // URL params
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("country") === "US") setCountry("US");
-    if (params.get("province") && CA_PROVINCES[params.get("province")]) setProvince(params.get("province"));
-    if (params.get("state") && US_STATES[params.get("state")]) setUsState(params.get("state"));
-    const loc = country === "CA" ? CA_PROVINCES[province]?.name : US_STATES[usState]?.name;
-    document.title = `Car Insurance Guide ${loc ? `,  ${loc}` : "Canada & US"} | CarInsureGuide.com`;
-  }, []);
+  let annual = cityRate || (country === "CA"
+    ? (CA_BASE[province] || 1500)
+    : (US_BASE[usState] || 1800));
 
-  const locationData = country === "CA" ? CA_PROVINCES[province] : US_STATES[usState];
+  // Coverage level
+  if (coverageLevel === "liability_only") annual *= 0.45;
+  else if (coverageLevel === "standard") annual *= 0.75;
+  // else full = 1.0
 
-  // Estimate calculator
-  const estimate = (() => {
-    const base = locationData?.avgPremium || 1600;
-    let monthly = base / 12;
-    if (driverAge < 25) monthly *= 1.8;
-    else if (driverAge < 30) monthly *= 1.25;
-    else if (driverAge > 65) monthly *= 1.1;
-    if (driverRecord === "one_accident") monthly *= 1.3;
-    else if (driverRecord === "two_plus") monthly *= 1.6;
-    else if (driverRecord === "dui") monthly *= 2.2;
-    if (annualKm < 10000) monthly *= 0.9;
-    else if (annualKm > 25000) monthly *= 1.1;
-    if (coverageLevel === "liability_only") monthly *= 0.45;
-    if (deductible >= 1000) monthly *= 0.85;
-    if (deductible >= 2000) monthly *= 0.75;
-    let discounts = 0;
-    if (hasWinterTires && country === "CA") discounts += 0.08;
-    if (hasBundle) discounts += 0.15;
-    if (hasTelematics) discounts += 0.15;
-    monthly *= (1 - discounts);
-    const annual = monthly * 12;
-    const savings = currentPremium - annual;
-    return { monthly: Math.round(monthly), annual: Math.round(annual), savings: Math.round(savings), discountPct: Math.round(discounts * 100) };
-  })();
+  // Age multipliers
+  if (age < 18) annual *= 2.5;
+  else if (age <= 19) annual *= 2.2;
+  else if (age <= 21) annual *= 1.9;
+  else if (age <= 24) annual *= 1.6;
+  else if (age <= 29) annual *= 1.2;
+  else if (age <= 64) annual *= 1.0;
+  else if (age <= 74) annual *= 1.1;
+  else annual *= 1.25;
 
-  const filteredVehicles = Object.entries(VEHICLE_COSTS).filter(([name]) =>
-    name.toLowerCase().includes(vehicleSearch.toLowerCase())
-  );
+  // Gender (where applicable)
+  if (gender === "male" && age < 25) annual *= 1.15;
+
+  // Marital status
+  if (maritalStatus === "married") annual *= 0.95;
+  else if (maritalStatus === "widowed") annual *= 0.97;
+
+  // Years licensed
+  if (yearsLicensed < 1) annual *= 1.5;
+  else if (yearsLicensed < 2) annual *= 1.3;
+  else if (yearsLicensed < 3) annual *= 1.15;
+  else if (yearsLicensed < 5) annual *= 1.05;
+
+  // Vehicle factors
+  if (vehicleValue > 80000) annual *= 1.35;
+  else if (vehicleValue > 50000) annual *= 1.2;
+  else if (vehicleValue > 35000) annual *= 1.1;
+  else if (vehicleValue < 10000) annual *= 0.85;
+
+  // Vehicle age
+  const vehicleAge = new Date().getFullYear() - vehicleYear;
+  if (vehicleAge <= 1) annual *= 1.1;
+  else if (vehicleAge >= 15) annual *= 0.85;
+
+  // High theft vehicles
+  const highTheftModels = ["civic", "crv", "cr-v", "rav4", "f-150", "f150", "ram", "equinox", "silverado"];
+  if (highTheftModels.some(m => (vehicleModel || "").toLowerCase().includes(m))) {
+    annual *= 1.12;
+  }
+
+  // EV premium
+  if (vehicleMake?.toLowerCase().includes("tesla") || vehicleModel?.toLowerCase().includes("electric") || vehicleModel?.toLowerCase().includes("ev")) {
+    annual *= 1.25;
+  }
+
+  // Vehicle use
+  if (vehicleUse === "rideshare") annual *= 1.35;
+  else if (vehicleUse === "business") annual *= 1.2;
+  else if (vehicleUse === "commute_long") annual *= 1.1;
+
+  // Annual km / mileage
+  if (annualKm < 8000) annual *= 0.88;
+  else if (annualKm < 12000) annual *= 0.94;
+  else if (annualKm > 25000) annual *= 1.1;
+  else if (annualKm > 40000) annual *= 1.2;
+
+  // Parking
+  if (parkingType === "garage") annual *= 0.93;
+  else if (parkingType === "street") annual *= 1.07;
+  else if (parkingType === "high_theft_area") annual *= 1.15;
+
+  // Driving record
+  annual += (atFaultAccidents || 0) * (annual * 0.28);
+  annual += (notAtFaultAccidents || 0) * (annual * 0.05);
+  annual += (tickets || 0) * (annual * 0.12);
+  if (dui) annual *= 1.8;
+
+  // Coverage lapse
+  if (lapseMonths > 12) annual *= 1.25;
+  else if (lapseMonths > 6) annual *= 1.15;
+  else if (lapseMonths > 0) annual *= 1.08;
+
+  // Deductible
+  if (deductible >= 2000) annual *= 0.75;
+  else if (deductible >= 1500) annual *= 0.82;
+  else if (deductible >= 1000) annual *= 0.87;
+  else if (deductible <= 250) annual *= 1.1;
+
+  // High liability
+  if (liabilityLimit === "2M" || liabilityLimit === "1M_umbrella") annual *= 1.08;
+  else if (liabilityLimit === "2M_plus") annual *= 1.15;
+
+  // Discounts
+  let discountTotal = 0;
+  if (winterTires && country === "CA") discountTotal += 0.08;
+  if (bundleHome) discountTotal += 0.15;
+  if (telematics) discountTotal += 0.12;
+  if (multiVehicle) discountTotal += 0.1;
+  if (studentDiscount && age < 25) discountTotal += 0.08;
+  if (occupation === "teacher" || occupation === "engineer" || occupation === "nurse") discountTotal += 0.05;
+
+  annual *= (1 - Math.min(discountTotal, 0.45));
+  if (financed) annual = Math.max(annual, (country === "CA" ? CA_BASE[province] : US_BASE[usState] || 1800) * 0.6);
+
+  return {
+    annual: Math.round(annual),
+    monthly: Math.round(annual / 12),
+    biweekly: Math.round(annual / 26),
+    discountPct: Math.round(discountTotal * 100),
+  };
+}
+
+// ── Recommendation engine ──────────────────────────────────────────────────────
+function generateRecommendations(profile, premium) {
+  const recs = [];
+  const warnings = [];
+  const coverageSuggestions = [];
+
+  // Coverage recommendations
+  if (profile.financed || profile.leased) {
+    coverageSuggestions.push({ type: "required", text: "Collision + Comprehensive required by your lender. Not optional.", icon: "⚠️" });
+  }
+  if (profile.vehicleValue > 30000 && profile.coverageLevel === "liability_only") {
+    warnings.push("Your vehicle is worth " + "$" + profile.vehicleValue.toLocaleString() + " but you have liability only. A total loss would cost you the full replacement value.");
+  }
+  if (profile.vehicleValue < 5000 && profile.coverageLevel === "full") {
+    recs.push({ text: "Your vehicle is only worth " + "$" + profile.vehicleValue.toLocaleString() + ". Dropping collision and comprehensive could save you " + "$" + Math.round(premium.annual * 0.4).toLocaleString() + "/year, more than the car may be worth.", icon: "💡" });
+  }
+
+  // High theft vehicles
+  const highTheft = ["civic", "rav4", "f-150", "f150", "ram", "equinox"];
+  if (highTheft.some(m => (profile.vehicleModel || "").toLowerCase().includes(m))) {
+    coverageSuggestions.push({ type: "important", text: "Your " + profile.vehicleModel + " is on Canada's top stolen vehicles list. Comprehensive coverage is essential, without it a theft pays you nothing.", icon: "🔐" });
+  }
+
+  // EV
+  if (profile.vehicleMake?.toLowerCase().includes("tesla")) {
+    coverageSuggestions.push({ type: "info", text: "Tesla repairs average 3-4x higher than equivalent gas vehicles. Even minor fender-benders cost $5,000+. Ensure your comprehensive and collision limits reflect replacement cost, not depreciated value.", icon: "⚡" });
+  }
+
+  // Rideshare
+  if (profile.vehicleUse === "rideshare") {
+    warnings.push("Your personal policy excludes rideshare coverage. You need a rideshare endorsement or commercial policy. Period 1 (app on, no ride accepted) is the highest-risk coverage gap.");
+  }
+
+  // Young driver
+  if (profile.age < 25) {
+    recs.push({ text: "As a driver under 25, telematics programs (app-based safe driving tracking) can reduce your premium by 10-25%. This is the fastest way to lower your rate.", icon: "📱" });
+  }
+
+  // New to Canada / lapse
+  if (profile.lapseMonths > 6) {
+    recs.push({ text: "Your coverage lapse is increasing your premium. Get any coverage now, even a basic policy, to start rebuilding your insurance history. Lapse discounts typically disappear after 3 consecutive years of coverage.", icon: "⏰" });
+  }
+
+  // Bundle opportunity
+  if (!profile.bundleHome && profile.maritalStatus !== "single") {
+    recs.push({ text: "Bundling home and auto with the same insurer typically saves 15-20%. If you own or rent your home, get a combined quote.", icon: "🏠" });
+  }
+
+  // Deductible
+  if (profile.deductible < 500 && premium.annual > 2000) {
+    recs.push({ text: "Raising your deductible from " + "$" + profile.deductible + " to $1,000 could save approximately " + "$" + Math.round(premium.annual * 0.13).toLocaleString() + "/year. Only choose a deductible you can comfortably pay if needed.", icon: "💰" });
+  }
+
+  // Winter tires Canada
+  if (profile.country === "CA" && !profile.winterTires) {
+    recs.push({ text: "Installing winter tires saves 5-10% with most Canadian insurers and is legally required in BC from Oct 1 - Mar 31 on many routes. Cost of tires is typically recovered in 1-2 seasons of discount.", icon: "❄️" });
+  }
+
+  // Liability limit
+  if (profile.liabilityLimit === "200K" && profile.country === "CA") {
+    warnings.push("$200,000 liability is the legal minimum in most provinces but dangerously low. A serious injury lawsuit can easily exceed $1M. Upgrading to $1M liability typically costs only $5-15/month more.");
+  }
+  if ((profile.liabilityLimit === "25_50" || profile.liabilityLimit === "state_min") && profile.country === "US") {
+    warnings.push("State minimum liability is rarely sufficient. A serious accident can exceed $500K in medical and legal costs. Experts recommend at least 100/300/100 coverage.");
+  }
+
+  return { recs, warnings, coverageSuggestions };
+}
+
+// ── Insurer matching ──────────────────────────────────────────────────────────
+function getInsurerMatches(profile, country) {
+  const CA_INSURERS = [
+    { name: "Intact Insurance", type: "major", strengths: ["Largest insurer in Canada", "Strong claims service", "Available in all provinces", "Good newcomer programs"], bestFor: ["Most drivers", "Bundling home+auto", "Newcomers to Canada"], quote: "https://www.intact.net/en/get-a-quote" },
+    { name: "TD Insurance", type: "major", strengths: ["Competitive rates for professionals", "Association member discounts", "Strong digital experience"], bestFor: ["TD banking customers", "Professionals", "Alumni associations"], quote: "https://www.tdinsurance.com/getaquote" },
+    { name: "Aviva Canada", type: "major", strengths: ["Good for high-value vehicles", "Strong comprehensive coverage options", "Multiple discount programs"], bestFor: ["High-value vehicles", "Bundling", "Safe drivers"], quote: "https://www.avivacanada.com/get-a-quote" },
+    { name: "Desjardins / Certas", type: "major", strengths: ["Best rates in Quebec", "Strong in Ontario and Atlantic", "Loyalty rewards program"], bestFor: ["Quebec residents", "Long-term customers", "Credit union members"], quote: "https://www.certas.ca/en/auto/get-a-quote" },
+    { name: "Belairdirect", type: "online", strengths: ["Online-first = lower overhead = lower rates", "Strong telematics program", "Transparent pricing"], bestFor: ["Tech-savvy drivers", "Telematics users", "Online buyers"], quote: "https://www.belairdirect.com/en/auto-insurance/get-a-quote.html" },
+    { name: "Sonnet Insurance", type: "online", strengths: ["100% online", "Instant quotes", "Modern digital experience", "Competitive for urban drivers"], bestFor: ["Urban drivers", "Digital-first users", "Simple coverage needs"], quote: "https://www.sonnet.ca/auto-insurance/get-a-quote" },
+    { name: "CAA Insurance", type: "specialty", strengths: ["Exclusive to CAA members", "Strong roadside included", "Loyalty rewards"], bestFor: ["CAA members", "Drivers who want roadside", "Frequent travellers"], quote: "https://www.caasco.com/insurance/auto" },
+    { name: "Ratehub.ca", type: "comparison", strengths: ["Compares 50+ insurers at once", "Find lowest rate for your profile", "No obligation"], bestFor: ["All drivers", "Rate shoppers", "Annual comparison"], quote: "https://www.ratehub.ca/car-insurance" },
+    { name: "Kanetix.ca", type: "comparison", strengths: ["Canadian comparison tool", "Multiple quotes in minutes", "Broker referrals available"], bestFor: ["Comparison shopping", "High-risk drivers", "Complex situations"], quote: "https://www.kanetix.ca/auto-insurance" },
+  ];
+  const US_INSURERS = [
+    { name: "State Farm", type: "major", strengths: ["Largest US insurer", "Local agent network", "Strong claims service", "Good Drive Safe & Save telematics"], bestFor: ["Most drivers", "Those wanting local agent", "Bundling"], quote: "https://www.statefarm.com/insurance/auto" },
+    { name: "GEICO", type: "major", strengths: ["Often cheapest rates", "Strong digital experience", "Military discounts", "Wide availability"], bestFor: ["Price-conscious drivers", "Military/federal employees", "Simple coverage needs"], quote: "https://www.geico.com/auto-insurance/" },
+    { name: "Progressive", type: "major", strengths: ["Snapshot telematics saves up to 30%", "Name Your Price tool", "Good for high-risk drivers"], bestFor: ["Telematics users", "High-risk drivers", "Price shoppers"], quote: "https://www.progressive.com/auto/" },
+    { name: "Allstate", type: "major", strengths: ["Drivewise telematics", "Accident forgiveness", "Milewise pay-per-mile for low-mileage drivers"], bestFor: ["Low-mileage drivers", "Safe drivers", "Those wanting forgiveness"], quote: "https://www.allstate.com/auto-insurance" },
+    { name: "USAA", type: "specialty", strengths: ["Best rates for military families", "Excellent customer satisfaction", "Comprehensive coverage options"], bestFor: ["Military and veterans ONLY", "Military families"], quote: "https://www.usaa.com/inet/wc/auto-insurance" },
+    { name: "Amica", type: "quality", strengths: ["Top customer satisfaction scores", "Dividend policies return premium", "Excellent claims handling"], bestFor: ["Quality-focused buyers", "Long-term customers", "Those who want best service"], quote: "https://www.amica.com/auto-insurance" },
+    { name: "Insurify", type: "comparison", strengths: ["Compare 20+ insurers instantly", "AI-powered matching", "No spam guarantee"], bestFor: ["All drivers", "Rate comparison", "First-time buyers"], quote: "https://insurify.com/car-insurance" },
+    { name: "The Zebra", type: "comparison", strengths: ["Compare 100+ companies", "No personal info required initially", "Educational resources"], bestFor: ["Anonymous comparison", "Research phase", "All drivers"], quote: "https://www.thezebra.com/auto-insurance/" },
+    { name: "Jerry", type: "comparison", strengths: ["45-second quotes", "Monitors for rate drops", "No spam policy"], bestFor: ["Busy drivers", "Rate monitoring", "Mobile-first users"], quote: "https://jerry.ai/car-insurance" },
+  ];
+
+  const list = country === "CA" ? CA_INSURERS : US_INSURERS;
+
+  // Score each insurer based on profile
+  return list.map(ins => {
+    let score = 50;
+    if (ins.type === "comparison") score += 20; // always useful
+    if (profile.bundleHome && ins.strengths.some(s => s.toLowerCase().includes("bundle"))) score += 15;
+    if (profile.telematics && ins.strengths.some(s => s.toLowerCase().includes("telematic"))) score += 15;
+    if (profile.age < 25 && ins.strengths.some(s => s.toLowerCase().includes("young"))) score += 10;
+    if (profile.vehicleUse === "rideshare" && ins.strengths.some(s => s.toLowerCase().includes("rideshare"))) score += 20;
+    if (ins.name === "USAA" && !profile.military) score = 5;
+    return { ...ins, score };
+  }).sort((a, b) => b.score - a.score);
+}
+
+// ── Wizard steps config ────────────────────────────────────────────────────────
+const STEPS = [
+  { id: "location", title: "Where do you live?", icon: "📍", why: "Your location is the single biggest factor in your premium. Brampton Ontario averages $2,900/year while Ottawa averages $1,213, same car, same driver, totally different city." },
+  { id: "driver", title: "About you", icon: "👤", why: "Your age, experience, and profile can change your premium by 2-3x. We ask only what insurers actually use." },
+  { id: "vehicle", title: "Your vehicle", icon: "🚗", why: "The make, model, year, and value of your car affects both your premium and which coverages you need." },
+  { id: "history", title: "Driving history", icon: "📋", why: "Your claims and ticket history are the second-biggest premium factor. Even one at-fault accident adds 20-40% for up to 6 years." },
+  { id: "coverage", title: "Coverage needs", icon: "🛡️", why: "We'll help you choose the right coverage, not too little (dangerous) and not too much (expensive). Most people are either underinsured or paying for coverage they don't need." },
+  { id: "lifestyle", title: "Lifestyle factors", icon: "⚡", why: "A few more questions that unlock significant discounts many drivers miss." },
+  { id: "results", title: "Your personalized report", icon: "📊", why: "" },
+];
+
+const CA_PROVINCES_LIST = [
+  ["ON","Ontario"], ["BC","British Columbia"], ["AB","Alberta"], ["QC","Quebec"],
+  ["MB","Manitoba"], ["SK","Saskatchewan"], ["NS","Nova Scotia"], ["NB","New Brunswick"],
+  ["NL","Newfoundland"], ["PE","PEI"], ["NT","NWT"], ["NU","Nunavut"], ["YT","Yukon"],
+];
+const US_STATES_LIST = [
+  ["CA","California"], ["TX","Texas"], ["FL","Florida"], ["NY","New York"], ["IL","Illinois"],
+  ["PA","Pennsylvania"], ["OH","Ohio"], ["GA","Georgia"], ["NC","North Carolina"], ["WA","Washington"],
+  ["AZ","Arizona"], ["CO","Colorado"], ["MI","Michigan"], ["WI","Wisconsin"], ["NV","Nevada"],
+  ["NJ","New Jersey"], ["MA","Massachusetts"], ["MD","Maryland"], ["TN","Tennessee"], ["VA","Virginia"],
+  ["MO","Missouri"], ["IN","Indiana"], ["KY","Kentucky"], ["SC","South Carolina"], ["AL","Alabama"],
+  ["MN","Minnesota"], ["OR","Oregon"], ["CT","Connecticut"], ["OK","Oklahoma"], ["UT","Utah"],
+  ["IA","Iowa"], ["KS","Kansas"], ["NE","Nebraska"], ["AR","Arkansas"], ["MS","Mississippi"],
+  ["LA","Louisiana"], ["ID","Idaho"], ["MT","Montana"], ["WY","Wyoming"], ["ND","North Dakota"],
+  ["SD","South Dakota"], ["NM","New Mexico"], ["VT","Vermont"], ["NH","New Hampshire"], ["ME","Maine"],
+  ["RI","Rhode Island"], ["DE","Delaware"], ["HI","Hawaii"], ["AK","Alaska"], ["DC","Washington DC"],
+  ["WV","West Virginia"],
+];
+
+function fmtC(n) { return "$" + Math.round(n).toLocaleString(); }
+
+// ── Main Component ─────────────────────────────────────────────────────────────
+export default function InsuranceWizard() {
+  const [step, setStep] = useState(0);
+  const [lightMode, setLightMode] = useState(() => localStorage.getItem("cig_theme") === "light");
+  const [animDir, setAnimDir] = useState("forward");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiReport, setAiReport] = useState("");
+  const [copied, setCopied] = useState(false);
+  const topRef = useRef(null);
+
+  const lm = lightMode;
+  useEffect(() => { localStorage.setItem("cig_theme", lm ? "light" : "dark"); }, [lm]);
+
+  // Profile state
+  const [profile, setProfile] = useState({
+    // Location
+    country: "CA", province: "ON", usState: "CA", city: "", cityRate: null,
+    // Driver
+    age: "", gender: "prefer_not", maritalStatus: "single", yearsLicensed: "",
+    occupation: "other", newToCountry: false,
+    // Vehicle
+    vehicleYear: new Date().getFullYear(), vehicleMake: "", vehicleModel: "",
+    vehicleValue: 30000, vehicleUse: "personal", financed: false, leased: false,
+    parkingType: "driveway", annualKm: 15000,
+    // History
+    atFaultAccidents: 0, notAtFaultAccidents: 0, tickets: 0, dui: false,
+    lapseMonths: 0, yearsWithCurrentInsurer: 0,
+    // Coverage
+    coverageLevel: "full", liabilityLimit: country === "CA" ? "1M" : "100_300",
+    deductible: 1000, accidentForgiveness: false, replacementCost: false,
+    roadsideAssistance: false,
+    // Lifestyle
+    winterTires: false, bundleHome: false, telematics: false, multiVehicle: false,
+    studentDiscount: false, rideshare: false, military: false, vehicleUse2: "personal",
+  });
+
+  const update = (key, val) => setProfile(p => ({ ...p, [key]: val }));
+
+  const premium = calcPremium(profile);
+  const { recs, warnings, coverageSuggestions } = generateRecommendations(profile, premium);
+  const insurers = getInsurerMatches(profile, profile.country);
+
+  const goNext = () => {
+    setAnimDir("forward");
+    setStep(s => Math.min(s + 1, STEPS.length - 1));
+    topRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  const goPrev = () => {
+    setAnimDir("back");
+    setStep(s => Math.max(s - 1, 0));
+    topRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const generateAIReport = async () => {
+    setAiLoading(true);
+    setAiReport("");
+    try {
+      const profileSummary = `
+Driver profile:
+- Location: ${profile.country === "CA" ? `${profile.city || ""} ${CA_PROVINCES_LIST.find(p => p[0] === profile.province)?.[1] || profile.province}, Canada` : `${profile.city || ""} ${US_STATES_LIST.find(s => s[0] === profile.usState)?.[1] || profile.usState}, USA`}
+- Age: ${profile.age}, Gender: ${profile.gender}, Married: ${profile.maritalStatus}
+- Licensed for: ${profile.yearsLicensed} years
+- Vehicle: ${profile.vehicleYear} ${profile.vehicleMake} ${profile.vehicleModel}, worth ${fmtC(profile.vehicleValue)}
+- Financed/leased: ${profile.financed || profile.leased ? "Yes" : "No"}
+- Annual km/miles: ${profile.annualKm.toLocaleString()}
+- Parking: ${profile.parkingType}
+- Vehicle use: ${profile.vehicleUse}
+- At-fault accidents last 6 years: ${profile.atFaultAccidents}
+- Tickets last 3 years: ${profile.tickets}
+- DUI: ${profile.dui ? "Yes" : "No"}
+- Coverage lapse: ${profile.lapseMonths} months
+- Coverage level: ${profile.coverageLevel}
+- Deductible: ${fmtC(profile.deductible)}
+- Winter tires: ${profile.winterTires ? "Yes" : "No"}
+- Bundle home+auto: ${profile.bundleHome ? "Yes" : "No"}
+- Telematics: ${profile.telematics ? "Yes" : "No"}
+- Rideshare driver: ${profile.rideshare ? "Yes" : "No"}
+- Estimated annual premium: ${fmtC(premium.annual)}`;
+
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `You are a friendly, expert Canadian and US car insurance advisor. Based on this driver profile, write a concise, personalized insurance recommendation report in plain English. Include:
+1. A brief summary of their risk profile (2-3 sentences)
+2. The 3 most important coverage recommendations specific to their situation
+3. The top 2-3 ways they could reduce their premium right now
+4. One key risk they should be aware of based on their profile
+5. A recommended next step
+
+Be specific, practical, and conversational. No jargon. Keep total response under 400 words. Use short paragraphs, no bullet points, no headers with # symbols.
+
+${profileSummary}`
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text || "Unable to generate report. Please try again.";
+      setAiReport(text);
+    } catch (e) {
+      setAiReport("Unable to generate your personalized report right now. Your estimated premium and recommendations above are based on your profile.");
+    }
+    setAiLoading(false);
+  };
+
+  const progress = step / (STEPS.length - 1) * 100;
+  const currentStep = STEPS[step];
 
   return (
-    <div style={{ fontFamily: "'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif", background: lm ? "#f5f7fa" : "#080c12", color: lm ? "#111827" : "#e8edf4", minHeight: "100vh", overflowX: "hidden", transition: "background 0.3s" }}>
+    <div ref={topRef} style={{ fontFamily: "'Outfit','Plus Jakarta Sans',system-ui,sans-serif", background: lm ? "#f5f7fa" : "#080c12", color: lm ? "#111827" : "#e8edf4", minHeight: "100vh" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
         :root {
@@ -457,1016 +403,694 @@ export default function CarInsuranceGuide() {
           --bg2: ${lm ? "#ffffff" : "#0e1420"};
           --bg3: ${lm ? "#f0f3f8" : "#141b28"};
           --border: ${lm ? "rgba(220,38,38,0.2)" : "rgba(239,68,68,0.2)"};
-          --border2: ${lm ? "rgba(220,38,38,0.09)" : "rgba(239,68,68,0.09)"};
+          --border2: ${lm ? "rgba(220,38,38,0.08)" : "rgba(239,68,68,0.08)"};
           --red: ${lm ? "#dc2626" : "#f87171"};
-          --red-dim: ${lm ? "rgba(220,38,38,0.08)" : "rgba(248,113,113,0.1)"};
-          --gold: ${lm ? "#b45309" : "#fbbf24"};
+          --red-dim: ${lm ? "rgba(220,38,38,0.07)" : "rgba(248,113,113,0.1)"};
           --green: ${lm ? "#16a34a" : "#4ade80"};
+          --green-dim: ${lm ? "rgba(22,163,74,0.08)" : "rgba(74,222,128,0.08)"};
+          --gold: ${lm ? "#b45309" : "#fbbf24"};
           --text: ${lm ? "#111827" : "#e8edf4"};
           --text2: ${lm ? "#4b5563" : "#8899aa"};
           --text3: ${lm ? "#9ca3af" : "#445566"};
-          --radius: 14px;
         }
         *{box-sizing:border-box;margin:0;padding:0}
-        body{background:var(--bg);font-family:'Outfit',system-ui}
-        input,button,select{font-family:'Outfit',system-ui}
+        input,select,button{font-family:'Outfit',system-ui}
         button{cursor:pointer;border:none;background:none;color:inherit}
-        ::-webkit-scrollbar{width:4px;height:4px}
+        ::-webkit-scrollbar{width:4px}
         ::-webkit-scrollbar-track{background:var(--bg2)}
         ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-        .fade-in{animation:fadeIn 0.3s ease}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-        .tab-btn{padding:9px 16px;border-radius:9px;font-size:12px;font-weight:700;transition:all 0.2s;color:var(--text2);border:1px solid transparent;white-space:nowrap;cursor:pointer}
-        .tab-btn:hover{color:var(--text);background:var(--red-dim)}
-        .tab-btn.active{background:var(--red-dim);border-color:var(--border);color:var(--red)}
-        .card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:18px}
-        .card:hover{border-color:var(--border)}
-        .faq-item{border-bottom:1px solid var(--border2)}
-        .faq-q{padding:16px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:14px;font-weight:600;gap:12px;color:var(--text)}
-        .faq-q:hover{color:var(--red)}
-        .faq-a{font-size:13px;color:var(--text2);line-height:1.75;padding-bottom:16px}
-        .br-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2);font-size:13px}
-        .br-row:last-child{border-bottom:none}
-        .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-        .select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;width:100%}
+        .fade-in{animation:fadeIn 0.35s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+        .opt-btn{padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;border:1.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;text-align:left;width:100%}
+        .opt-btn:hover{border-color:var(--border);color:var(--text);background:var(--red-dim)}
+        .opt-btn.active{border-color:var(--red);background:var(--red-dim);color:var(--red);font-weight:700}
         .range{width:100%;accent-color:var(--red);height:4px;cursor:pointer}
-        .num-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none}
+        .select{background:var(--bg3);border:1.5px solid var(--border2);border-radius:10px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;width:100%}
+        .select:focus{border-color:var(--red)}
+        .text-input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+        .text-input:focus{border-color:var(--red)}
+        .num-input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:15px;font-family:'Space Mono',monospace;outline:none}
         .num-input:focus{border-color:var(--red)}
-        .badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;display:inline-block}
-        .b-red{background:rgba(239,68,68,0.12);color:var(--red)}
-        .b-green{background:rgba(74,222,128,0.12);color:var(--green)}
-        .b-gold{background:rgba(251,191,36,0.12);color:var(--gold)}
-        .b-blue{background:rgba(59,130,246,0.12);color:#60a5fa}
-        .pill-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s}
-        .pill-btn:hover,.pill-btn.active{border-color:var(--border);color:var(--red);background:var(--red-dim)}
-        .vehicle-row{padding:10px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s;border:1px solid transparent;margin-bottom:4px}
-        .vehicle-row:hover{background:var(--bg3);border-color:var(--border2)}
-        .vehicle-row.selected{background:var(--red-dim);border-color:var(--border)}
-        .prov-btn{padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap}
-        .prov-btn:hover{border-color:var(--border);color:var(--red)}
-        .prov-btn.active{background:var(--red-dim);border-color:var(--border);color:var(--red)}
-        .mono{font-family:'Space Mono',monospace}
-        @media print{header,.tab-btn,.range,.num-input,.select,button:not(.no-print){display:none!important}body{background:white!important;color:black!important}}
+        .card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:18px}
+        .br-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border2);font-size:13px}
+        .br-row:last-child{border-bottom:none}
+        .ins-card{background:var(--bg3);border-radius:12px;padding:14px;border:1px solid var(--border2);transition:border-color 0.15s;cursor:pointer}
+        .ins-card:hover{border-color:var(--border)}
+        .why-box{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#60a5fa;line-height:1.6;margin-bottom:16px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
       `}</style>
 
       {/* Header */}
-      <header style={{ borderBottom: "1px solid var(--border2)", background: "var(--bg2)", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: 1060, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+      <header style={{ background: "var(--bg2)", borderBottom: "1px solid var(--border2)", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 34, height: 34, borderRadius: 9, background: "linear-gradient(135deg,#dc2626,#991b1b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🚗</div>
             <div>
-              <div style={{ fontSize: 19, fontWeight: 900, letterSpacing: "-0.5px" }}>
-                CarInsure<span style={{ color: "var(--red)" }}>Guide</span>
-              </div>
-              <div style={{ fontSize: 10, color: "var(--text2)", fontWeight: 500 }}>
-                {country === "CA" ? (CA_PROVINCES[province]?.name || "Canada") : (US_STATES[usState]?.name || "US")} · Free · No signup
-              </div>
+              <div style={{ fontSize: 17, fontWeight: 900, letterSpacing: "-0.5px" }}>Insurance<span style={{ color: "var(--red)" }}>Wizard</span></div>
+              <div style={{ fontSize: 10, color: "var(--text2)" }}>Personalized quote estimator</div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", gap: 3, background: "var(--bg3)", borderRadius: 8, padding: 3 }}>
-              {["CA", "US"].map(c => (
-                <button key={c} onClick={() => setCountry(c)} style={{ padding: "5px 12px", borderRadius: 6, background: country === c ? "var(--red)" : "transparent", color: country === c ? "#fff" : "var(--text2)", fontSize: 12, fontWeight: 700 }}>
-                  {c === "CA" ? "🇨🇦 Canada" : "🇺🇸 US"}
-                </button>
-              ))}
-            </div>
-            <button onClick={() => setLightMode(v => !v)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", fontSize: 15 }}>{lm ? "🌙" : "☀️"}</button>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {/* Live estimate pill */}
+            {step > 0 && step < STEPS.length - 1 && profile.age && (
+              <div style={{ padding: "5px 12px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 20, fontSize: 12, fontWeight: 700, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>
+                Est. {fmtC(premium.monthly)}/mo
+              </div>
+            )}
+            <button onClick={() => setLightMode(v => !v)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border2)", background: "transparent", fontSize: 15 }}>{lm ? "🌙" : "☀️"}</button>
           </div>
+        </div>
+        {/* Progress bar */}
+        <div style={{ height: 3, background: "var(--bg3)" }}>
+          <div style={{ height: "100%", background: "var(--red)", width: progress + "%", transition: "width 0.4s ease", borderRadius: "0 2px 2px 0" }} />
         </div>
       </header>
 
-      <div style={{ maxWidth: 1060, margin: "0 auto", padding: "18px 16px 80px" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 16px 80px" }}>
 
-        {/* Province/State selector */}
-        <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 11, color: "var(--text2)", fontWeight: 700, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            {country === "CA" ? "Select your province" : "Select your state"}
-          </div>
-          <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-            {country === "CA"
-              ? Object.entries(CA_PROVINCES).map(([code, data]) => (
-                <button key={code} className={`prov-btn ${province === code ? "active" : ""}`} onClick={() => setProvince(code)}>
-                  {code}
-                  {data.system === "public" && <span style={{ marginLeft: 3, fontSize: 9, color: "var(--text3)" }}>pub</span>}
-                </button>
-              ))
-              : Object.entries(US_STATES).map(([code, data]) => (
-                <button key={code} className={`prov-btn ${usState === code ? "active" : ""}`} onClick={() => setUsState(code)}>
-                  {code}
-                </button>
-              ))
-            }
-          </div>
-        </div>
-
-        {/* Province/State highlight banner */}
-        {locationData && (
-          <div className="fade-in" style={{ marginBottom: 18, padding: "14px 18px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: "var(--text)", marginBottom: 4 }}>
-                {locationData.name}, {locationData.system === "public" ? "🏛️ Public Insurance" : locationData.system === "hybrid" ? "🔀 Hybrid System" : "🏢 Private Insurance"}
-              </div>
-              <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.65, maxWidth: 600 }}>{locationData.notes}</div>
-              {locationData.firstTimeSavings && (
-                <div style={{ marginTop: 8, fontSize: 12, color: "var(--green)", background: "rgba(74,222,128,0.08)", padding: "5px 10px", borderRadius: 6, display: "inline-block" }}>
-                  💡 {locationData.firstTimeSavings}
+        {/* Step indicator */}
+        {step < STEPS.length - 1 && (
+          <div style={{ display: "flex", gap: 6, marginBottom: 20, overflowX: "auto" }}>
+            {STEPS.slice(0, -1).map((s, i) => (
+              <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "var(--green)" : i === step ? "var(--red)" : "var(--bg3)", border: `1.5px solid ${i <= step ? (i < step ? "var(--green)" : "var(--red)") : "var(--border2)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: i <= step ? "#fff" : "var(--text3)", transition: "all 0.3s" }}>
+                  {i < step ? "✓" : i + 1}
                 </div>
-              )}
-            </div>
-            <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 2 }}>Average annual premium</div>
-              <div style={{ fontSize: 32, fontWeight: 900, color: getPremiumColor(locationData.avgPremium, 1400), fontFamily: "'Space Mono',monospace" }}>{fmtC(locationData.avgPremium)}</div>
-              <div style={{ fontSize: 11, color: "var(--text3)" }}>{fmtC(Math.round(locationData.avgPremium / 12))}/mo · 2025 average</div>
-            </div>
+                <span style={{ fontSize: 11, color: i === step ? "var(--red)" : i < step ? "var(--green)" : "var(--text3)", fontWeight: i === step ? 700 : 500, display: i === step ? "block" : "none" }}>{s.title}</span>
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Tabs */}
-        <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--border2)", paddingBottom: 10, overflowX: "auto" }}>
-          {[
-            ["city", "📍 City Rates"],
-            ["guide", "🗺️ Province Guide"],
-            ["estimate", "🧮 Rate Estimator"],
-            ["vehicles", "🚗 Insurance by Vehicle"],
-            ["coverage", "🛡️ Coverage Explainer"],
-            ["gaps", "⚠️ Coverage Gaps"],
-            ["discounts", "💰 Discounts"],
-            ["factors", "📊 Rating Factors"],
-            ["switching", "🔄 Switching Guide"],
-            ["glossary", "📖 Glossary"],
-          ].map(([id, label]) => (
-            <button key={id} className={`tab-btn ${tab === id ? "active" : ""}`} onClick={() => setTab(id)}>{label}</button>
-          ))}
-        </div>
+        <div className="fade-in" key={step}>
 
-        {/* ── CITY RATES TAB ── */}
-        {tab === "city" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Car Insurance Rates by City</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 16 }}>
-              Your city matters as much as your province. In Ontario alone, Brampton drivers pay $2,900/year while Ottawa drivers pay $1,213, the same car, same driver, $1,687 difference.
-            </p>
+          {/* Step header */}
+          {step < STEPS.length - 1 && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>{currentStep.icon}</div>
+              <h1 style={{ fontSize: 26, fontWeight: 900, color: "var(--text)", letterSpacing: "-0.5px", marginBottom: 8 }}>{currentStep.title}</h1>
+              {currentStep.why && (
+                <div className="why-box">💡 <strong>Why we ask:</strong> {currentStep.why}</div>
+              )}
+            </div>
+          )}
 
-            {/* City search */}
-            <div style={{ position: "relative", marginBottom: 16, maxWidth: 420 }}>
-              <input
-                className="num-input"
-                placeholder="Search any city (e.g. Toronto, Calgary, Miami...)"
-                value={citySearchQuery}
-                onChange={e => { setCitySearchQuery(e.target.value); searchCityRates(e.target.value); }}
-                style={{ fontFamily: "'Outfit',system-ui", fontSize: 14, paddingLeft: 14 }}
-              />
-              {cityLoading && <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>Searching...</div>}
-              {citySearchResults.length > 0 && (
-                <div style={{ position: "absolute", top: "105%", left: 0, right: 0, zIndex: 50, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 24px rgba(0,0,0,0.3)", maxHeight: 280, overflowY: "auto" }}>
-                  {citySearchResults.map((city, i) => (
-                    <div key={i}
-                      style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "1px solid var(--border2)", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                      onMouseEnter={e => e.currentTarget.style.background = "var(--bg3)"}
-                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                      onClick={() => { setSelectedCityData(city); setCitySearchResults([]); setCitySearchQuery(city.name); }}>
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{city.name}</div>
-                        <div style={{ fontSize: 11, color: "var(--text3)" }}>{city.adminName || city.province || city.state}</div>
-                      </div>
-                      {city.avgPremium ? (
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: 16, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(city.avgPremium)}/yr</div>
-                          <div style={{ fontSize: 10, color: "var(--text3)" }}>{fmtC(Math.round(city.avgPremium / 12))}/mo avg</div>
+          {/* ── STEP 0: LOCATION ── */}
+          {step === 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Country</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[["CA","🇨🇦 Canada"],["US","🇺🇸 United States"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${profile.country === val ? "active" : ""}`} style={{ flex: 1, textAlign: "center" }} onClick={() => update("country", val)}>{label}</button>
+                  ))}
+                </div>
+              </div>
+
+              {profile.country === "CA" ? (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Province</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {CA_PROVINCES_LIST.map(([code, name]) => (
+                      <button key={code} className={`opt-btn ${profile.province === code ? "active" : ""}`} style={{ width: "auto", padding: "8px 14px", fontSize: 13 }} onClick={() => update("province", code)}>{name}</button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>State</div>
+                  <select className="select" value={profile.usState} onChange={e => update("usState", e.target.value)}>
+                    {US_STATES_LIST.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>City / Town <span style={{ fontSize: 11, color: "var(--text3)" }}>(optional, improves accuracy)</span></div>
+                <input className="text-input" placeholder={profile.country === "CA" ? "e.g. Toronto, Ottawa, Calgary..." : "e.g. Austin, Miami, Seattle..."} value={profile.city} onChange={e => update("city", e.target.value)} />
+              </div>
+
+              {profile.province && (
+                <div style={{ padding: "12px 16px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
+                    {profile.country === "CA" ? `${CA_PROVINCES_LIST.find(p => p[0] === profile.province)?.[1]}, ` : `${US_STATES_LIST.find(s => s[0] === profile.usState)?.[1]}, `}
+                    {profile.country === "CA" && ["BC","MB","SK"].includes(profile.province) ? "🏛️ Public insurance province" : "🏢 Private insurance market"}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text2)" }}>
+                    {profile.country === "CA" && ["BC","MB","SK"].includes(profile.province)
+                      ? "Government-run insurance. Basic coverage is set by the province. You can shop for optional collision and comprehensive."
+                      : "Private competitive market. Shopping around is essential, rates vary up to 40% between insurers for the same driver."}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── STEP 1: DRIVER ── */}
+          {step === 1 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Your age</div>
+                <input className="num-input" type="number" min={16} max={99} placeholder="e.g. 35" value={profile.age} onChange={e => update("age", +e.target.value)} />
+                {profile.age && profile.age < 25 && (
+                  <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 6, padding: "5px 10px", background: "rgba(245,158,11,0.08)", borderRadius: 6 }}>
+                    ⚠️ Drivers under 25 pay 1.5-2.5x more. Telematics programs are your fastest path to savings.
+                  </div>
+                )}
+                {profile.age && profile.age >= 25 && profile.age < 65 && (
+                  <div style={{ fontSize: 12, color: "var(--green)", marginTop: 6 }}>✅ Prime age range for insurance rates</div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Gender <span style={{ fontSize: 11, color: "var(--text3)" }}>(where used as a rating factor)</span></div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[["male","Male"],["female","Female"],["non_binary","Non-binary"],["prefer_not","Prefer not to say"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${profile.gender === val ? "active" : ""}`} style={{ width: "auto" }} onClick={() => update("gender", val)}>{label}</button>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>Note: Ontario and most Canadian provinces prohibit gender as a rating factor. Some US states allow it.</div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Marital status</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[["single","Single"],["married","Married"],["common_law","Common-law"],["divorced","Divorced"],["widowed","Widowed"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${profile.maritalStatus === val ? "active" : ""}`} style={{ width: "auto" }} onClick={() => update("maritalStatus", val)}>{label}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>
+                  Years licensed <span style={{ fontSize: 12, color: "var(--text3)" }}>(how long you've had a full license)</span>
+                </div>
+                <input className="num-input" type="number" min={0} max={60} placeholder="e.g. 10" value={profile.yearsLicensed} onChange={e => update("yearsLicensed", +e.target.value)} />
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Occupation <span style={{ fontSize: 11, color: "var(--text3)" }}>(some occupations qualify for discounts)</span></div>
+                <select className="select" value={profile.occupation} onChange={e => update("occupation", e.target.value)}>
+                  <option value="other">Other / Prefer not to say</option>
+                  <option value="teacher">Teacher / Professor</option>
+                  <option value="engineer">Engineer / Scientist</option>
+                  <option value="nurse">Nurse / Healthcare worker</option>
+                  <option value="doctor">Doctor</option>
+                  <option value="lawyer">Lawyer / Legal professional</option>
+                  <option value="accountant">Accountant / Finance professional</option>
+                  <option value="retired">Retired</option>
+                  <option value="student">Student</option>
+                  <option value="military">Military / Ex-military</option>
+                  <option value="police">Police / Emergency services</option>
+                  <option value="tradesperson">Tradesperson / Contractor</option>
+                  <option value="self_employed">Self-employed</option>
+                </select>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Are you new to {profile.country === "CA" ? "Canada" : "this country"}?</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[["true","Yes, I have international driving history"],["false","No, Canadian/US driving history"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${String(profile.newToCountry) === val ? "active" : ""}`} onClick={() => update("newToCountry", val === "true")}>{label}</button>
+                  ))}
+                </div>
+                {profile.newToCountry && (
+                  <div style={{ fontSize: 12, color: "#60a5fa", marginTop: 8, padding: "8px 12px", background: "rgba(59,130,246,0.06)", borderRadius: 8, border: "1px solid rgba(59,130,246,0.15)" }}>
+                    💡 Bring your foreign driving record (obtained from your home country's motor vehicle authority) when getting quotes. Many Canadian insurers, especially Intact and Aviva, have newcomer programs that recognize your international experience.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 2: VEHICLE ── */}
+          {step === 2 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Year</div>
+                  <select className="select" value={profile.vehicleYear} onChange={e => update("vehicleYear", +e.target.value)}>
+                    {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() + 1 - i).map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Make</div>
+                  <select className="select" value={profile.vehicleMake} onChange={e => update("vehicleMake", e.target.value)}>
+                    <option value="">Select make...</option>
+                    {["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","Genesis","GMC","Honda","Hyundai","Infiniti","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mitsubishi","Nissan","Porsche","RAM","Subaru","Tesla","Toyota","Volkswagen","Volvo","Other"].map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Model</div>
+                <input className="text-input" placeholder="e.g. Civic, RAV4, F-150, Model 3..." value={profile.vehicleModel} onChange={e => update("vehicleModel", e.target.value)} />
+                {profile.vehicleModel && ["civic","rav4","f-150","f150","tucson","sorento"].some(m => profile.vehicleModel.toLowerCase().includes(m)) && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "5px 10px", background: "rgba(239,68,68,0.06)", borderRadius: 6 }}>
+                    ⚠️ This vehicle is on Canada's top stolen vehicles list. Comprehensive coverage is essential.
+                  </div>
+                )}
+                {profile.vehicleMake?.toLowerCase().includes("tesla") && (
+                  <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 6, padding: "5px 10px", background: "rgba(245,158,11,0.08)", borderRadius: 6 }}>
+                    ⚡ Tesla repairs average 3-4x higher than equivalent gas vehicles. Ensure your coverage reflects replacement cost, not depreciated value.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>
+                  Current vehicle value <span style={{ fontSize: 12, color: "var(--red)", fontFamily: "'Space Mono',monospace", fontWeight: 800 }}>{fmtC(profile.vehicleValue)}</span>
+                </div>
+                <input type="range" className="range" min={1000} max={200000} step={1000} value={profile.vehicleValue} onChange={e => update("vehicleValue", +e.target.value)} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text3)", marginTop: 2 }}>
+                  <span>$1K</span><span>$200K</span>
+                </div>
+                {profile.vehicleValue < 5000 && (
+                  <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 6, padding: "5px 10px", background: "rgba(245,158,11,0.08)", borderRadius: 6 }}>
+                    💡 For vehicles under $5,000, dropping collision and comprehensive may save more than the car is worth.
+                  </div>
+                )}
+                {profile.vehicleValue > 60000 && (
+                  <div style={{ fontSize: 12, color: "#60a5fa", marginTop: 6, padding: "5px 10px", background: "rgba(59,130,246,0.06)", borderRadius: 6 }}>
+                    💡 High-value vehicle, consider replacement cost coverage and a lower deductible to avoid large out-of-pocket costs.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>How is the vehicle owned?</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[["owned","Owned outright"],["financed","Financed (loan)"],["leased","Leased"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${(val === "financed" && profile.financed) || (val === "leased" && profile.leased) || (val === "owned" && !profile.financed && !profile.leased) ? "active" : ""}`} style={{ width: "auto" }}
+                      onClick={() => { update("financed", val === "financed"); update("leased", val === "leased"); }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {(profile.financed || profile.leased) && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "5px 10px", background: "rgba(239,68,68,0.06)", borderRadius: 6 }}>
+                    ⚠️ Your lender requires collision and comprehensive coverage. These are mandatory, not optional, for financed and leased vehicles.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Primary vehicle use</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {[
+                    ["personal","Personal use, errands, leisure, occasional commute"],
+                    ["commute_short","Daily commute, under 20km/12mi each way"],
+                    ["commute_long","Daily commute, over 20km/12mi each way"],
+                    ["business","Business use, client visits, sales calls, deliveries"],
+                    ["rideshare","Rideshare / delivery, Uber, Lyft, DoorDash, etc."],
+                  ].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${profile.vehicleUse === val ? "active" : ""}`} onClick={() => update("vehicleUse", val)}>{label}</button>
+                  ))}
+                </div>
+                {profile.vehicleUse === "rideshare" && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 8, padding: "8px 12px", background: "rgba(239,68,68,0.06)", borderRadius: 8, border: "1px solid rgba(239,68,68,0.2)", lineHeight: 1.7 }}>
+                    ⚠️ Critical: Your personal policy does NOT cover rideshare or delivery use. You need a rideshare endorsement or commercial policy. Without it, you have zero coverage during Period 1 (app on, waiting for a ride). Ask any insurer specifically about rideshare coverage.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>
+                  Annual {profile.country === "CA" ? "kilometres" : "miles"} driven <span style={{ fontSize: 13, color: "var(--red)", fontFamily: "'Space Mono',monospace", fontWeight: 800 }}>{profile.annualKm.toLocaleString()}</span>
+                </div>
+                <input type="range" className="range" min={1000} max={50000} step={1000} value={profile.annualKm} onChange={e => update("annualKm", +e.target.value)} />
+                {profile.annualKm < 10000 && (
+                  <div style={{ fontSize: 12, color: "var(--green)", marginTop: 4 }}>✅ Low mileage, you qualify for low-mileage discounts with most insurers</div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Where do you primarily park overnight?</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[["garage","Private garage"],["driveway","Private driveway"],["lot","Private lot / carport"],["street","Street parking"],["high_theft_area","Street in high-theft area"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${profile.parkingType === val ? "active" : ""}`} style={{ width: "auto" }} onClick={() => update("parkingType", val)}>{label}</button>
+                  ))}
+                </div>
+                {profile.parkingType === "garage" && <div style={{ fontSize: 12, color: "var(--green)", marginTop: 4 }}>✅ Garage parking qualifies for a reduced comprehensive premium</div>}
+                {profile.parkingType === "high_theft_area" && <div style={{ fontSize: 12, color: "var(--red)", marginTop: 4 }}>⚠️ High-theft parking adds 10-15% to your comprehensive premium</div>}
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 3: HISTORY ── */}
+          {step === 3 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>At-fault accidents in the last 6 years</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[0,1,2,3,"4+"].map(n => (
+                    <button key={n} className={`opt-btn ${profile.atFaultAccidents === (n === "4+" ? 4 : n) ? "active" : ""}`} style={{ flex: 1, textAlign: "center" }}
+                      onClick={() => update("atFaultAccidents", n === "4+" ? 4 : n)}>{n}</button>
+                  ))}
+                </div>
+                {profile.atFaultAccidents > 0 && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "5px 10px", background: "rgba(239,68,68,0.06)", borderRadius: 6 }}>
+                    Each at-fault accident typically adds 20-40% to your premium for 6 years in most provinces.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Not-at-fault accidents in the last 3 years</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[0,1,2,"3+"].map(n => (
+                    <button key={n} className={`opt-btn ${profile.notAtFaultAccidents === (n === "3+" ? 3 : n) ? "active" : ""}`} style={{ flex: 1, textAlign: "center" }}
+                      onClick={() => update("notAtFaultAccidents", n === "3+" ? 3 : n)}>{n}</button>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>Not-at-fault accidents can still affect your premium in some provinces, typically a small increase.</div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Traffic tickets / convictions in the last 3 years</div>
+                <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 8, padding: "6px 10px", background: "var(--bg3)", borderRadius: 6 }}>Include: speeding tickets, distracted driving, failing to stop, careless driving</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[0,1,2,"3+"].map(n => (
+                    <button key={n} className={`opt-btn ${profile.tickets === (n === "3+" ? 3 : n) ? "active" : ""}`} style={{ flex: 1, textAlign: "center" }}
+                      onClick={() => update("tickets", n === "3+" ? 3 : n)}>{n}</button>
+                  ))}
+                </div>
+                {profile.tickets > 0 && (
+                  <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 6, padding: "5px 10px", background: "rgba(245,158,11,0.08)", borderRadius: 6 }}>
+                    Each ticket typically adds 5-15% to your premium. Serious convictions (stunt driving, DUI) can double your rate or trigger cancellation.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>DUI / DWI / impaired driving conviction in last 10 years</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[["false","No"],["true","Yes"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${String(profile.dui) === val ? "active" : ""}`} style={{ flex: 1, textAlign: "center" }}
+                      onClick={() => update("dui", val === "true")}>{label}</button>
+                  ))}
+                </div>
+                {profile.dui && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "8px 12px", background: "rgba(239,68,68,0.08)", borderRadius: 8 }}>
+                    A DUI conviction typically results in 80-150% premium increase and may require an SR-22 (US) or high-risk insurance (Canada). Some standard insurers will not cover you. We'll recommend appropriate insurers for your situation.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Months without insurance coverage (if any lapse)</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[["0","None"],["1-3","1-3 months"],["4-6","4-6 months"],["7-12","7-12 months"],["12+","Over a year"]].map(([val, label]) => (
+                    <button key={val} className={`opt-btn ${(val === "0" && profile.lapseMonths === 0) || (val === "1-3" && profile.lapseMonths > 0 && profile.lapseMonths <= 3) || (val === "4-6" && profile.lapseMonths >= 4 && profile.lapseMonths <= 6) || (val === "7-12" && profile.lapseMonths >= 7 && profile.lapseMonths <= 12) || (val === "12+" && profile.lapseMonths > 12) ? "active" : ""}`} style={{ width: "auto" }}
+                      onClick={() => update("lapseMonths", val === "0" ? 0 : val === "1-3" ? 2 : val === "4-6" ? 5 : val === "7-12" ? 9 : 18)}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {profile.lapseMonths > 6 && (
+                  <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 6, padding: "5px 10px", background: "rgba(245,158,11,0.08)", borderRadius: 6 }}>
+                    A significant lapse is treated like a new driver by many insurers. Get any continuous coverage now to start rebuilding your history.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 4: COVERAGE ── */}
+          {step === 4 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Coverage level</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    ["liability_only", "Liability only", "Legal minimum. Covers damage you cause to others. Does NOT cover damage to your own vehicle. Not recommended if your car is worth more than $5,000 or is financed."],
+                    ["standard", "Standard coverage", "Liability + collision + comprehensive. Covers your vehicle in most scenarios. Most common choice for vehicles worth $10,000+."],
+                    ["full", "Full coverage + extras", "Everything in standard plus optional add-ons like accident forgiveness, replacement cost, rental coverage, and enhanced accident benefits."],
+                  ].map(([val, label, desc]) => (
+                    <button key={val} className={`opt-btn ${profile.coverageLevel === val ? "active" : ""}`} onClick={() => update("coverageLevel", val)} style={{ textAlign: "left" }}>
+                      <div style={{ fontWeight: 700 }}>{label}</div>
+                      <div style={{ fontSize: 12, marginTop: 3, color: profile.coverageLevel === val ? "inherit" : "var(--text3)", lineHeight: 1.5 }}>{desc}</div>
+                    </button>
+                  ))}
+                </div>
+                {(profile.financed || profile.leased) && profile.coverageLevel === "liability_only" && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "5px 10px", background: "rgba(239,68,68,0.06)", borderRadius: 6 }}>
+                    ❌ Your lender requires collision and comprehensive. Liability only is not permitted on a financed or leased vehicle.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 4 }}>Liability limit</div>
+                <div style={{ fontSize: 12, color: "var(--text3)", marginBottom: 8 }}>Protects your personal assets if you cause a serious accident. The minimum is rarely enough.</div>
+                {profile.country === "CA" ? (
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {[["200K","$200K (legal min)"],["500K","$500K"],["1M","$1M (recommended)"],["2M","$2M (best protection)"]].map(([val, label]) => (
+                      <button key={val} className={`opt-btn ${profile.liabilityLimit === val ? "active" : ""}`} style={{ width: "auto" }} onClick={() => update("liabilityLimit", val)}>{label}</button>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {[["state_min","State minimum"],["50_100","50/100/50"],["100_300","100/300/100 (recommended)"],["250_500","250/500/250 (best protection)"]].map(([val, label]) => (
+                      <button key={val} className={`opt-btn ${profile.liabilityLimit === val ? "active" : ""}`} style={{ width: "auto" }} onClick={() => update("liabilityLimit", val)}>{label}</button>
+                    ))}
+                  </div>
+                )}
+                {((profile.country === "CA" && profile.liabilityLimit === "200K") || (profile.country === "US" && profile.liabilityLimit === "state_min")) && (
+                  <div style={{ fontSize: 12, color: "var(--red)", marginTop: 6, padding: "5px 10px", background: "rgba(239,68,68,0.06)", borderRadius: 6 }}>
+                    ⚠️ Minimum liability is dangerously low. A serious injury lawsuit can exceed $1M+. Upgrading to {profile.country === "CA" ? "$1M" : "100/300/100"} typically costs only $5-15/month more.
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>
+                  Deductible (collision and comprehensive), <span style={{ color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(profile.deductible)}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text3)", marginBottom: 8 }}>The amount YOU pay after a claim before insurance kicks in. Higher deductible = lower premium.</div>
+                <input type="range" className="range" min={250} max={5000} step={250} value={profile.deductible} onChange={e => update("deductible", +e.target.value)} />
+                <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>
+                  {profile.deductible >= 2000 ? "💰 High deductible saves ~25% on collision/comprehensive premium. Choose this only if you have strong emergency savings." :
+                   profile.deductible >= 1000 ? "✅ Good balance of savings and manageable out-of-pocket cost." :
+                   "Standard deductible. Consider raising to $1,000+ if you have solid savings."}
+                </div>
+              </div>
+
+              {profile.coverageLevel === "full" && (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Optional add-ons</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {[
+                      ["accidentForgiveness", "Accident forgiveness", "Prevents your first at-fault accident from raising your premium. Worth it after 5+ years clean record."],
+                      ["replacementCost", "Replacement cost coverage", "Pays to replace with a brand-new vehicle instead of depreciated value. Usually only for vehicles under 2 years old."],
+                      ["roadsideAssistance", "Roadside assistance", "Covers towing, battery boost, lockout, flat tire. Check if you already have this through CAA/AAA or a credit card."],
+                    ].map(([key, label, desc]) => (
+                      <div key={key} onClick={() => update(key, !profile[key])} style={{ display: "flex", gap: 12, padding: "10px 14px", background: profile[key] ? "var(--red-dim)" : "var(--bg3)", border: `1.5px solid ${profile[key] ? "var(--red)" : "var(--border2)"}`, borderRadius: 10, cursor: "pointer", alignItems: "flex-start" }}>
+                        <div style={{ width: 20, height: 20, borderRadius: 5, background: profile[key] ? "var(--red)" : "var(--bg2)", border: `1.5px solid ${profile[key] ? "var(--red)" : "var(--border2)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", flexShrink: 0, marginTop: 1 }}>
+                          {profile[key] ? "✓" : ""}
                         </div>
-                      ) : (
-                        <div style={{ fontSize: 11, color: "var(--text3)" }}>Rate data varies</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Selected city result */}
-            {selectedCityData && (
-              <div className="fade-in card" style={{ marginBottom: 20, border: "1px solid var(--border)", background: lm ? "linear-gradient(135deg,#fef2f2,#fff)" : "linear-gradient(135deg,#1a0a0a,#0e1420)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
-                  <div>
-                    <div style={{ fontSize: 20, fontWeight: 900, color: "var(--text)", marginBottom: 4 }}>{selectedCityData.name}</div>
-                    <div style={{ fontSize: 13, color: "var(--text2)", maxWidth: 500, lineHeight: 1.65 }}>{selectedCityData.note}</div>
-                    {selectedCityData.province && (
-                      <div style={{ marginTop: 8, fontSize: 12, color: "var(--text3)" }}>
-                        Province: <strong style={{ color: "var(--text)" }}>{CA_PROVINCES[selectedCityData.province]?.name || selectedCityData.province}</strong> · System: <strong style={{ color: "var(--text)" }}>{CA_PROVINCES[selectedCityData.province]?.system || "private"}</strong>
-                      </div>
-                    )}
-                  </div>
-                  {selectedCityData.avgPremium && (
-                    <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 2 }}>Average annual premium</div>
-                      <div style={{ fontSize: 40, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(selectedCityData.avgPremium)}</div>
-                      <div style={{ fontSize: 12, color: "var(--text3)" }}>{fmtC(Math.round(selectedCityData.avgPremium / 12))}/month</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Ontario city comparison, most searched */}
-            <div className="card" style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 4 }}>🇨🇦 Ontario Cities, Rates Vary Up to 3x</div>
-              <p style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12 }}>Same driver, same car, different city means drastically different premium. All estimates for a 35-year-old with a clean record driving a Honda Civic.</p>
-              <div style={{ overflowX: "auto" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px", gap: 8, padding: "5px 8px", fontSize: 10, color: "var(--text3)", fontWeight: 700, textTransform: "uppercase", minWidth: 360 }}>
-                  <div>City</div><div>Annual avg</div><div>vs Provincial</div>
-                </div>
-                {Object.entries(CA_CITY_RATES).filter(([, d]) => d.province === "ON").sort((a, b) => b[1].avgPremium - a[1].avgPremium).map(([name, data]) => {
-                  const prov = CA_PROVINCES["ON"].avgPremium;
-                  const diff = ((data.avgPremium - prov) / prov * 100).toFixed(0);
-                  const color = data.avgPremium > prov * 1.15 ? "var(--red)" : data.avgPremium < prov * 0.85 ? "var(--green)" : "var(--gold)";
-                  return (
-                    <div key={name} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px", gap: 8, padding: "7px 8px", borderRadius: 6, minWidth: 360, fontSize: 13, cursor: "pointer" }}
-                      onMouseEnter={e => e.currentTarget.style.background = "var(--bg3)"}
-                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                      onClick={() => { setSelectedCityData({ name, ...data }); setCitySearchQuery(name); }}>
-                      <div style={{ fontWeight: 600, color: "var(--text)" }}>{name}</div>
-                      <div style={{ fontFamily: "'Space Mono',monospace", fontWeight: 700, color }}>{fmtC(data.avgPremium)}</div>
-                      <div style={{ color, fontWeight: 600 }}>{diff > 0 ? "+" : ""}{diff}%</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* US city highlights */}
-            <div className="card" style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>🇺🇸 US City Rates, Miami vs Columbus</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 8 }}>
-                {[["Miami, FL", 4200, "var(--red)"],["Detroit, MI", 4800, "var(--red)"],["New York City", 4500, "var(--red)"],["Los Angeles", 3200, "var(--red)"],["Denver, CO", 2800, "var(--gold)"],["Austin, TX", 2500, "var(--gold)"],["Charlotte, NC", 1600, "var(--green)"],["Columbus, OH", 1200, "var(--green)"]].map(([city, rate, color]) => (
-                  <div key={city} style={{ background: "var(--bg3)", borderRadius: 10, padding: "12px 14px" }}>
-                    <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}>{city}</div>
-                    <div style={{ fontSize: 20, fontWeight: 900, color, fontFamily: "'Space Mono',monospace" }}>{fmtC(rate)}/yr</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ padding: "14px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, fontSize: 13, color: "var(--text2)" }}>
-              <strong style={{ color: "var(--text)" }}>Rate data is approximate</strong>, actual rates vary by insurer, your specific address (postal/ZIP code), vehicle, age, and driving record. These are averages for a clean-record adult driver. Get a personalized quote to see your actual rate.
-              <div style={{ marginTop: 8 }}>
-                <a href={country === "CA" ? "https://www.ratehub.ca/car-insurance" : "https://www.insurify.com"} target="_blank" rel="noopener noreferrer sponsored" style={{ color: "var(--red)", fontWeight: 700, textDecoration: "none" }}>Get your personalized rate now →</a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── COVERAGE GAPS TAB ── */}
-        {tab === "gaps" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Coverage Gaps, What Your Policy May NOT Cover</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 16 }}>
-              Most drivers only discover these gaps after an accident. Read this before you assume you're covered.
-            </p>
-
-            {/* Sub-tabs */}
-            <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
-              {[["rideshare","🚗 Rideshare/Delivery"],["lifeevents","🔄 Life Events"],["renewal","🔁 Renewal Trap"],["excluded","👤 Excluded Drivers"],["truecost","💸 True Ownership Cost"]].map(([id, label]) => (
-                <button key={id} className={`tab-btn ${coverageGapTab === id ? "active" : ""}`} onClick={() => setCoverageGapTab(id)}>{label}</button>
-              ))}
-            </div>
-
-            {/* Rideshare gap */}
-            {coverageGapTab === "rideshare" && (
-              <div className="fade-in">
-                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.04)", marginBottom: 12 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
-                    ⚠️ Uber, Lyft, DoorDash, Instacart drivers: your personal policy probably does NOT cover you while working
-                  </div>
-                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
-                    Personal auto insurance policies exclude coverage for commercial use. The moment you log into the Uber or DoorDash app, your personal policy stops applying in most cases, creating a dangerous gap that could leave you personally liable for an accident.
-                  </p>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 10 }}>The 3 Coverage Periods (Uber/Lyft model)</div>
-                  {[
-                    { period: "Period 0", label: "App is OFF", personal: "Your personal policy", rideshare: "No rideshare coverage", color: "var(--green)", risk: "No gap, fully covered by personal policy" },
-                    { period: "Period 1", label: "App ON, waiting for ride request", personal: "Personal policy EXCLUDED", rideshare: "Platform provides limited liability only (Uber: $50K/$100K). NO collision or comprehensive.", color: "var(--red)", risk: "HIGHEST RISK. If you hit someone while waiting, your personal insurer will deny the claim. Platform only covers liability, not your car." },
-                    { period: "Period 2", label: "Ride accepted, en route to pickup", personal: "Personal policy excluded", rideshare: "Platform coverage: $1M liability + collision/comprehensive (with $2,500 deductible)", color: "var(--gold)", risk: "Better coverage but $2,500 deductible for your vehicle is very high." },
-                    { period: "Period 3", label: "Passenger in car", personal: "Personal policy excluded", rideshare: "Full platform coverage: $1M liability + collision/comprehensive", color: "var(--green)", risk: "Best coverage period, you're most protected while actively carrying a passenger." },
-                  ].map(p => (
-                    <div key={p.period} style={{ padding: "12px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8, borderLeft: `3px solid ${p.color}` }}>
-                      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
-                        <span className={`badge ${p.color === "var(--green)" ? "b-green" : p.color === "var(--red)" ? "b-red" : "b-gold"}`}>{p.period}</span>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{p.label}</span>
-                      </div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}><strong style={{ color: "var(--text)" }}>Personal policy:</strong> {p.personal}</div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 6 }}><strong style={{ color: "var(--text)" }}>Platform coverage:</strong> {p.rideshare}</div>
-                      <div style={{ fontSize: 12, color: p.color, fontWeight: 600 }}>Risk: {p.risk}</div>
-                    </div>
-                  ))}
-                  <div style={{ marginTop: 12, padding: "10px 14px", background: "var(--bg3)", borderRadius: 8, fontSize: 12, color: "var(--text2)", lineHeight: 1.7 }}>
-                    <strong style={{ color: "var(--text)" }}>The fix:</strong> Ask your insurer for a rideshare endorsement ($10-30/mo extra) or switch to a provider with built-in rideshare coverage (Intact, Aviva in Canada offer this). This fills Period 1 and gives you proper protection throughout.
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Life events */}
-            {coverageGapTab === "lifeevents" && (
-              <div className="fade-in">
-                <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 16, lineHeight: 1.7 }}>
-                  These life changes can affect your coverage, and if you don't notify your insurer, a claim could be denied.
-                </p>
-                {[
-                  { event: "You moved to a new address", risk: "Your postal/ZIP code is a major rating factor. Moving to a higher-risk area without updating your policy could mean your insurer denies a claim for non-disclosure. Update immediately, it may change your premium.", action: "Call or update online within 30 days of moving." },
-                  { event: "Someone else drives your car regularly", risk: "Any household member with a driver's license who regularly drives your car must be listed on your policy. If an unlisted household member causes an accident, your insurer can deny the claim entirely.", action: "List ALL household drivers, even occasional ones." },
-                  { event: "You started driving for work or deliveries", risk: "Using your personal vehicle for any commercial purpose (deliveries, client visits, Uber/Lyft) is typically excluded from personal auto policies. One accident while working and your claim could be denied.", action: "Add a business use endorsement or get a commercial policy." },
-                  { event: "You added a teen driver", risk: "A teen driver in the household who is not listed on your policy is a serious gap. If they cause an accident, the insurer may deny coverage or pursue you for the full cost.", action: "Add them immediately. Yes, premiums go up, but the alternative is catastrophic." },
-                  { event: "You started working from home (less driving)", risk: "Positive life event for insurance! If your annual mileage dropped significantly, notify your insurer. You may qualify for a low-mileage discount.", action: "Report reduced mileage, could save 5-15%." },
-                  { event: "You financed or leased a new vehicle", risk: "Your lender requires you to carry collision and comprehensive coverage. If you only have liability and the car is totaled, you're still on the hook for the loan.", action: "Ensure collision and comprehensive are on your policy before driving off the lot." },
-                  { event: "Your vehicle's value dropped significantly", risk: "If your car is worth less than $4,000, carrying collision and comprehensive may cost more per year than the car is worth.", action: "Review annually, consider dropping collision on old vehicles." },
-                ].map((item, i) => (
-                  <div key={i} className="card" style={{ marginBottom: 10, borderLeft: "3px solid var(--red)" }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>🔴 {item.event}</div>
-                    <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 8, lineHeight: 1.65 }}>{item.risk}</div>
-                    <div style={{ fontSize: 12, color: "var(--green)", fontWeight: 600, padding: "6px 10px", background: "rgba(74,222,128,0.08)", borderRadius: 6 }}>
-                      ✅ Action: {item.action}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Renewal trap */}
-            {coverageGapTab === "renewal" && (
-              <div className="fade-in">
-                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.04)", marginBottom: 12 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
-                    🔁 The Renewal Trap, Loyalty is Often Punished
-                  </div>
-                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
-                    Insurers rely on customer inertia at renewal time. Many quietly raise rates each year knowing most customers won't shop around. Long-term loyal customers frequently pay more than new customers for identical coverage.
-                  </p>
-                  {[
-                    { title: "The loyalty penalty", detail: "Studies consistently show long-term policyholders pay 10-40% more than new customers with the same insurer. You are essentially being charged for the convenience of not switching." },
-                    { title: "The introductory rate trap", detail: "Some insurers offer below-market rates for the first year to acquire you as a customer, then raise rates significantly at renewal. The renewal notice arrives and it's 20-30% higher." },
-                    { title: "Automatic renewal without review", detail: "Auto-renewal is convenient but means you may be carrying outdated coverage limits, paying for coverage you no longer need (collision on a 15-year-old car), or missing new discounts." },
-                    { title: "How to fight back", detail: "Start shopping 30-45 days before renewal. Get 3+ quotes. Call your current insurer with the best competing quote and ask them to match it. About 60% of the time they will, or at least reduce the increase. If not, switch without guilt." },
-                  ].map((item, i) => (
-                    <div key={i} style={{ padding: "10px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{i + 1}. {item.title}</div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.65 }}>{item.detail}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Excluded drivers */}
-            {coverageGapTab === "excluded" && (
-              <div className="fade-in">
-                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", marginBottom: 12 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--red)", marginBottom: 8 }}>
-                    👤 Excluded Driver Endorsements, A Dangerous Trap
-                  </div>
-                  <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75, marginBottom: 12 }}>
-                    Some households exclude a high-risk driver (teenager, new driver, someone with a bad record) from the policy to save money. This is legal, but the excluded driver creates serious risk for everyone in the household.
-                  </p>
-                  {[
-                    { title: "What excluded means exactly", detail: "An excluded driver endorsement means that person is explicitly removed from your policy. If they ever drive your car, even in an emergency, there is zero coverage. The insurer can and will deny the claim entirely." },
-                    { title: "The emergency exception myth", detail: "Many people believe there is an emergency exception. There is not. If your excluded teen driver takes the car to the hospital in a genuine emergency and causes an accident, your insurer still denies the claim." },
-                    { title: "Hidden household members", detail: "Any licensed driver who lives in your household is assumed to have access to your vehicle by insurers. If you don't disclose a household driver, your insurer can deny claims as non-disclosure. You must disclose everyone." },
-                    { title: "The solution", detail: "The only safe option is to list all drivers and pay the higher premium, or ensure excluded drivers have their own separate vehicle with their own policy. Never lend your car to an excluded driver, for any reason." },
-                  ].map((item, i) => (
-                    <div key={i} style={{ padding: "10px 14px", background: "var(--bg3)", borderRadius: 10, marginBottom: 8, borderLeft: "3px solid var(--red)" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{item.title}</div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.65 }}>{item.detail}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* True cost of ownership */}
-            {coverageGapTab === "truecost" && (
-              <div className="fade-in">
-                <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>
-                  💸 True Cost of Car Ownership Calculator
-                </div>
-                <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 16, lineHeight: 1.7 }}>
-                  Insurance is just one piece. The average hidden car ownership costs total $6,894/year in the US, insurance is the biggest single expense. Here is everything combined.
-                </p>
-                {(() => {
-                  const sel = selectedCityData || (country === "CA" ? { avgPremium: CA_PROVINCES[province]?.avgPremium || 1920 } : { avgPremium: US_STATES[usState]?.avgPremium || 2000 });
-                  const insurance = sel.avgPremium || 1920;
-                  const gasMonthly = country === "CA" ? 200 : 150;
-                  const maintenance = 1200;
-                  const depreciation = 3500;
-                  const parking = country === "CA" && (province === "ON") ? 1800 : 600;
-                  const registration = country === "CA" ? 120 : 200;
-                  const total = insurance + gasMonthly * 12 + maintenance + depreciation + parking + registration;
-                  return (
-                    <div>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 10, marginBottom: 16 }}>
-                        {[
-                          { label: "Car insurance", val: insurance, color: "var(--red)", pct: (insurance / total * 100).toFixed(0) },
-                          { label: "Gas/fuel (est.)", val: gasMonthly * 12, color: "var(--gold)", pct: (gasMonthly * 12 / total * 100).toFixed(0) },
-                          { label: "Maintenance & repairs", val: maintenance, color: "#60a5fa", pct: (maintenance / total * 100).toFixed(0) },
-                          { label: "Depreciation (est.)", val: depreciation, color: "#a78bfa", pct: (depreciation / total * 100).toFixed(0) },
-                          { label: "Parking & tolls", val: parking, color: "#34d399", pct: (parking / total * 100).toFixed(0) },
-                          { label: "Registration & taxes", val: registration, color: "var(--text2)", pct: (registration / total * 100).toFixed(0) },
-                        ].map(item => (
-                          <div key={item.label} style={{ background: "var(--bg3)", borderRadius: 10, padding: "12px 14px" }}>
-                            <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 4 }}>{item.label}</div>
-                            <div style={{ fontSize: 20, fontWeight: 900, color: item.color, fontFamily: "'Space Mono',monospace" }}>{fmtC(item.val)}</div>
-                            <div style={{ fontSize: 10, color: "var(--text3)", marginTop: 2 }}>{item.pct}% of total</div>
-                          </div>
-                        ))}
-                      </div>
-                      <div style={{ padding: "14px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
                         <div>
-                          <div style={{ fontSize: 13, color: "var(--text2)", fontWeight: 700 }}>Estimated total annual cost of car ownership</div>
-                          <div style={{ fontSize: 11, color: "var(--text3)" }}>Based on {selectedCityData?.name || locationData?.name} rates + average expenses</div>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{label}</div>
+                          <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2, lineHeight: 1.5 }}>{desc}</div>
                         </div>
-                        <div style={{ fontSize: 36, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{fmtC(total)}/yr</div>
                       </div>
-                      <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 10 }}>Depreciation, gas, and maintenance are estimates. Actual costs vary significantly by vehicle type, age, and driving habits.</p>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── PROVINCE GUIDE TAB ── */}
-        {tab === "guide" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>
-              {country === "CA" ? "🇨🇦 Canadian Car Insurance Guide" : "🇺🇸 US Car Insurance Guide"}, {locationData?.name}
-            </div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>
-              {country === "CA"
-                ? "Car insurance in Canada is provincially regulated. Each province has different rules, minimums, and systems. Here's exactly what you need to know."
-                : "US car insurance varies significantly by state. Coverage requirements, legal systems, and average costs differ enormously. Here's what matters in your state."}
-            </p>
-
-            <div className="grid2">
-              {/* Mandatory coverage */}
-              <div className="card">
-                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>
-                  ✅ Mandatory Coverage in {locationData?.name}
-                </div>
-                {locationData?.mandatoryCoverage?.map((c, i) => (
-                  <div key={i} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--border2)", alignItems: "flex-start", fontSize: 13 }}>
-                    <span style={{ color: "var(--green)", flexShrink: 0, marginTop: 1 }}>✓</span>
-                    <span style={{ color: "var(--text2)" }}>{c}</span>
+                    ))}
                   </div>
-                ))}
-              </div>
-
-              {/* Optional coverage */}
-              <div className="card">
-                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>
-                  ➕ Optional Coverage in {locationData?.name}
-                </div>
-                {locationData?.optionalCoverage?.map((c, i) => (
-                  <div key={i} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--border2)", alignItems: "flex-start", fontSize: 13 }}>
-                    <span style={{ color: "var(--text2)", flexShrink: 0, marginTop: 1 }}>+</span>
-                    <span style={{ color: "var(--text2)" }}>{c}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Insurer list */}
-            <div className="card" style={{ marginTop: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>
-                🏢 Major Insurers in {locationData?.name}
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {locationData?.insurers?.map(ins => (
-                  <span key={ins} style={{ padding: "5px 12px", background: "var(--bg3)", borderRadius: 8, fontSize: 13, fontWeight: 600, border: "1px solid var(--border2)" }}>{ins}</span>
-                ))}
-              </div>
-              {country === "CA" && locationData?.system === "private" && (
-                <div style={{ marginTop: 12, fontSize: 12, color: "var(--text2)", padding: "8px 12px", background: "var(--red-dim)", borderRadius: 8, border: "1px solid var(--border)" }}>
-                  💡 Private insurance province, you can and should shop around. Getting 3+ quotes at renewal can save you $500-1,500/year.
-                </div>
-              )}
-              {country === "CA" && locationData?.system === "public" && (
-                <div style={{ marginTop: 12, fontSize: 12, color: "var(--text2)", padding: "8px 12px", background: "rgba(59,130,246,0.08)", borderRadius: 8, border: "1px solid rgba(59,130,246,0.2)" }}>
-                  🏛️ Public insurance province, basic coverage is fixed by the government. You can still shop for optional collision and comprehensive from private insurers.
                 </div>
               )}
             </div>
+          )}
 
-            {/* Province comparison table */}
-            {country === "CA" && (
-              <div className="card" style={{ marginTop: 14 }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>📊 Canada Province Comparison</div>
-                <div style={{ overflowX: "auto" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 80px 80px", gap: 8, padding: "5px 8px", fontSize: 10, color: "var(--text3)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", minWidth: 460 }}>
-                    <div>Province</div><div>Avg/Year</div><div>System</div><div>Tort</div><div>Min Liab</div>
-                  </div>
-                  {Object.entries(CA_PROVINCES).map(([code, data]) => (
-                    <div key={code} style={{ display: "grid", gridTemplateColumns: "1fr 100px 100px 80px 80px", gap: 8, padding: "8px 8px", borderRadius: 6, background: code === province ? "var(--red-dim)" : "transparent", cursor: "pointer", minWidth: 460, fontSize: 13 }}
-                      onClick={() => setProvince(code)}>
-                      <div style={{ fontWeight: 700, color: code === province ? "var(--red)" : "var(--text)" }}>{data.name}{code === province ? " ✓" : ""}</div>
-                      <div style={{ fontFamily: "'Space Mono',monospace", fontWeight: 700, color: getPremiumColor(data.avgPremium, 1400) }}>{fmtC(data.avgPremium)}</div>
-                      <div style={{ color: "var(--text2)" }}>
-                        <span className={`badge ${data.system === "public" ? "b-blue" : data.system === "hybrid" ? "b-gold" : "b-red"}`}>{data.system}</span>
-                      </div>
-                      <div style={{ color: "var(--text2)", fontSize: 11 }}>{data.tort}</div>
-                      <div style={{ color: "var(--text2)", fontFamily: "'Space Mono',monospace", fontSize: 11 }}>${(data.minLiability / 1000).toFixed(0)}K</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* ── STEP 5: LIFESTYLE ── */}
+          {step === 5 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 4 }}>These questions unlock discounts many drivers leave on the table. Answer honestly, they can save you 20-40%.</div>
 
-            {/* Affiliate placement */}
-            <div style={{ marginTop: 16, padding: "14px 18px", background: "linear-gradient(135deg,var(--red-dim),transparent)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 3 }}>
-                  Ready to find a better rate in {locationData?.name}?
-                </div>
-                <div style={{ fontSize: 12, color: "var(--text2)" }}>
-                  Compare quotes from top insurers. {country === "CA" ? "Takes 5 minutes. No obligation." : "Average savings: $709/year. No credit check."}
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                {country === "CA" ? (
-                  <>
-                    <a href="https://www.ratehub.ca/car-insurance" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 18px", borderRadius: 9, background: "var(--red)", color: "#fff", fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Compare on Ratehub →</a>
-                    <a href="https://www.kanetix.ca" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 16px", borderRadius: 9, background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>Kanetix.ca →</a>
-                  </>
-                ) : (
-                  <>
-                    <a href="https://www.insurify.com" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 18px", borderRadius: 9, background: "var(--red)", color: "#fff", fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Compare on Insurify →</a>
-                    <a href="https://www.thezebra.com" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 16px", borderRadius: 9, background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>The Zebra →</a>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── RATE ESTIMATOR TAB ── */}
-        {tab === "estimate" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Rate Estimator</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>Get a rough estimate of what you should be paying, and see which factors are costing you the most.</p>
-
-            <div className="grid2">
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div className="card">
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 14 }}>Your driver profile</div>
-                  <div style={{ marginBottom: 14 }}>
-                    <div className="br-row" style={{ border: "none", paddingBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600 }}>Driver age</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>{driverAge}</span>
-                    </div>
-                    <input type="range" className="range" min={16} max={80} step={1} value={driverAge} onChange={e => setDriverAge(+e.target.value)} />
-                    {driverAge < 25 && <div style={{ fontSize: 11, color: "var(--red)", marginTop: 3 }}>⚠️ Under 25: premiums are 1.8x higher on average</div>}
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600, marginBottom: 6 }}>Driving record</div>
-                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                      {[["clean", "✅ Clean"], ["one_accident", "⚠️ 1 Accident"], ["two_plus", "❌ 2+ Incidents"], ["dui", "🚫 DUI/DWI"]].map(([val, label]) => (
-                        <button key={val} onClick={() => setDriverRecord(val)} style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${driverRecord === val ? "var(--red)" : "var(--border2)"}`, background: driverRecord === val ? "var(--red-dim)" : "transparent", color: driverRecord === val ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 700 }}>
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <div className="br-row" style={{ border: "none", paddingBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600 }}>{country === "CA" ? "Annual km driven" : "Annual miles driven"}</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--text)", fontFamily: "'Space Mono',monospace" }}>{annualKm.toLocaleString()}</span>
-                    </div>
-                    <input type="range" className="range" min={2000} max={40000} step={1000} value={annualKm} onChange={e => setAnnualKm(+e.target.value)} />
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <div className="br-row" style={{ border: "none", paddingBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600 }}>Vehicle age (years)</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--text)", fontFamily: "'Space Mono',monospace" }}>{vehicleAge} yrs old</span>
-                    </div>
-                    <input type="range" className="range" min={0} max={20} step={1} value={vehicleAge} onChange={e => setVehicleAge(+e.target.value)} />
-                  </div>
-                </div>
-
-                <div className="card">
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>Coverage and discounts</div>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600, marginBottom: 6 }}>Coverage level</div>
-                    <div style={{ display: "flex", gap: 5 }}>
-                      {[["liability_only", "Liability only"], ["full", "Full coverage"]].map(([val, label]) => (
-                        <button key={val} onClick={() => setCoverageLevel(val)} style={{ flex: 1, padding: "7px", borderRadius: 8, border: `1px solid ${coverageLevel === val ? "var(--red)" : "var(--border2)"}`, background: coverageLevel === val ? "var(--red-dim)" : "transparent", color: coverageLevel === val ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 700 }}>
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 12 }}>
-                    <div className="br-row" style={{ border: "none", paddingBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600 }}>Deductible</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--text)", fontFamily: "'Space Mono',monospace" }}>{fmtC(deductible)}</span>
-                    </div>
-                    <input type="range" className="range" min={250} max={5000} step={250} value={deductible} onChange={e => setDeductible(+e.target.value)} />
-                    {deductible >= 1000 && <div style={{ fontSize: 11, color: "var(--green)", marginTop: 3 }}>✅ Higher deductible saves ~{deductible >= 2000 ? "25" : "15"}% on collision/comprehensive</div>}
-                  </div>
-
-                  <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600, marginBottom: 8 }}>Active discounts</div>
-                  {[
-                    ...(country === "CA" ? [["hasWinterTires", hasWinterTires, setHasWinterTires, "❄️ Winter tires installed", "~8% discount"]] : []),
-                    ["hasBundle", hasBundle, setHasBundle, "🏠 Bundle home + auto", "~15% discount"],
-                    ["hasTelematics", hasTelematics, setHasTelematics, "📱 Telematics/usage-based", "~15% discount"],
-                  ].map(([key, val, setter, label, saving]) => (
-                    <div key={key} onClick={() => setter(v => !v)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", borderRadius: 8, cursor: "pointer", background: val ? "var(--red-dim)" : "var(--bg3)", border: `1px solid ${val ? "var(--border)" : "var(--border2)"}`, marginBottom: 6 }}>
-                      <span style={{ fontSize: 13, color: "var(--text)" }}>{label}</span>
-                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                        <span style={{ fontSize: 11, color: "var(--green)" }}>{saving}</span>
-                        <div style={{ width: 20, height: 20, borderRadius: "50%", background: val ? "var(--green)" : "var(--bg2)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff" }}>{val ? "✓" : ""}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {/* Results */}
-                <div className="card" style={{ background: lm ? "linear-gradient(135deg,#fef2f2,#fff)" : "linear-gradient(135deg,#1a0a0a,#0e1420)", border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Estimated monthly premium</div>
-                  <div style={{ fontSize: 44, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace", letterSpacing: "-1px", lineHeight: 1 }}>{fmtC(estimate.monthly)}</div>
-                  <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>{fmtC(estimate.annual)}/year · {locationData?.name}</div>
-                  {estimate.discountPct > 0 && (
-                    <div style={{ marginTop: 8, fontSize: 12, color: "var(--green)", background: "rgba(74,222,128,0.08)", padding: "4px 10px", borderRadius: 6, display: "inline-block" }}>
-                      ✅ {estimate.discountPct}% in active discounts applied
-                    </div>
-                  )}
-                </div>
-
-                {/* Current vs estimated */}
-                <div className="card">
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 10 }}>Compare to what you pay now</div>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 600, marginBottom: 4 }}>Your current annual premium</div>
-                    <input type="number" className="num-input" value={currentPremium} onChange={e => setCurrentPremium(+e.target.value)} />
-                  </div>
-                  {currentPremium > 0 && (
-                    <div style={{ padding: "12px 14px", background: estimate.savings > 0 ? "rgba(74,222,128,0.08)" : "rgba(239,68,68,0.06)", borderRadius: 10, border: `1px solid ${estimate.savings > 0 ? "rgba(74,222,128,0.2)" : "var(--border)"}` }}>
-                      <div style={{ fontSize: 22, fontWeight: 900, color: estimate.savings > 0 ? "var(--green)" : "var(--red)", fontFamily: "'Space Mono',monospace" }}>
-                        {estimate.savings > 0 ? `You may be overpaying ${fmtC(estimate.savings)}/yr` : `Your rate seems competitive`}
-                      </div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>
-                        {estimate.savings > 200 ? "Worth shopping around, get 3 quotes before your next renewal." : "Your current rate is near the estimated average for your profile."}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Key factors driving cost */}
-                <div className="card">
-                  <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text)", marginBottom: 10 }}>What's driving your estimate</div>
-                  {[
-                    { label: "Province/State base rate", val: fmtC((locationData?.avgPremium || 1600) / 12) + "/mo", color: "var(--text)" },
-                    { label: "Age adjustment", val: driverAge < 25 ? "+80% (under 25)" : driverAge < 30 ? "+25%" : "No adjustment", color: driverAge < 25 ? "var(--red)" : driverAge < 30 ? "var(--gold)" : "var(--green)" },
-                    { label: "Driving record", val: driverRecord === "clean" ? "No adjustment" : driverRecord === "one_accident" ? "+30%" : driverRecord === "two_plus" ? "+60%" : "+120% (DUI)", color: driverRecord === "clean" ? "var(--green)" : "var(--red)" },
-                    { label: "Coverage level", val: coverageLevel === "liability_only" ? "-55% (liability only)" : "Full coverage", color: coverageLevel === "liability_only" ? "var(--gold)" : "var(--text)" },
-                    { label: "Deductible choice", val: deductible >= 2000 ? "-25%" : deductible >= 1000 ? "-15%" : "Standard $500", color: deductible >= 1000 ? "var(--green)" : "var(--text)" },
-                    { label: "Active discounts", val: estimate.discountPct > 0 ? `-${estimate.discountPct}%` : "None active", color: estimate.discountPct > 0 ? "var(--green)" : "var(--text3)" },
-                  ].map(r => (
-                    <div key={r.label} className="br-row">
-                      <span style={{ color: "var(--text2)", fontSize: 12 }}>{r.label}</span>
-                      <span style={{ color: r.color, fontWeight: 700, fontSize: 12 }}>{r.val}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CTA */}
-                <div style={{ padding: "12px 14px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 10, fontSize: 13, color: "var(--text2)" }}>
-                  <strong style={{ color: "var(--text)" }}>This is an estimate only</strong>, actual rates depend on your specific vehicle, address, credit history (US), and insurer. Always get 3+ real quotes.
-                  <div style={{ marginTop: 8 }}>
-                    <a href={country === "CA" ? "https://www.ratehub.ca/car-insurance" : "https://www.insurify.com"} target="_blank" rel="noopener noreferrer sponsored" style={{ color: "var(--red)", fontWeight: 700, textDecoration: "none" }}>
-                      Get real quotes now →
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── VEHICLES TAB ── */}
-        {tab === "vehicles" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Insurance Cost by Vehicle</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 8 }}>
-              <cite index="98-1">Your vehicle choice can add $100-200/month to your insurance costs. A Subaru Outback costs $96/month to insure vs $241 for a Tesla Model Y, both mid-size SUVs, but a $1,740/year gap.</cite>
-            </p>
-            <p style={{ fontSize: 13, color: "var(--text3)", marginBottom: 16 }}>Estimates based on full coverage for a 35-year-old driver with a clean record in an average urban area. Actual rates vary.</p>
-
-            <div style={{ marginBottom: 14 }}>
-              <input className="num-input" placeholder="Search vehicles..." value={vehicleSearch} onChange={e => setVehicleSearch(e.target.value)} style={{ fontFamily: "'Outfit',system-ui", maxWidth: 300 }} />
-            </div>
-
-            <div className="grid2">
-              <div>
-                {filteredVehicles.map(([name, data]) => (
-                  <div key={name} className={`vehicle-row ${selectedVehicle === name ? "selected" : ""}`} onClick={() => setSelectedVehicle(selectedVehicle === name ? null : name)}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{name}</div>
-                        <div style={{ display: "flex", gap: 6, marginTop: 3 }}>
-                          <span className={`badge ${data.theft === "Very High" || data.theft === "High" ? "b-red" : data.theft === "Medium" ? "b-gold" : "b-green"}`}>
-                            Theft: {data.theft}
-                          </span>
-                          <span className={`badge ${data.rating === "Excellent" ? "b-green" : data.rating === "Good" ? "b-blue" : "b-gold"}`}>
-                            Safety: {data.rating}
-                          </span>
-                        </div>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 18, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace" }}>
-                          {fmtC(country === "CA" ? data.ca : data.us)}/mo
-                        </div>
-                        <div style={{ fontSize: 11, color: "var(--text3)" }}>~{fmtC((country === "CA" ? data.ca : data.us) * 12)}/yr</div>
-                      </div>
-                    </div>
-                    {selectedVehicle === name && (
-                      <div className="fade-in" style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border2)", fontSize: 12, color: "var(--text2)", lineHeight: 1.7 }}>
-                        {data.notes}
-                        <div style={{ marginTop: 6, display: "flex", gap: 12 }}>
-                          <div><span style={{ color: "var(--text3)" }}>🇨🇦 Canada: </span><strong className="mono">{fmtC(data.ca)}/mo</strong></div>
-                          <div><span style={{ color: "var(--text3)" }}>🇺🇸 US: </span><strong className="mono">{fmtC(data.us)}/mo</strong></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {/* Cheapest vs most expensive */}
-                <div className="card" style={{ border: "1px solid rgba(74,222,128,0.3)", background: "rgba(74,222,128,0.04)" }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: "var(--green)", marginBottom: 10 }}>✅ Cheapest to insure</div>
-                  {Object.entries(VEHICLE_COSTS).sort((a, b) => (country === "CA" ? a[1].ca - b[1].ca : a[1].us - b[1].us)).slice(0, 5).map(([name, data], i) => (
-                    <div key={name} className="br-row">
-                      <span style={{ color: "var(--text2)", fontSize: 13 }}>{i + 1}. {name}</span>
-                      <span style={{ color: "var(--green)", fontWeight: 800, fontFamily: "'Space Mono',monospace" }}>{fmtC(country === "CA" ? data.ca : data.us)}/mo</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.04)" }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: "var(--red)", marginBottom: 10 }}>⚠️ Most expensive to insure</div>
-                  {Object.entries(VEHICLE_COSTS).sort((a, b) => (country === "CA" ? b[1].ca - a[1].ca : b[1].us - a[1].us)).slice(0, 5).map(([name, data], i) => (
-                    <div key={name} className="br-row">
-                      <span style={{ color: "var(--text2)", fontSize: 13 }}>{i + 1}. {name}</span>
-                      <span style={{ color: "var(--red)", fontWeight: 800, fontFamily: "'Space Mono',monospace" }}>{fmtC(country === "CA" ? data.ca : data.us)}/mo</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="card">
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>🇨🇦 Canada stolen vehicle alert</div>
-                  <p style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.65 }}>
-                    Honda Civic, Toyota RAV4, and Ford F-150 have consistently topped Canada's most-stolen vehicle lists. If you own one, expect comprehensive premiums to reflect this, and ensure your insurer knows about any anti-theft devices or tracker subscriptions.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── COVERAGE EXPLAINER TAB ── */}
-        {tab === "coverage" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Coverage Explainer</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>Every type of car insurance explained in plain English, what it covers, when you need it, and what happens if you skip it.</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {COVERAGE_TYPES.map((cov, i) => (
-                <div key={cov.name} className="card" style={{ cursor: "pointer", border: openCoverage === i ? "1px solid var(--border)" : "1px solid var(--border2)" }} onClick={() => setOpenCoverage(openCoverage === i ? null : i)}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{ display: "flex", gap: 5 }}>
-                        {cov.required && <span className="badge b-red">Required</span>}
-                        {cov.ca && <span className="badge b-blue">🇨🇦 CA</span>}
-                        {cov.us && <span className="badge b-blue">🇺🇸 US</span>}
-                      </div>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{cov.name}</span>
-                    </div>
-                    <span style={{ color: "var(--red)", fontSize: 18, transform: openCoverage === i ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 6 }}>{cov.what}</div>
-                  {openCoverage === i && (
-                    <div className="fade-in" style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-                      {cov.caMin && (
-                        <div style={{ padding: "8px 12px", background: "rgba(59,130,246,0.06)", borderRadius: 8, fontSize: 12, color: "var(--text2)" }}>
-                          <strong style={{ color: "#60a5fa" }}>🇨🇦 Canada:</strong> {cov.caMin}
-                        </div>
-                      )}
-                      {cov.usMin && (
-                        <div style={{ padding: "8px 12px", background: "rgba(239,68,68,0.05)", borderRadius: 8, fontSize: 12, color: "var(--text2)" }}>
-                          <strong style={{ color: "var(--red)" }}>🇺🇸 US:</strong> {cov.usMin}
-                        </div>
-                      )}
-                      <div style={{ padding: "8px 12px", background: "rgba(239,68,68,0.06)", borderRadius: 8, fontSize: 12, color: "var(--text2)", borderLeft: "3px solid var(--red)" }}>
-                        <strong style={{ color: "var(--red)" }}>Risk of skipping:</strong> {cov.riskOfSkipping}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── DISCOUNTS TAB ── */}
-        {tab === "discounts" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Discounts Finder</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>Most drivers qualify for discounts they don't know about. Here's every discount available and how much each one saves.</p>
-            <div className="grid2">
-              {DISCOUNTS.map((d, i) => (
-                <div key={i} className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{d.name}</div>
-                    <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.6 }}>{d.desc}</div>
-                  </div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "var(--green)", fontFamily: "'Space Mono',monospace", flexShrink: 0, textAlign: "right" }}>
-                    {d.savings}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="card" style={{ marginTop: 14, border: "1px solid rgba(74,222,128,0.25)", background: "rgba(74,222,128,0.04)" }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--green)", marginBottom: 8 }}>💡 Maximum discount stacking example</div>
-              <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.7 }}>
-                A driver who bundles home and auto (15%), installs winter tires (8%), and signs up for telematics (15%) could reduce their premium by up to 38%. On a $1,920 Ontario average premium, that's <strong style={{ color: "var(--green)" }}>$730/year saved</strong>, without switching insurers.
-              </p>
-              <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 8 }}>Note: Discounts don't always stack additively, insurers may cap total discounts. Ask your broker for the exact calculation.</p>
-            </div>
-          </div>
-        )}
-
-        {/* ── RATING FACTORS TAB ── */}
-        {tab === "factors" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Rating Factors</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>Understanding how insurers calculate your rate gives you power to reduce it. Here's every factor explained.</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {RATING_FACTORS.map((f, i) => (
-                <div key={i} className="card" style={{ cursor: "pointer" }} onClick={() => setOpenFactor(openFactor === i ? null : i)}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span className={`badge ${f.impact === "Very High" ? "b-red" : f.impact === "High" ? "b-gold" : "b-blue"}`}>{f.impact} impact</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{f.factor}</span>
-                    </div>
-                    <span style={{ color: "var(--red)", fontSize: 18, transform: openFactor === i ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
-                  </div>
-                  {openFactor === i && (
-                    <div className="fade-in" style={{ marginTop: 10, fontSize: 13, color: "var(--text2)", lineHeight: 1.7, paddingTop: 10, borderTop: "1px solid var(--border2)" }}>
-                      {f.detail}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── SWITCHING GUIDE TAB ── */}
-        {tab === "switching" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Switching Guide</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>
-              <cite index="87-1">Comparing quotes from at least 3 companies saves drivers $709 on average, and some find differences of more than $8,500 a year.</cite> Here's how to switch safely.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-              {SWITCHING_TIPS.map((t, i) => (
-                <div key={i} className="card" style={{ display: "flex", gap: 14 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--red)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{t.tip}</div>
-                    <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.65 }}>{t.detail}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ padding: "16px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 3 }}>Ready to compare real quotes?</div>
-                <div style={{ fontSize: 12, color: "var(--text2)" }}>Get 3+ quotes in under 5 minutes. No obligation, no spam.</div>
-              </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                {country === "CA" ? (
-                  <>
-                    <a href="https://www.ratehub.ca/car-insurance" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 18px", borderRadius: 9, background: "var(--red)", color: "#fff", fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Ratehub.ca →</a>
-                    <a href="https://www.kanetix.ca" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 14px", borderRadius: 9, background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>Kanetix →</a>
-                  </>
-                ) : (
-                  <>
-                    <a href="https://www.insurify.com" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 18px", borderRadius: 9, background: "var(--red)", color: "#fff", fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Insurify →</a>
-                    <a href="https://www.thezebra.com" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 14px", borderRadius: 9, background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>The Zebra →</a>
-                    <a href="https://www.jerrysapp.com" target="_blank" rel="noopener noreferrer sponsored" style={{ padding: "9px 14px", borderRadius: 9, background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text)", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>Jerry →</a>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── GLOSSARY TAB ── */}
-        {tab === "glossary" && (
-          <div className="fade-in">
-            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 4, color: "var(--text)" }}>Car Insurance Glossary</div>
-            <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>Every insurance term explained in plain English. No jargon.</p>
-            <div className="card">
               {[
-                { term: "Premium", def: "The amount you pay for insurance, usually monthly or annually. Your premium is calculated based on your risk profile." },
-                { term: "Deductible", def: "The amount you pay out of pocket before insurance kicks in. A $1,000 deductible means if your repair costs $4,000, you pay $1,000 and your insurer pays $3,000." },
-                { term: "Liability coverage", def: "Pays for damage you cause to others, their vehicle, property, and medical bills. Required everywhere. The minimum is rarely enough; experts recommend $1M+ in Canada." },
-                { term: "No-fault insurance", def: "A system where you claim from your own insurer regardless of who caused the accident. Speeds up claims but limits your right to sue. Used in BC, MB, SK, QC, and some US states." },
-                { term: "Tort system", def: "A system where you can sue the at-fault driver for damages. Used in Ontario, Alberta, Atlantic provinces, and most US states. Allows full compensation for injuries." },
-                { term: "Collision coverage", def: "Pays to repair your car after you collide with another vehicle or object, regardless of who was at fault. Required if you finance or lease your vehicle." },
-                { term: "Comprehensive coverage", def: "Covers damage not caused by a collision, theft, vandalism, fire, flood, hail, hitting an animal. Essential in Canada given high theft rates and extreme weather." },
-                { term: "Accident benefits (CA)", def: "Mandatory coverage that pays your medical expenses, income replacement, and rehabilitation costs after an accident, regardless of fault." },
-                { term: "PIP (Personal Injury Protection)", def: "The US equivalent of accident benefits. Required in no-fault states. Covers your medical expenses and lost wages after an accident." },
-                { term: "Uninsured/underinsured motorist", def: "Protects you if you're hit by a driver with no insurance or not enough insurance. About 12% of US drivers are uninsured." },
-                { term: "Accident forgiveness", def: "An add-on that prevents your premium from increasing after your first at-fault accident. Very worthwhile for drivers with clean records." },
-                { term: "Replacement cost coverage", def: "Pays to replace your vehicle with a brand-new equivalent, rather than the depreciated value. Usually only available for vehicles under 2 years old." },
-                { term: "ICBC", def: "Insurance Corporation of British Columbia. The government-run insurer providing mandatory basic auto insurance in BC. Optional coverages can be added through ICBC or private insurers." },
-                { term: "MPI / Autopac", def: "Manitoba Public Insurance. The government-run insurer providing mandatory auto insurance in Manitoba." },
-                { term: "SGI", def: "Saskatchewan Government Insurance. The government-run insurer providing mandatory auto insurance in Saskatchewan." },
-                { term: "FSRA", def: "Financial Services Regulatory Authority of Ontario. Regulates auto insurance rates and insurer conduct in Ontario." },
-                { term: "Telematics / Usage-based insurance", def: "A program where an app or device tracks your driving habits (speed, braking, time of day) and offers discounts for safe driving. Can save 10-30%." },
-                { term: "No-claims discount", def: "A reduction in your premium for maintaining a claims-free record. Also called 'claims-free discount' in Canada." },
-                { term: "SEF Endorsements (Canada)", def: "Standard Endorsement Forms, add-ons to your policy. SEF 43 (loss of use), SEF 27 (legal liability for physical damage), and others customize your coverage." },
-                { term: "SR-22 / FR-44 (US)", def: "A certificate of financial responsibility required by some states for high-risk drivers (DUI, multiple violations). Significantly increases premiums." },
-                { term: "30/60/25 (US liability)", def: "A liability coverage notation meaning $30,000 per person/$60,000 per accident for bodily injury, and $25,000 for property damage." },
-              ].map((item, i) => (
-                <div key={item.term} className="faq-item">
-                  <div className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                    <span>{item.term}</span>
-                    <span style={{ color: "var(--red)", fontSize: 18, flexShrink: 0, transform: openFaq === i ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
+                ...(profile.country === "CA" ? [["winterTires", "❄️ Winter tires installed", "Most Canadian insurers discount 5-10%. Legally required in BC on many routes Oct 1-Mar 31."]] : []),
+                ["bundleHome", "🏠 You own or rent a home (bundle discount)", "Bundling auto and home/renters insurance typically saves 15-20%."],
+                ["telematics", "📱 Willing to try telematics (app-based safe driving)", "An app tracks your speed, braking, and time of day. Saves 10-30%, the biggest single discount available to most drivers."],
+                ["multiVehicle", "🚗 You have 2+ vehicles in your household", "Multi-vehicle discount: 10-15% off each vehicle when insured together."],
+                ...(profile.age < 25 ? [["studentDiscount", "🎓 Full-time student with B+ average", "Good student discount: 5-15% with most insurers."]] : []),
+                ["rideshare", "🚕 You drive for Uber, Lyft, DoorDash, or similar", "Important for getting the right coverage recommendation."],
+                ...(profile.country === "US" ? [["military", "🎖️ Current or former military / veteran", "USAA offers the best rates for military families. Other insurers also offer military discounts."]] : []),
+              ].map(([key, label, desc]) => (
+                <div key={key} onClick={() => update(key, !profile[key])} style={{ display: "flex", gap: 12, padding: "14px 16px", background: profile[key] ? "var(--red-dim)" : "var(--bg2)", border: `1.5px solid ${profile[key] ? "var(--red)" : "var(--border2)"}`, borderRadius: 12, cursor: "pointer", alignItems: "flex-start", transition: "all 0.15s" }}>
+                  <div style={{ width: 22, height: 22, borderRadius: 6, background: profile[key] ? "var(--red)" : "var(--bg3)", border: `1.5px solid ${profile[key] ? "var(--red)" : "var(--border2)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", flexShrink: 0, marginTop: 1 }}>
+                    {profile[key] ? "✓" : ""}
                   </div>
-                  {openFaq === i && <div className="faq-a fade-in">{item.def}</div>}
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>{label}</div>
+                    <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 3, lineHeight: 1.55 }}>{desc}</div>
+                  </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
 
-        {/* ── FAQ ── */}
-        <div style={{ marginTop: 48 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: 18, color: "var(--text)" }}>
-            Frequently Asked <span style={{ color: "var(--red)" }}>Questions</span>
-          </h2>
-          <div className="card">
-            {FAQ.map((item, i) => (
-              <div key={i} className="faq-item">
-                <div className="faq-q" onClick={() => setOpenFaq(100 + i === openFaq ? null : 100 + i)}>
-                  <span>{item.q}</span>
-                  <span style={{ color: "var(--red)", fontSize: 18, flexShrink: 0, transform: openFaq === 100 + i ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
+              {premium.discountPct > 0 && (
+                <div style={{ padding: "12px 16px", background: "var(--green-dim)", border: "1px solid rgba(74,222,128,0.25)", borderRadius: 12, fontSize: 13, color: "var(--green)", fontWeight: 600 }}>
+                  ✅ {premium.discountPct}% in discounts active, saving you approx. {fmtC(Math.round(premium.annual * premium.discountPct / (100 - premium.discountPct)))}/year
                 </div>
-                {openFaq === 100 + i && <div className="faq-a fade-in">{item.a}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
+              )}
+            </div>
+          )}
 
-        {/* About + SEO */}
-        <div style={{ marginTop: 32, padding: 22, background: "var(--bg2)", border: "1px solid var(--border2)", borderRadius: "var(--radius)" }}>
-          <div style={{ fontSize: 17, fontWeight: 900, marginBottom: 10, color: "var(--text)" }}>About <span style={{ color: "var(--red)" }}>CarInsureGuide</span></div>
-          <p style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.8, marginBottom: 10 }}>
-            CarInsureGuide is the most complete free car insurance resource for Canada and the United States. We explain the difference between Ontario's private insurance market, BC's public ICBC system, Quebec's hybrid model, and every US state's requirements, in plain English, without trying to sell you anything.
-          </p>
-          <p style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.8 }}>
-            Our tools include a rate estimator, insurance cost by vehicle lookup, coverage explainer, discounts finder, rating factors guide, and switching guide. No signup required. No personal data collected.
-          </p>
-          <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 5 }}>
-            {[
-              { label: "Ontario Car Insurance", url: "?country=CA&province=ON" },
-              { label: "BC Car Insurance (ICBC)", url: "?country=CA&province=BC" },
-              { label: "Alberta Car Insurance", url: "?country=CA&province=AB" },
-              { label: "Quebec Car Insurance", url: "?country=CA&province=QC" },
-              { label: "Manitoba Car Insurance", url: "?country=CA&province=MB" },
-              { label: "California Car Insurance", url: "?country=US&state=CA" },
-              { label: "Texas Car Insurance", url: "?country=US&state=TX" },
-              { label: "Florida Car Insurance", url: "?country=US&state=FL" },
-              { label: "ICBC BC Insurance Guide", url: "?country=CA&province=BC" },
-              { label: "Canada Car Insurance Guide", url: "?country=CA" },
-            ].map(tag => (
-              <a key={tag.label} href={tag.url} style={{ fontSize: 10, padding: "3px 9px", borderRadius: 20, background: "var(--bg3)", color: "var(--text3)", border: "1px solid var(--border2)", textDecoration: "none" }}>{tag.label}</a>
-            ))}
-          </div>
+          {/* ── STEP 6: RESULTS ── */}
+          {step === 6 && (
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: "var(--text)", letterSpacing: "-0.5px", marginBottom: 4 }}>📊 Your Personalized Report</div>
+              <p style={{ fontSize: 14, color: "var(--text2)", marginBottom: 20 }}>
+                Based on everything you've told us. Not a guarantee, actual quotes may vary. Use this to guide your conversations with insurers.
+              </p>
+
+              {/* Premium estimate */}
+              <div style={{ padding: "24px", background: lm ? "linear-gradient(135deg,#fef2f2,#fff)" : "linear-gradient(135deg,#1a0a0a,#0e1420)", border: "1px solid var(--border)", borderRadius: 16, marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>Estimated annual premium</div>
+                <div style={{ fontSize: 52, fontWeight: 900, color: "var(--red)", fontFamily: "'Space Mono',monospace", letterSpacing: "-1px", lineHeight: 1 }}>{fmtC(premium.annual)}</div>
+                <div style={{ fontSize: 14, color: "var(--text2)", marginTop: 6 }}>
+                  {fmtC(premium.monthly)}/month · {fmtC(premium.biweekly)}/bi-weekly
+                </div>
+                {premium.discountPct > 0 && (
+                  <div style={{ marginTop: 10, fontSize: 13, color: "var(--green)" }}>
+                    ✅ {premium.discountPct}% in active discounts applied
+                  </div>
+                )}
+                <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
+                  {[
+                    ["Location", profile.country === "CA" ? (profile.city ? `${profile.city}, ${profile.province}` : CA_PROVINCES_LIST.find(p => p[0] === profile.province)?.[1]) : (profile.city ? `${profile.city}, ${profile.usState}` : US_STATES_LIST.find(s => s[0] === profile.usState)?.[1])],
+                    ["Vehicle", `${profile.vehicleYear || ""} ${profile.vehicleMake || ""} ${profile.vehicleModel || ""}`.trim() || "Not specified"],
+                    ["Coverage", profile.coverageLevel === "full" ? "Full coverage" : profile.coverageLevel === "standard" ? "Standard" : "Liability only"],
+                    ["Deductible", fmtC(profile.deductible)],
+                  ].map(([label, val]) => (
+                    <div key={label} style={{ background: "var(--bg3)", borderRadius: 8, padding: "8px 12px" }}>
+                      <div style={{ fontSize: 10, color: "var(--text3)", marginBottom: 2 }}>{label}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{val}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Warnings */}
+              {warnings.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  {warnings.map((w, i) => (
+                    <div key={i} style={{ padding: "12px 14px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, marginBottom: 8, fontSize: 13, color: "var(--text2)", lineHeight: 1.65, borderLeft: "3px solid var(--red)" }}>
+                      🔴 <strong style={{ color: "var(--red)" }}>Warning:</strong> {w}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Coverage suggestions */}
+              {coverageSuggestions.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>Coverage recommendations for your situation</div>
+                  {coverageSuggestions.map((s, i) => (
+                    <div key={i} style={{ padding: "10px 14px", background: "var(--bg2)", border: "1px solid var(--border2)", borderRadius: 10, marginBottom: 6, fontSize: 13, color: "var(--text2)", lineHeight: 1.65 }}>
+                      {s.icon} {s.text}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Savings recommendations */}
+              {recs.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>💰 How to reduce your premium</div>
+                  {recs.map((r, i) => (
+                    <div key={i} style={{ padding: "10px 14px", background: "var(--green-dim)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: 10, marginBottom: 6, fontSize: 13, color: "var(--text2)", lineHeight: 1.65 }}>
+                      {r.icon} {r.text}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* AI-powered personalized report */}
+              <div style={{ marginBottom: 16, padding: "18px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14 }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  ✨ AI-Powered Personal Insurance Analysis
+                  <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: "rgba(220,38,38,0.1)", color: "var(--red)", fontWeight: 700 }}>Powered by Claude</span>
+                </div>
+                {!aiReport && !aiLoading && (
+                  <>
+                    <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 12, lineHeight: 1.65 }}>
+                      Get a plain-English analysis of your specific risk profile, personalized coverage advice, and the exact steps to take next, written specifically for your situation.
+                    </p>
+                    <button onClick={generateAIReport} style={{ padding: "11px 22px", background: "var(--red)", color: "#fff", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", border: "none" }}>
+                      Generate my personalized report
+                    </button>
+                  </>
+                )}
+                {aiLoading && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 0", color: "var(--text2)", fontSize: 13 }}>
+                    <div className="spinner" />
+                    Analyzing your profile and generating personalized recommendations...
+                  </div>
+                )}
+                {aiReport && (
+                  <div>
+                    <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.85, whiteSpace: "pre-wrap" }}>{aiReport}</div>
+                    <button onClick={() => { navigator.clipboard.writeText(aiReport); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                      style={{ marginTop: 12, padding: "7px 16px", borderRadius: 8, border: "1px solid var(--border2)", background: "transparent", color: "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                      {copied ? "✓ Copied!" : "📋 Copy report"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Insurer recommendations */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>🏢 Best insurers for your profile</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {insurers.slice(0, 6).map(ins => (
+                    <a key={ins.name} href={ins.quote} target="_blank" rel="noopener noreferrer sponsored"
+                      style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, padding: "14px 16px", background: "var(--bg2)", border: "1px solid var(--border2)", borderRadius: 12, textDecoration: "none", transition: "border-color 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = "var(--red)"}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border2)"}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{ins.name}</span>
+                          <span style={{ fontSize: 10, padding: "1px 7px", borderRadius: 20, background: ins.type === "comparison" ? "rgba(59,130,246,0.1)" : "var(--red-dim)", color: ins.type === "comparison" ? "#60a5fa" : "var(--red)", fontWeight: 700 }}>
+                            {ins.type === "comparison" ? "Compare" : ins.type === "online" ? "Online" : ins.type === "specialty" ? "Specialty" : "Major"}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.5 }}>{ins.bestFor.slice(0, 2).join(" · ")}</div>
+                      </div>
+                      <div style={{ color: "var(--red)", fontSize: 14, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>Get quote →</div>
+                    </a>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 8 }}>Affiliate links, we may earn a commission at no cost to you. Always compare at least 3 quotes.</div>
+              </div>
+
+              {/* Start over */}
+              <button onClick={() => { setStep(0); setProfile({ country: "CA", province: "ON", usState: "CA", city: "", cityRate: null, age: "", gender: "prefer_not", maritalStatus: "single", yearsLicensed: "", occupation: "other", newToCountry: false, vehicleYear: new Date().getFullYear(), vehicleMake: "", vehicleModel: "", vehicleValue: 30000, vehicleUse: "personal", financed: false, leased: false, parkingType: "driveway", annualKm: 15000, atFaultAccidents: 0, notAtFaultAccidents: 0, tickets: 0, dui: false, lapseMonths: 0, yearsWithCurrentInsurer: 0, coverageLevel: "full", liabilityLimit: "1M", deductible: 1000, accidentForgiveness: false, replacementCost: false, roadsideAssistance: false, winterTires: false, bundleHome: false, telematics: false, multiVehicle: false, studentDiscount: false, rideshare: false, military: false }); setAiReport(""); }}
+                style={{ padding: "10px 22px", borderRadius: 10, border: "1px solid var(--border2)", background: "transparent", color: "var(--text2)", fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 8 }}>
+                ↩ Start over with a new profile
+              </button>
+            </div>
+          )}
+
+          {/* Navigation */}
+          {step < STEPS.length - 1 && (
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, gap: 10 }}>
+              {step > 0 ? (
+                <button onClick={goPrev} style={{ padding: "12px 24px", borderRadius: 10, border: "1px solid var(--border2)", background: "transparent", color: "var(--text2)", fontSize: 15, fontWeight: 600 }}>← Back</button>
+              ) : <div />}
+              <button onClick={goNext} style={{ padding: "13px 32px", borderRadius: 10, background: "var(--red)", color: "#fff", fontSize: 15, fontWeight: 800, flex: step === 0 ? 1 : "none", maxWidth: 300 }}>
+                {step === STEPS.length - 2 ? "See my results →" : "Next →"}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--border2)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8, fontSize: 11, color: "var(--text3)" }}>
-          <span>CarInsureGuide.com · Canada & US Car Insurance Guide · Free</span>
-          <span>Not insurance advice · Affiliate links may earn us a commission</span>
-        </div>
-        <div style={{ paddingTop: 6, fontSize: 10, color: "var(--text3)", lineHeight: 1.6 }}>
-          Rate estimates are approximate and for informational purposes only. Actual premiums depend on individual factors including vehicle, address, driving record, and insurer. Always get quotes from licensed insurance professionals. Some links on this page are affiliate links.
+        <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid var(--border2)", fontSize: 11, color: "var(--text3)", lineHeight: 1.7, textAlign: "center" }}>
+          Premium estimates are approximate and for informational purposes only. Actual rates depend on your specific address, complete vehicle details, and individual insurer criteria. Always get quotes from licensed insurance professionals. Some links are affiliate links.
         </div>
       </div>
     </div>
