@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // ── Premium calculation engine ─────────────────────────────────────────────────
 function calcPremium(profile) {
@@ -283,7 +283,7 @@ const US_STATES_LIST = [
 function fmtC(n) { return "$" + Math.round(n).toLocaleString(); }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
-export default function InsuranceWizard() {
+function InsuranceWizard() {
   const [step, setStep] = useState(0);
   const [lightMode, setLightMode] = useState(() => localStorage.getItem("cig_theme") === "light");
   const [animDir, setAnimDir] = useState("forward");
@@ -1099,3 +1099,31 @@ ${profileSummary}`
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ fontFamily: "monospace", padding: 32, background: "#1a0a0a", color: "#f87171", minHeight: "100vh" }}>
+          <h2 style={{ marginBottom: 16 }}>Debug Error:</h2>
+          <pre style={{ whiteSpace: "pre-wrap", fontSize: 13, lineHeight: 1.6 }}>
+            {this.state.error.toString()}
+            {"\n\n"}
+            {this.state.error.stack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const _InsuranceWizard = InsuranceWizard;
+export default function InsuranceWizardWrapped() {
+  return (
+    <ErrorBoundary>
+      <_InsuranceWizard />
+    </ErrorBoundary>
+  );
+}
