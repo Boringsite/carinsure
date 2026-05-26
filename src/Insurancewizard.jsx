@@ -459,22 +459,46 @@ export default function InsuranceWizard(){
           {step===5&&(
             <div style={{display:"flex",flexDirection:"column",gap:4}}>
               <div style={{fontSize:14,color:lm?"#4b5563":"#8899aa",marginBottom:12}}>Check all that apply. These unlock significant discounts many drivers miss.</div>
-              {([
-                ...(p.country==="CA"?[["winterTires",p.winterTires,"[snow] Winter tires installed","5-10% discount. Required in BC Oct 1-Mar 31 on many routes."]]:[] ),
-                ["bundleHome",p.bundleHome,"[home] You own or rent a home","Bundling home and auto saves 15-20%."],
-                ["telematics",p.telematics,"[phone] Willing to use a safe driving app","Saves 10-25%. Biggest single discount for most drivers."],
-                ["multiVehicle",p.multiVehicle,"[car] 2+ vehicles in household","Multi-vehicle discount: 10-15% off each vehicle."],
-                ...(+p.age<25?[["studentDiscount",p.studentDiscount,"[grad] Full-time student with B+ average","Good student discount: 5-15%."]]:[] ),
-                ...(p.country==="US"?[["military",p.military,"[medal] Current or former military","USAA offers best rates for military families."]]:[] ),
-              ]).map(([key,val,label,desc])=>(
-                <div key={key} className={"chk "+(val?"chk-on":"chk-off")} onClick={()=>upd(key,!val)}>
-                  <div className={"chkbox "+(val?"chkbox-on":"chkbox-off")}>{val?"v":""}</div>
+              {[
+                {key:"bundleHome",val:p.bundleHome,label:"You own or rent a home",desc:"Bundling home and auto saves 15-20%."},
+                {key:"telematics",val:p.telematics,label:"Willing to use a safe driving app",desc:"Saves 10-25%. Biggest single discount for most drivers."},
+                {key:"multiVehicle",val:p.multiVehicle,label:"2+ vehicles in household",desc:"Multi-vehicle discount: 10-15% off each vehicle."},
+              ].map(item=>(
+                <div key={item.key} className={"chk "+(item.val?"chk-on":"chk-off")} onClick={()=>upd(item.key,!item.val)}>
+                  <div className={"chkbox "+(item.val?"chkbox-on":"chkbox-off")}>{item.val?"v":""}</div>
                   <div>
-                    <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>{label}</div>
-                    <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>{desc}</div>
+                    <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>{item.label}</div>
+                    <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>{item.desc}</div>
                   </div>
                 </div>
               ))}
+              {p.country==="CA"&&(
+                <div className={"chk "+(p.winterTires?"chk-on":"chk-off")} onClick={()=>upd("winterTires",!p.winterTires)}>
+                  <div className={"chkbox "+(p.winterTires?"chkbox-on":"chkbox-off")}>{p.winterTires?"v":""}</div>
+                  <div>
+                    <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>Winter tires installed</div>
+                    <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>5-10% discount. Required in BC Oct 1-Mar 31 on many routes.</div>
+                  </div>
+                </div>
+              )}
+              {+p.age<25&&(
+                <div className={"chk "+(p.studentDiscount?"chk-on":"chk-off")} onClick={()=>upd("studentDiscount",!p.studentDiscount)}>
+                  <div className={"chkbox "+(p.studentDiscount?"chkbox-on":"chkbox-off")}>{p.studentDiscount?"v":""}</div>
+                  <div>
+                    <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>Full-time student with B+ average</div>
+                    <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>Good student discount: 5-15%.</div>
+                  </div>
+                </div>
+              )}
+              {p.country==="US"&&(
+                <div className={"chk "+(p.military?"chk-on":"chk-off")} onClick={()=>upd("military",!p.military)}>
+                  <div className={"chkbox "+(p.military?"chkbox-on":"chkbox-off")}>{p.military?"v":""}</div>
+                  <div>
+                    <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>Current or former military</div>
+                    <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>USAA offers best rates for military families.</div>
+                  </div>
+                </div>
+              )}
               {premium.discountPct>0&&<div className="warn warn-green" style={{marginTop:8}}>{premium.discountPct}% in discounts active</div>}
             </div>
           )}
