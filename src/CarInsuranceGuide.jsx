@@ -408,7 +408,7 @@ export default function CarInsuranceGuide() {
 
         {/* Province/State highlight banner */}
         {locationData && (
-          <div className="fade-in" style={{ marginBottom: 18, padding: "14px 18px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: var(--radius), display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+          <div className="fade-in" style={{ marginBottom: 18, padding: "14px 18px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: 16, fontWeight: 800, color: "var(--text)", marginBottom: 4 }}>
                 {locationData.name}, {locationData.system === "public" ? "🏛️ Public Insurance" : locationData.system === "hybrid" ? "🔀 Hybrid System" : "🏢 Private Insurance"}
@@ -531,7 +531,7 @@ export default function CarInsuranceGuide() {
             )}
 
             {/* Affiliate placement */}
-            <div style={{ marginTop: 16, padding: "14px 18px", background: "linear-gradient(135deg,var(--red-dim),transparent)", border: "1px solid var(--border)", borderRadius: var(--radius), display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+            <div style={{ marginTop: 16, padding: "14px 18px", background: "linear-gradient(135deg,var(--red-dim),transparent)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 3 }}>
                   Ready to find a better rate in {locationData?.name}?
@@ -902,7 +902,7 @@ export default function CarInsuranceGuide() {
               ))}
             </div>
 
-            <div style={{ padding: "16px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: var(--radius), display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <div style={{ padding: "16px 18px", background: "var(--red-dim)", border: "1px solid var(--border)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", marginBottom: 3 }}>Ready to compare real quotes?</div>
                 <div style={{ fontSize: 12, color: "var(--text2)" }}>Get 3+ quotes in under 5 minutes. No obligation, no spam.</div>
