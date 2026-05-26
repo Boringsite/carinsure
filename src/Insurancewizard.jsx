@@ -38,13 +38,13 @@ const US_INSURERS = [
   {name:"Jerry",type:"comparison",bestFor:["Rate monitoring","Mobile-first"],quote:"https://jerry.ai/car-insurance"},
 ];
 const STEPS = [
-  {id:"location",title:"Where do you live?",icon:"📍",why:"Your location is the single biggest factor. Brampton Ontario averages $2,900/year while Ottawa averages $1,213 -- same car, same driver."},
-  {id:"driver",title:"About you",icon:"👤",why:"Your age and experience can change your premium by 2-3x. We ask only what insurers actually use."},
-  {id:"vehicle",title:"Your vehicle",icon:"🚗",why:"Make, model, year and value affects both your premium and which coverages you need."},
-  {id:"history",title:"Driving history",icon:"📋",why:"One at-fault accident adds 20-40% to your premium for up to 6 years."},
-  {id:"coverage",title:"Coverage needs",icon:"🛡️",why:"Most people are either underinsured or overpaying. We help you find the right balance."},
-  {id:"lifestyle",title:"Discounts",icon:"💰",why:"These questions unlock discounts many drivers miss -- some save 10-25% each."},
-  {id:"results",title:"Your results",icon:"📊",why:""},
+  {id:"location",title:"Where do you live?",icon:"[pin]",why:"Your location is the single biggest factor. Brampton Ontario averages $2,900/year while Ottawa averages $1,213 -- same car, same driver."},
+  {id:"driver",title:"About you",icon:"[person]",why:"Your age and experience can change your premium by 2-3x. We ask only what insurers actually use."},
+  {id:"vehicle",title:"Your vehicle",icon:"[car]",why:"Make, model, year and value affects both your premium and which coverages you need."},
+  {id:"history",title:"Driving history",icon:"[list]",why:"One at-fault accident adds 20-40% to your premium for up to 6 years."},
+  {id:"coverage",title:"Coverage needs",icon:"[shield]",why:"Most people are either underinsured or overpaying. We help you find the right balance."},
+  {id:"lifestyle",title:"Discounts",icon:"[money]",why:"These questions unlock discounts many drivers miss -- some save 10-25% each."},
+  {id:"results",title:"Your results",icon:"[chart]",why:""},
 ];
 function fmtC(n){return "$"+Math.round(n).toLocaleString();}
 function calcPremium(p){
@@ -165,7 +165,7 @@ export default function InsuranceWizard(){
       <header style={{background:lm?"#fff":"#0e1420",borderBottom:`1px solid ${lm?"rgba(220,38,38,0.1)":"rgba(239,68,68,0.1)"}`,position:"sticky",top:0,zIndex:50}}>
         <div style={{maxWidth:660,margin:"0 auto",padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#dc2626,#991b1b)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🚗</div>
+            <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#dc2626,#991b1b)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>[car]</div>
             <div>
               <div style={{fontSize:17,fontWeight:900,letterSpacing:"-0.5px"}}>Insurance<span style={{color:lm?"#dc2626":"#f87171"}}>Wizard</span></div>
               <div style={{fontSize:10,color:lm?"#4b5563":"#8899aa"}}>Personalized quote estimator</div>
@@ -177,7 +177,7 @@ export default function InsuranceWizard(){
                 Est. {fmtC(premium.monthly)}/mo
               </div>
             )}
-            <button onClick={()=>setLm(v=>!v)} style={{padding:"6px 10px",borderRadius:8,border:`1px solid ${lm?"rgba(220,38,38,0.2)":"rgba(239,68,68,0.2)"}`,background:"transparent",fontSize:15}}>{lm?"🌙":"☀️"}</button>
+            <button onClick={()=>setLm(v=>!v)} style={{padding:"6px 10px",borderRadius:8,border:`1px solid ${lm?"rgba(220,38,38,0.2)":"rgba(239,68,68,0.2)"}`,background:"transparent",fontSize:15}}>{lm?"[moon]":"[sun]"}</button>
           </div>
         </div>
         <div style={{height:3,background:lm?"#f0f3f8":"#141b28"}}>
@@ -192,7 +192,7 @@ export default function InsuranceWizard(){
             {STEPS.slice(0,-1).map((s,i)=>(
               <div key={s.id} style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
                 <div style={{width:26,height:26,borderRadius:"50%",background:i<step?lm?"#16a34a":"#4ade80":i===step?lm?"#dc2626":"#f87171":lm?"#f0f3f8":"#141b28",border:`1.5px solid ${i<=step?(i<step?lm?"#16a34a":"#4ade80":lm?"#dc2626":"#f87171"):lm?"rgba(220,38,38,0.1)":"rgba(239,68,68,0.1)"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:i<=step?"#fff":lm?"#9ca3af":"#445566"}}>
-                  {i<step?"✓":i+1}
+                  {i<step?"v":i+1}
                 </div>
                 {i===step&&<span style={{fontSize:11,color:lm?"#dc2626":"#f87171",fontWeight:700}}>{s.title}</span>}
               </div>
@@ -217,7 +217,7 @@ export default function InsuranceWizard(){
               <div>
                 <div style={{fontSize:14,color:lm?"#4b5563":"#8899aa",fontWeight:600,marginBottom:8}}>Country</div>
                 <div style={{display:"flex",gap:8}}>
-                  {[["CA","🇨🇦 Canada"],["US","🇺🇸 United States"]].map(([val,label])=>(
+                  {[["CA","CA Canada"],["US","US United States"]].map(([val,label])=>(
                     <button key={val} className={"opt"+(p.country===val?" on":"")} style={{flex:1,textAlign:"center"}} onClick={()=>upd("country",val)}>{label}</button>
                   ))}
                 </div>
@@ -460,15 +460,15 @@ export default function InsuranceWizard(){
             <div style={{display:"flex",flexDirection:"column",gap:4}}>
               <div style={{fontSize:14,color:lm?"#4b5563":"#8899aa",marginBottom:12}}>Check all that apply. These unlock significant discounts many drivers miss.</div>
               {([
-                ...(p.country==="CA"?[["winterTires",p.winterTires,"❄️ Winter tires installed","5-10% discount. Required in BC Oct 1-Mar 31 on many routes."]]:[] ),
-                ["bundleHome",p.bundleHome,"🏠 You own or rent a home","Bundling home and auto saves 15-20%."],
-                ["telematics",p.telematics,"📱 Willing to use a safe driving app","Saves 10-25%. Biggest single discount for most drivers."],
-                ["multiVehicle",p.multiVehicle,"🚗 2+ vehicles in household","Multi-vehicle discount: 10-15% off each vehicle."],
-                ...(+p.age<25?[["studentDiscount",p.studentDiscount,"🎓 Full-time student with B+ average","Good student discount: 5-15%."]]:[] ),
-                ...(p.country==="US"?[["military",p.military,"🎖️ Current or former military","USAA offers best rates for military families."]]:[] ),
+                ...(p.country==="CA"?[["winterTires",p.winterTires,"[snow] Winter tires installed","5-10% discount. Required in BC Oct 1-Mar 31 on many routes."]]:[] ),
+                ["bundleHome",p.bundleHome,"[home] You own or rent a home","Bundling home and auto saves 15-20%."],
+                ["telematics",p.telematics,"[phone] Willing to use a safe driving app","Saves 10-25%. Biggest single discount for most drivers."],
+                ["multiVehicle",p.multiVehicle,"[car] 2+ vehicles in household","Multi-vehicle discount: 10-15% off each vehicle."],
+                ...(+p.age<25?[["studentDiscount",p.studentDiscount,"[grad] Full-time student with B+ average","Good student discount: 5-15%."]]:[] ),
+                ...(p.country==="US"?[["military",p.military,"[medal] Current or former military","USAA offers best rates for military families."]]:[] ),
               ]).map(([key,val,label,desc])=>(
                 <div key={key} className={"chk "+(val?"chk-on":"chk-off")} onClick={()=>upd(key,!val)}>
-                  <div className={"chkbox "+(val?"chkbox-on":"chkbox-off")}>{val?"✓":""}</div>
+                  <div className={"chkbox "+(val?"chkbox-on":"chkbox-off")}>{val?"v":""}</div>
                   <div>
                     <div style={{fontSize:15,fontWeight:600,color:lm?"#111827":"#e8edf4"}}>{label}</div>
                     <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa",marginTop:3,lineHeight:1.5}}>{desc}</div>
@@ -481,7 +481,7 @@ export default function InsuranceWizard(){
 
           {step===6&&(
             <div>
-              <div style={{fontSize:24,fontWeight:900,color:lm?"#111827":"#e8edf4",letterSpacing:"-0.5px",marginBottom:4}}>📊 Your Personalized Report</div>
+              <div style={{fontSize:24,fontWeight:900,color:lm?"#111827":"#e8edf4",letterSpacing:"-0.5px",marginBottom:4}}>[chart] Your Personalized Report</div>
               <p style={{fontSize:14,color:lm?"#4b5563":"#8899aa",marginBottom:20}}>Based on everything you told us. Use this to guide your conversations with insurers.</p>
 
               <div style={{padding:22,background:lm?"linear-gradient(135deg,#fef2f2,#fff)":"linear-gradient(135deg,#1a0a0a,#0e1420)",border:`1px solid ${lm?"rgba(220,38,38,0.2)":"rgba(239,68,68,0.2)"}`,borderRadius:16,marginBottom:14}}>
