@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-// ── Premium calculation engine ─────────────────────────────────────────────────
+// -- Premium calculation engine ------------------------------------------------─
 function calcPremium(profile) {
   const {
     country, province, usState, city, cityRate,
@@ -141,7 +141,7 @@ function calcPremium(profile) {
   };
 }
 
-// ── Recommendation engine ──────────────────────────────────────────────────────
+// -- Recommendation engine ------------------------------------------------------
 function generateRecommendations(profile, premium) {
   const recs = [];
   const warnings = [];
@@ -210,7 +210,7 @@ function generateRecommendations(profile, premium) {
   return { recs, warnings, coverageSuggestions };
 }
 
-// ── Insurer matching ──────────────────────────────────────────────────────────
+// -- Insurer matching ----------------------------------------------------------
 function getInsurerMatches(profile, country) {
   const CA_INSURERS = [
     { name: "Intact Insurance", type: "major", strengths: ["Largest insurer in Canada", "Strong claims service", "Available in all provinces", "Good newcomer programs"], bestFor: ["Most drivers", "Bundling home+auto", "Newcomers to Canada"], quote: "https://www.intact.net/en/get-a-quote" },
@@ -250,7 +250,7 @@ function getInsurerMatches(profile, country) {
   }).sort((a, b) => b.score - a.score);
 }
 
-// ── Wizard steps config ────────────────────────────────────────────────────────
+// -- Wizard steps config --------------------------------------------------------
 const STEPS = [
   { id: "location", title: "Where do you live?", icon: "📍", why: "Your location is the single biggest factor in your premium. Brampton Ontario averages $2,900/year while Ottawa averages $1,213, same car, same driver, totally different city." },
   { id: "driver", title: "About you", icon: "👤", why: "Your age, experience, and profile can change your premium by 2-3x. We ask only what insurers actually use." },
@@ -282,7 +282,7 @@ const US_STATES_LIST = [
 
 function fmtC(n) { return "$" + Math.round(n).toLocaleString(); }
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// -- Main Component ------------------------------------------------------------─
 function InsuranceWizard() {
   const [step, setStep] = useState(0);
   const [lightMode, setLightMode] = useState(() => localStorage.getItem("cig_theme") === "light");
@@ -496,7 +496,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 0: LOCATION ── */}
+          {/* -- STEP 0: LOCATION -- */}
           {step === 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
@@ -547,7 +547,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 1: DRIVER ── */}
+          {/* -- STEP 1: DRIVER -- */}
           {step === 1 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div>
@@ -624,7 +624,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 2: VEHICLE ── */}
+          {/* -- STEP 2: VEHICLE -- */}
           {step === 2 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -742,7 +742,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 3: HISTORY ── */}
+          {/* -- STEP 3: HISTORY -- */}
           {step === 3 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div>
@@ -821,7 +821,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 4: COVERAGE ── */}
+          {/* -- STEP 4: COVERAGE -- */}
           {step === 4 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div>
@@ -906,7 +906,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 5: LIFESTYLE ── */}
+          {/* -- STEP 5: LIFESTYLE -- */}
           {step === 5 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 4 }}>These questions unlock discounts many drivers leave on the table. Answer honestly, they can save you 20-40%.</div>
@@ -939,7 +939,7 @@ ${profileSummary}`
             </div>
           )}
 
-          {/* ── STEP 6: RESULTS ── */}
+          {/* -- STEP 6: RESULTS -- */}
           {step === 6 && (
             <div>
               <div style={{ fontSize: 28, fontWeight: 900, color: "var(--text)", letterSpacing: "-0.5px", marginBottom: 4 }}>📊 Your Personalized Report</div>
@@ -1060,7 +1060,7 @@ ${profileSummary}`
                         </div>
                         <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.5 }}>{ins.bestFor.slice(0, 2).join(" · ")}</div>
                       </div>
-                      <div style={{ color: "var(--red)", fontSize: 14, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>Get quote →</div>
+                      <div style={{ color: "var(--red)", fontSize: 14, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>Get quote  -&gt;</div>
                     </a>
                   ))}
                 </div>
@@ -1079,10 +1079,10 @@ ${profileSummary}`
           {step < STEPS.length - 1 && (
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, gap: 10 }}>
               {step > 0 ? (
-                <button onClick={goPrev} style={{ padding: "12px 24px", borderRadius: 10, border: "1px solid var(--border2)", background: "transparent", color: "var(--text2)", fontSize: 15, fontWeight: 600 }}>← Back</button>
+                <button onClick={goPrev} style={{ padding: "12px 24px", borderRadius: 10, border: "1px solid var(--border2)", background: "transparent", color: "var(--text2)", fontSize: 15, fontWeight: 600 }}>&lt;-  Back</button>
               ) : <div />}
               <button onClick={goNext} style={{ padding: "13px 32px", borderRadius: 10, background: "var(--red)", color: "#fff", fontSize: 15, fontWeight: 800, flex: step === 0 ? 1 : "none", maxWidth: 300 }}>
-                {step === STEPS.length - 2 ? "See my results →" : "Next →"}
+                {step === STEPS.length - 2 ? "See my results  -&gt;" : "Next  -&gt;"}
               </button>
             </div>
           )}
@@ -1095,7 +1095,7 @@ ${profileSummary}`
       </div>
     </div>
     </div>
-  </div>
+    </div>
   );
 }
 
