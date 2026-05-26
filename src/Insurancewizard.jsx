@@ -310,7 +310,7 @@ export default function InsuranceWizard() {
     atFaultAccidents: 0, notAtFaultAccidents: 0, tickets: 0, dui: false,
     lapseMonths: 0, yearsWithCurrentInsurer: 0,
     // Coverage
-    coverageLevel: "full", liabilityLimit: country === "CA" ? "1M" : "100_300",
+    coverageLevel: "full", liabilityLimit: "1M",
     deductible: 1000, accidentForgiveness: false, replacementCost: false,
     roadsideAssistance: false,
     // Lifestyle
@@ -1094,5 +1094,8 @@ ${profileSummary}`
         </div>
       </div>
     </div>
+    </div>
+  </div>
   );
 }
+
