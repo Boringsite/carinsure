@@ -558,7 +558,7 @@ export default function InsuranceWizard(){
                             {ins.type==="comparison"?"Compare":ins.type==="online"?"Online":"Major"}
                           </span>
                         </div>
-                        <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa"}}>{ins.bestFor.slice(0,2).join(" · ")}</div>
+                        <div style={{fontSize:12,color:lm?"#4b5563":"#8899aa"}}>{ins.bestFor.slice(0,2).join("  |  ")}</div>
                       </div>
                       <div style={{color:lm?"#dc2626":"#f87171",fontSize:13,fontWeight:700,flexShrink:0}}>Get quote</div>
                     </a>
