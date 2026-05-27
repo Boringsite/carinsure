@@ -108,7 +108,7 @@ export default function InsuranceWizard() {
           <div style={{ fontSize:18, fontWeight:700 }}>Insurance<span style={{ color:"#dc2626" }}>Wizard</span></div>
           {step > 0 && step < STEPS.length - 1 && p.age && (
             <div style={{ padding:"4px 12px", background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:20, fontSize:13, fontWeight:600, color:"#dc2626" }}>
-              Est. {fmtC(pr.monthly)}/mo
+              {"Est. " + fmtC(pr.monthly) + "/mo"}
             </div>
           )}
         </div>
@@ -139,7 +139,7 @@ export default function InsuranceWizard() {
           {step === 0 && (
             <div>
               <h1 style={{ fontSize:24, fontWeight:700, marginBottom:8 }}>Where do you live?</h1>
-              <W type="b">Your city matters enormously. Brampton Ontario averages $2,900/year while Ottawa averages $1,213 -- same car, same driver.</W>
+              <W type="b">{"Your city matters enormously. Brampton Ontario averages $2,900 per year while Ottawa averages $1,213 -- same car, same driver."}</W>
               <div style={{ marginTop:16, marginBottom:4, fontSize:13, color:"#6b7280", fontWeight:600 }}>Country</div>
               <div style={{ display:"flex", gap:8, marginBottom:12 }}>
                 {[["CA","Canada"],["US","United States"]].map(([v,l]) => (
@@ -373,7 +373,7 @@ export default function InsuranceWizard() {
                 ))}
               </div>
               {((p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min")) && (
-                <W type="r">Minimum is dangerously low. Upgrading to {p.country==="CA"?"$1M":"100/300"} costs only $5-15/month more.</W>
+                <W type="r">Minimum is dangerously low. Upgrading to {p.country==="CA" ? "$1M" : "100 per 300"} -- costs only $5 to $15 more per month.</W>
               )}
 
               <div style={{ fontSize:13, color:"#6b7280", fontWeight:600, marginBottom:6, marginTop:14 }}>
@@ -447,7 +447,7 @@ export default function InsuranceWizard() {
               <div style={{ padding:22, background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:16, marginBottom:16 }}>
                 <div style={{ fontSize:12, color:"#9ca3af", marginBottom:4 }}>Estimated annual premium</div>
                 <div style={{ fontSize:52, fontWeight:700, color:"#dc2626", letterSpacing:"-1px", lineHeight:1 }}>{fmtC(pr.annual)}</div>
-                <div style={{ fontSize:14, color:"#6b7280", marginTop:6 }}>{fmtC(pr.monthly)}/month</div>
+                <div style={{ fontSize:14, color:"#6b7280", marginTop:6 }}>{"" + fmtC(pr.monthly) + "/month"}</div>
                 {pr.disc > 0 && <div style={{ marginTop:8, fontSize:13, color:"#16a34a" }}>{pr.disc}% in active discounts applied</div>}
                 <div style={{ marginTop:14, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
                   {[["Location",(p.city?p.city+", ":"")+provName],["Vehicle",([p.vYear,p.vMake,p.vModel].filter(Boolean).join(" "))||"Not specified"],["Coverage",p.coverage==="full"?"Full coverage":p.coverage==="standard"?"Standard":"Liability only"],["Deductible",fmtC(p.ded)]].map(([l,v]) => (
@@ -461,7 +461,7 @@ export default function InsuranceWizard() {
 
               {[p.vUse==="rideshare"&&"Your personal policy does NOT cover rideshare use. Ask every insurer about a rideshare endorsement.",
                 (p.financed||p.leased)&&p.coverage==="liability_only"&&"Your lender requires collision and comprehensive. Liability only is not permitted.",
-                ((p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min"))&&("Your liability limit is dangerously low. Upgrading to "+(p.country==="CA"?"$1M":"100/300")+" costs only $5-15/month more."),
+                ((p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min"))&&("Your liability limit is dangerously low. Upgrading costs only $5-15 more per month."),
                 p.vValue<5000&&p.coverage==="full"&&("Vehicle worth "+fmtC(p.vValue)+". Consider dropping collision and comprehensive."),
               ].filter(Boolean).map((w,i) => <W key={i} type="r">{w}</W>)}
 
