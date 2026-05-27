@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Insurance Wizard - Canada and US</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2485982449702214" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:#f9fafb;color:#111827;min-height:100vh}
+.hdr{background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:50;padding:12px 16px}
+.hdr-inner{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:18px;font-weight:800}
+.logo span{color:#dc2626}
+.pill{padding:4px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:20px;font-size:13px;font-weight:600;color:#dc2626;display:none}
+.prog{height:3px;background:#f3f4f6}
+.prog-fill{height:100%;background:#dc2626;transition:width 0.4s;width:0%}
+.wrap{max-width:640px;margin:0 auto;padding:24px 16px 80px}
+.dots{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.dot{width:24px;height:24px;border-radius:50%;border:1px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#6b7280;flex-shrink:0}
+.dot.done{background:#16a34a;border-color:#16a34a;color:#fff}
+.dot.active{background:#dc2626;border-color:#dc2626;color:#fff}
+.dot-label{font-size:12px;color:#dc2626;font-weight:600}
+h1{font-size:24px;font-weight:800;margin-bottom:8px}
+.why{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;font-size:13px;color:#1e40af;line-height:1.6;margin-bottom:20px}
+.lbl{font-size:13px;color:#6b7280;font-weight:600;margin:14px 0 6px;display:block}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.opt{padding:9px 14px;border-radius:8px;border:1px solid #d1d5db;background:transparent;color:#374151;cursor:pointer;font-family:inherit;font-size:14px;transition:all 0.15s}
+.opt:hover{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.opt.on{border:2px solid #dc2626;background:#fef2f2;color:#dc2626;font-weight:700}
+.opt.block{display:block;width:100%;text-align:left;margin-bottom:6px}
+.opt-title{font-weight:600}
+.opt-desc{font-size:12px;opacity:0.75;margin-top:2px}
+input[type=text],input[type=number],select{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:14px;font-family:inherit;background:#fff;color:#111827;outline:none}
+input[type=text]:focus,input[type=number]:focus,select:focus{border-color:#dc2626}
+input[type=range]{width:100%;accent-color:#dc2626;margin:6px 0}
+.warn{padding:8px 12px;border-radius:8px;font-size:13px;line-height:1.6;margin-top:8px}
+.warn-r{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.warn-g{background:#f0fdf4;color:#16a34a}
+.warn-a{background:#fffbeb;color:#d97706}
+.warn-b{background:#eff6ff;color:#1e40af}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:10px;cursor:pointer;margin-bottom:6px;border:1px solid #d1d5db;transition:all 0.15s}
+.chk:hover{border-color:#dc2626}
+.chk.on{border:2px solid #dc2626;background:#fef2f2}
+.chk-box{width:20px;height:20px;border-radius:4px;border:1px solid #d1d5db;background:#fff;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#dc2626}
+.chk.on .chk-box{background:#dc2626;color:#fff}
+.nav{display:flex;justify-content:space-between;margin-top:28px;gap:10px}
+.btn-back{padding:12px 24px;border-radius:10px;border:1px solid #d1d5db;background:transparent;color:#6b7280;font-size:15px;cursor:pointer;font-family:inherit}
+.btn-next{padding:13px 32px;border-radius:10px;background:#dc2626;color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-box{padding:22px;background:#fef2f2;border:1px solid #fca5a5;border-radius:16px;margin-bottom:16px}
+.big-num{font-size:52px;font-weight:800;color:#dc2626;letter-spacing:-1px;line-height:1}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.meta-card{background:#fff;border-radius:8px;padding:8px 12px}
+.meta-l{font-size:11px;color:#9ca3af;margin-bottom:2px}
+.meta-v{font-size:13px;font-weight:600}
+.ins-link{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;text-decoration:none;color:inherit;margin-bottom:6px;transition:border-color 0.15s}
+.ins-link:hover{border-color:#dc2626}
+.ins-name{font-size:14px;font-weight:600}
+.ins-desc{font-size:12px;color:#6b7280;margin-top:2px}
+.ins-arrow{color:#dc2626;font-size:13px;font-weight:600}
+.badge{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;margin-left:6px}
+.badge-r{background:#fef2f2;color:#dc2626}
+.badge-b{background:#eff6ff;color:#1e40af}
+.disc-pct{background:#f0fdf4;color:#16a34a;padding:8px 12px;border-radius:8px;font-size:13px;margin-top:8px}
+.footer-note{margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center}
+.section-title{font-size:15px;font-weight:700;margin-bottom:10px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="logo">Insurance<span>Wizard</span></div>
+    <div class="pill" id="est-pill">Est. $0/mo</div>
+  </div>
+  <div class="prog"><div class="prog-fill" id="prog"></div></div>
+</div>
+
+<div class="wrap">
+  <div class="dots" id="dots"></div>
+  <div id="step-content"></div>
+</div>
+
+<script>
+const CA_BASE={ON:1920,BC:1450,AB:1735,QC:900,MB:1350,SK:1235,NS:1150,NB:1120,NL:1270,PE:1080,NT:1200,NU:1200,YT:1200};
+const US_BASE={CA:2450,TX:2310,FL:3183,NY:2994,IL:1566,PA:1478,OH:1034,GA:2359,NC:1392,WA:1701,AZ:2026,CO:2568,MI:2864,WI:1087,NV:2100,NJ:2800,MA:2000,MD:1900,TN:1600,VA:1400,MO:1300,IN:1200,KY:1500,SC:1400,AL:1400,MN:1400};
+const CA_PROVS=[["ON","Ontario"],["BC","British Columbia"],["AB","Alberta"],["QC","Quebec"],["MB","Manitoba"],["SK","Saskatchewan"],["NS","Nova Scotia"],["NB","New Brunswick"],["NL","Newfoundland"],["PE","PEI"]];
+const US_STATES=[["CA","California"],["TX","Texas"],["FL","Florida"],["NY","New York"],["IL","Illinois"],["PA","Pennsylvania"],["OH","Ohio"],["GA","Georgia"],["NC","North Carolina"],["WA","Washington"],["AZ","Arizona"],["CO","Colorado"],["MI","Michigan"],["WI","Wisconsin"],["NV","Nevada"],["NJ","New Jersey"],["MA","Massachusetts"],["MD","Maryland"],["TN","Tennessee"],["VA","Virginia"],["MO","Missouri"],["IN","Indiana"],["KY","Kentucky"],["SC","South Carolina"],["AL","Alabama"],["MN","Minnesota"],["OR","Oregon"],["CT","Connecticut"],["OK","Oklahoma"],["UT","Utah"]];
+const STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Results"];
+
+const p={country:"CA",province:"ON",usState:"CA",city:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false};
+let step=0;
+
+function fmtC(n){return"$"+Math.round(n).toLocaleString();}
+
+function calcPremium(){
+  const base=p.country==="CA"?(CA_BASE[p.province]||1500):(US_BASE[p.usState]||1800);
+  let a=base;
+  if(p.coverage==="liability_only")a*=0.45;
+  else if(p.coverage==="standard")a*=0.75;
+  const age=+p.age||35;
+  if(age<18)a*=2.5;else if(age<=21)a*=2.0;else if(age<=24)a*=1.6;else if(age<=29)a*=1.2;else if(age>74)a*=1.25;else if(age>64)a*=1.1;
+  if(p.marital==="married")a*=0.95;
+  const yl=+p.yearsLic||5;
+  if(yl<1)a*=1.5;else if(yl<3)a*=1.2;
+  const val=+p.vValue||25000;
+  if(val>80000)a*=1.35;else if(val>50000)a*=1.2;else if(val>35000)a*=1.1;else if(val<10000)a*=0.85;
+  const vAge=new Date().getFullYear()-(+p.vYear||new Date().getFullYear());
+  if(vAge<=1)a*=1.1;else if(vAge>=15)a*=0.85;
+  const m=(p.vModel||"").toLowerCase();
+  const hiTheft=m.indexOf("civic")>-1||m.indexOf("rav4")>-1||m.indexOf("f-150")>-1||m.indexOf("tucson")>-1||m.indexOf("sorento")>-1;
+  if(hiTheft)a*=1.12;
+  if((p.vMake||"").toLowerCase().indexOf("tesla")>-1)a*=1.25;
+  if(p.vUse==="rideshare")a*=1.35;else if(p.vUse==="business")a*=1.2;else if(p.vUse==="commute_long")a*=1.1;
+  const km=+p.km||15000;
+  if(km<8000)a*=0.88;else if(km>25000)a*=1.1;
+  if(p.parking==="garage")a*=0.93;else if(p.parking==="high_theft")a*=1.15;
+  a+=(+p.atFault||0)*a*0.28;
+  a+=(+p.tickets||0)*a*0.12;
+  if(p.dui)a*=1.8;
+  const lapse=+p.lapse||0;
+  if(lapse>12)a*=1.25;else if(lapse>6)a*=1.15;
+  const ded=+p.ded||1000;
+  if(ded>=2000)a*=0.75;else if(ded>=1000)a*=0.87;else if(ded<=250)a*=1.1;
+  let disc=0;
+  if(p.winterTires&&p.country==="CA")disc+=0.08;
+  if(p.bundle)disc+=0.15;
+  if(p.telematics)disc+=0.12;
+  if(p.multi)disc+=0.1;
+  a*=(1-Math.min(disc,0.45));
+  return{annual:Math.round(a),monthly:Math.round(a/12),disc:Math.round(disc*100)};
+}
+
+function opt(val,label,current,key,isBlock,desc){
+  const on=current===val?"on":"";
+  const d=desc?`<div class="opt-desc">${desc}</div>`:"";
+  const cls=isBlock?`opt block ${on}`:`opt ${on}`;
+  return `<button class="${cls}" onclick="p.${key}='${val}';render()">${isBlock?`<div class="opt-title">${label}</div>${d}`:label}</button>`;
+}
+
+function warn(type,msg){return`<div class="warn warn-${type}">${msg}</div>`;}
+
+function chk(key,val,label,desc){
+  const on=val?"on":"";
+  const check=val?"v":"";
+  return`<div class="chk ${on}" onclick="p.${key}=!p.${key};render()"><div class="chk-box">${check}</div><div><div style="font-size:14px;font-weight:${val?600:400}">${label}</div><div style="font-size:12px;color:#6b7280;margin-top:2px">${desc}</div></div></div>`;
+}
+
+function render(){
+  const pr=calcPremium();
+  const pct=(step/(STEPS.length-1))*100;
+  document.getElementById("prog").style.width=pct+"%";
+
+  // Dots
+  let dots="";
+  STEPS.slice(0,-1).forEach((s,i)=>{
+    const cls=i<step?"dot done":i===step?"dot active":"dot";
+    dots+=`<div class="${cls}">${i<step?"v":i+1}</div>`;
+    if(i===step)dots+=`<span class="dot-label">${s}</span>`;
+  });
+  document.getElementById("dots").innerHTML=dots;
+
+  // Pill
+  const pill=document.getElementById("est-pill");
+  if(step>0&&step<STEPS.length-1&&p.age){
+    pill.style.display="block";
+    pill.textContent="Est. "+fmtC(pr.monthly)+"/mo";
+  }else{pill.style.display="none";}
+
+  let html="";
+
+  if(step===0){
+    html+=`<h1>Where do you live?</h1>`;
+    html+=`<div class="why">Your city matters enormously. Brampton Ontario averages $2,900 per year while Ottawa averages $1,213 -- same car, same driver.</div>`;
+    html+=`<span class="lbl">Country</span><div class="opts">`;
+    html+=`<button class="opt ${p.country==='CA'?'on':''}" onclick="p.country='CA';render()">Canada</button>`;
+    html+=`<button class="opt ${p.country==='US'?'on':''}" onclick="p.country='US';render()">United States</button>`;
+    html+=`</div>`;
+    if(p.country==="CA"){
+      html+=`<span class="lbl">Province</span><div class="opts">`;
+      CA_PROVS.forEach(function(x){html+=`<button class="opt ${p.province===x[0]?'on':''}" onclick="p.province='${x[0]}';render()">${x[1]}</button>`;});
+      html+=`</div>`;
+    }else{
+      html+=`<span class="lbl">State</span><select onchange="p.usState=this.value;render()">`;
+      US_STATES.forEach(function(x){html+=`<option value="${x[0]}"${p.usState===x[0]?" selected":""}>${x[1]}</option>`;});
+      html+=`</select>`;
+    }
+    html+=`<span class="lbl">City (optional)</span><input type="text" value="${p.city}" placeholder="${p.country==='CA'?'e.g. Toronto, Ottawa...':'e.g. Austin, Miami...'}" oninput="p.city=this.value">`;
+    const isPublic=p.country==="CA"&&(p.province==="BC"||p.province==="MB"||p.province==="SK");
+    html+=warn("b",isPublic?"Public insurance province. You cannot shop around for basic coverage, but can for optional collision and comprehensive.":"Private insurance market. Shopping around is essential. Rates vary up to 40% between insurers.");
+  }
+
+  else if(step===1){
+    html+=`<h1>About you</h1>`;
+    html+=`<span class="lbl">Your age</span><input type="number" min="16" max="99" value="${p.age||''}" placeholder="e.g. 35" oninput="p.age=this.value;render()">`;
+    if(p.age&&+p.age<25)html+=warn("a","Drivers under 25 pay 1.5-2.5x more. A telematics app is your fastest way to save.");
+    if(p.age&&+p.age>=25&&+p.age<65)html+=warn("g","Prime age range for insurance rates.");
+    html+=`<span class="lbl">Marital status</span><div class="opts">`;
+    [["single","Single"],["married","Married"],["common_law","Common-law"],["divorced","Divorced"]].forEach(function(x){html+=`<button class="opt ${p.marital===x[0]?'on':''}" onclick="p.marital='${x[0]}';render()">${x[1]}</button>`;});
+    html+=`</div>`;
+    html+=`<span class="lbl">Years licensed</span><input type="number" min="0" max="60" value="${p.yearsLic||''}" placeholder="e.g. 10" oninput="p.yearsLic=this.value">`;
+    html+=`<span class="lbl">New to ${p.country==="CA"?"Canada":"the US"}?</span><div class="opts">`;
+    html+=`<button class="opt ${!p.newToCountry?'on':''}" onclick="p.newToCountry=false;render()">No</button>`;
+    html+=`<button class="opt ${p.newToCountry?'on':''}" onclick="p.newToCountry=true;render()">Yes - I have international driving history</button>`;
+    html+=`</div>`;
+    if(p.newToCountry)html+=warn("b","Bring your foreign driving record when getting quotes. Intact and Aviva in Canada have newcomer programs.");
+  }
+
+  else if(step===2){
+    html+=`<h1>Your vehicle</h1>`;
+    html+=`<div class="grid2">`;
+    html+=`<div><span class="lbl" style="margin-top:0">Year</span><select onchange="p.vYear=+this.value">`;
+    for(var y=new Date().getFullYear()+1;y>new Date().getFullYear()-25;y--)html+=`<option value="${y}"${p.vYear===y?" selected":""}>${y}</option>`;
+    html+=`</select></div>`;
+    html+=`<div><span class="lbl" style="margin-top:0">Make</span><select onchange="p.vMake=this.value;render()">`;
+    ["","Acura","Audi","BMW","Chevrolet","Dodge","Ford","GMC","Honda","Hyundai","Jeep","Kia","Mazda","Mercedes-Benz","Nissan","RAM","Subaru","Tesla","Toyota","Volkswagen","Other"].forEach(function(m){html+=`<option value="${m}"${p.vMake===m?" selected":""}>${m||"Select..."}</option>`;});
+    html+=`</select></div></div>`;
+    html+=`<span class="lbl">Model</span><input type="text" value="${p.vModel||''}" placeholder="e.g. Civic, RAV4, F-150..." oninput="p.vModel=this.value;render()">`;
+    var ml=(p.vModel||"").toLowerCase();
+    if(p.vModel&&(ml.indexOf("civic")>-1||ml.indexOf("rav4")>-1||ml.indexOf("f-150")>-1||ml.indexOf("tucson")>-1))html+=warn("r","This vehicle is on Canada's top stolen list. Comprehensive coverage is essential.");
+    if((p.vMake||"").toLowerCase().indexOf("tesla")>-1)html+=warn("a","Tesla repairs average 3-4x higher. Ensure replacement cost coverage.");
+    html+=`<span class="lbl">Vehicle value: <strong style="color:#dc2626">${fmtC(p.vValue)}</strong></span>`;
+    html+=`<input type="range" min="1000" max="200000" step="1000" value="${p.vValue}" oninput="p.vValue=+this.value;render()">`;
+    if(p.vValue<5000)html+=warn("a","Under $5,000. Dropping collision and comprehensive may cost more than the car is worth.");
+    html+=`<span class="lbl">Ownership</span><div class="opts">`;
+    html+=`<button class="opt ${!p.financed&&!p.leased?'on':''}" onclick="p.financed=false;p.leased=false;render()">Owned</button>`;
+    html+=`<button class="opt ${p.financed?'on':''}" onclick="p.financed=true;p.leased=false;render()">Financed</button>`;
+    html+=`<button class="opt ${p.leased?'on':''}" onclick="p.leased=true;p.financed=false;render()">Leased</button>`;
+    html+=`</div>`;
+    if(p.financed||p.leased)html+=warn("r","Your lender requires collision and comprehensive. Not optional.");
+    html+=`<span class="lbl">Primary use</span>`;
+    [["personal","Personal use"],["commute_short","Daily commute under 20km"],["commute_long","Daily commute over 20km"],["business","Business use"],["rideshare","Rideshare or delivery (Uber, DoorDash...)"]].forEach(function(x){html+=`<button class="opt block ${p.vUse===x[0]?'on':''}" onclick="p.vUse='${x[0]}';render()">${x[1]}</button>`;});
+    if(p.vUse==="rideshare")html+=warn("r","Your personal policy does NOT cover rideshare use. You need a rideshare endorsement.");
+    html+=`<span class="lbl">Annual km driven: <strong style="color:#dc2626">${(+p.km).toLocaleString()}</strong></span>`;
+    html+=`<input type="range" min="1000" max="50000" step="1000" value="${p.km}" oninput="p.km=+this.value;render()">`;
+    if(p.km<10000)html+=warn("g","Low mileage qualifies for discounts.");
+  }
+
+  else if(step===3){
+    html+=`<h1>Driving history</h1>`;
+    html+=`<span class="lbl">At-fault accidents (last 6 years)</span><div class="opts">`;
+    [0,1,2,3,4].forEach(function(n){html+=`<button class="opt ${p.atFault===n?'on':''}" onclick="p.atFault=${n};render()">${n===4?"4+":n}</button>`;});
+    html+=`</div>`;
+    if(p.atFault>0)html+=warn("r","Each at-fault accident adds 20-40% for up to 6 years.");
+    html+=`<span class="lbl">Traffic tickets (last 3 years)</span><div class="opts">`;
+    [0,1,2,3].forEach(function(n){html+=`<button class="opt ${p.tickets===n?'on':''}" onclick="p.tickets=${n};render()">${n===3?"3+":n}</button>`;});
+    html+=`</div>`;
+    html+=`<span class="lbl">DUI or DWI in last 10 years</span><div class="opts">`;
+    html+=`<button class="opt ${!p.dui?'on':''}" onclick="p.dui=false;render()">No</button>`;
+    html+=`<button class="opt ${p.dui?'on':''}" onclick="p.dui=true;render()">Yes</button>`;
+    html+=`</div>`;
+    if(p.dui)html+=warn("r","A DUI typically results in 80-150% premium increase.");
+    html+=`<span class="lbl">Coverage lapse</span><div class="opts">`;
+    [[0,"None"],[2,"1-3 months"],[5,"4-6 months"],[9,"7-12 months"],[18,"Over 1 year"]].forEach(function(x){html+=`<button class="opt ${p.lapse===x[0]?'on':''}" onclick="p.lapse=${x[0]};render()">${x[1]}</button>`;});
+    html+=`</div>`;
+    if(p.lapse>6)html+=warn("a","A significant lapse is treated like a new driver. Get any coverage now to rebuild.");
+  }
+
+  else if(step===4){
+    html+=`<h1>Coverage needs</h1>`;
+    html+=`<span class="lbl">Coverage level</span>`;
+    [["liability_only","Liability only","Legal minimum. Does NOT cover your own vehicle."],["standard","Standard coverage","Liability plus collision and comprehensive."],["full","Full coverage","Everything plus optional add-ons."]].forEach(function(x){
+      html+=`<button class="opt block ${p.coverage===x[0]?'on':''}" onclick="p.coverage='${x[0]}';render()"><div class="opt-title">${x[1]}</div><div class="opt-desc">${x[2]}</div></button>`;
+    });
+    if((p.financed||p.leased)&&p.coverage==="liability_only")html+=warn("r","Your lender requires collision and comprehensive. Liability only is not permitted.");
+    html+=`<span class="lbl">Liability limit</span><div class="opts">`;
+    if(p.country==="CA"){
+      [["200K","$200K"],["500K","$500K"],["1M","$1M"],["2M","$2M"]].forEach(function(x){html+=`<button class="opt ${p.liability===x[0]?'on':''}" onclick="p.liability='${x[0]}';render()">${x[1]}</button>`;});
+    }else{
+      [["state_min","State min"],["50_100","50/100"],["100_300","100/300"],["250_500","250/500"]].forEach(function(x){html+=`<button class="opt ${p.liability===x[0]?'on':''}" onclick="p.liability='${x[0]}';render()">${x[1]}</button>`;});
+    }
+    html+=`</div>`;
+    var minLiab=(p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min");
+    if(minLiab)html+=warn("r","Minimum liability is dangerously low. A serious injury lawsuit can exceed $1 million. Upgrading costs only $5-15 more per month.");
+    html+=`<span class="lbl">Deductible: <strong style="color:#dc2626">${fmtC(p.ded)}</strong></span>`;
+    html+=`<input type="range" min="250" max="5000" step="250" value="${p.ded}" oninput="p.ded=+this.value;render()">`;
+    var dedMsg=p.ded>=2000?"High deductible saves about 25%. Only choose this if you have strong emergency savings.":p.ded>=1000?"Good balance of savings and manageable cost.":"Consider raising to $1,000 or more to reduce your premium.";
+    html+=`<div style="font-size:13px;color:#6b7280;margin-top:6px">${dedMsg}</div>`;
+  }
+
+  else if(step===5){
+    html+=`<h1>Discounts</h1>`;
+    html+=`<p style="font-size:14px;color:#6b7280;margin-bottom:16px">Check all that apply. Each one can save 5-20%.</p>`;
+    html+=chk("bundle",p.bundle,"Own or rent a home (bundle home and auto)","Bundling saves 15-20%.");
+    html+=chk("telematics",p.telematics,"Willing to use a safe driving app","Saves 10-25%. The biggest discount available to most drivers.");
+    html+=chk("multi",p.multi,"2 or more vehicles in household","Multi-vehicle discount: 10-15%.");
+    if(p.country==="CA")html+=chk("winterTires",p.winterTires,"Winter tires installed","5-10% discount in most provinces.");
+    if(+p.age<25)html+=chk("student",p.student,"Full-time student with B+ average","Good student discount: 5-15%.");
+    if(pr.disc>0)html+=`<div class="disc-pct">${pr.disc}% in discounts active</div>`;
+  }
+
+  else if(step===6){
+    html+=`<h1>Your personalized results</h1>`;
+    html+=`<div class="result-box">`;
+    html+=`<div style="font-size:12px;color:#9ca3af;margin-bottom:4px">Estimated annual premium</div>`;
+    html+=`<div class="big-num">${fmtC(pr.annual)}</div>`;
+    html+=`<div style="font-size:14px;color:#6b7280;margin-top:6px">${fmtC(pr.monthly)} per month</div>`;
+    if(pr.disc>0)html+=`<div style="color:#16a34a;font-size:13px;margin-top:8px">${pr.disc}% in discounts applied</div>`;
+    const provName=p.country==="CA"?(CA_PROVS.find(function(x){return x[0]===p.province;})||["",""])[1]:(US_STATES.find(function(x){return x[0]===p.usState;})||["",""])[1];
+    const vName=[p.vYear,p.vMake,p.vModel].filter(Boolean).join(" ")||"Not specified";
+    html+=`<div class="meta-grid">`;
+    html+=`<div class="meta-card"><div class="meta-l">Location</div><div class="meta-v">${(p.city?p.city+", ":"")+provName}</div></div>`;
+    html+=`<div class="meta-card"><div class="meta-l">Vehicle</div><div class="meta-v">${vName}</div></div>`;
+    html+=`<div class="meta-card"><div class="meta-l">Coverage</div><div class="meta-v">${p.coverage==="full"?"Full coverage":p.coverage==="standard"?"Standard":"Liability only"}</div></div>`;
+    html+=`<div class="meta-card"><div class="meta-l">Deductible</div><div class="meta-v">${fmtC(p.ded)}</div></div>`;
+    html+=`</div></div>`;
+
+    if(p.vUse==="rideshare")html+=warn("r","Your personal policy does NOT cover rideshare use. Ask every insurer about a rideshare endorsement before buying.");
+    if((p.financed||p.leased)&&p.coverage==="liability_only")html+=warn("r","Your lender requires collision and comprehensive. Liability only will not satisfy your loan agreement.");
+    var minLiab2=(p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min");
+    if(minLiab2)html+=warn("r","Your liability limit is the legal minimum and dangerously low. Upgrading costs only $5-15 more per month.");
+
+    const isCA=p.country==="CA";
+    html+=`<div class="section-title">Best insurers for your profile</div>`;
+    const ins=isCA?[["Ratehub.ca","Compare 50+ insurers","comparison","https://www.ratehub.ca/car-insurance"],["Intact Insurance","Best for most drivers","major","https://www.intact.net/en/get-a-quote"],["Belairdirect","Best online rates","online","https://www.belairdirect.com/en/auto-insurance/get-a-quote.html"],["Kanetix.ca","Side-by-side comparison","comparison","https://www.kanetix.ca/auto-insurance"]]:[["Insurify","Compare 20+ insurers","comparison","https://insurify.com/car-insurance"],["The Zebra","100+ companies","comparison","https://www.thezebra.com/auto-insurance/"],["State Farm","Largest US insurer","major","https://www.statefarm.com/insurance/auto"],["GEICO","Often cheapest rates","major","https://www.geico.com/auto-insurance/"]];
+    ins.forEach(function(x){
+      var bc=x[2]==="comparison"?"badge-b":"badge-r";
+      var bt=x[2]==="comparison"?"Compare":"Major";
+      html+=`<a href="${x[3]}" target="_blank" rel="noopener noreferrer" class="ins-link"><div><div class="ins-name">${x[0]}<span class="badge ${bc}">${bt}</span></div><div class="ins-desc">${x[1]}</div></div><div class="ins-arrow">Get quote</div></a>`;
+    });
+    html+=`<div style="font-size:11px;color:#9ca3af;margin-top:6px">Affiliate links. We may earn a commission. Always compare at least 3 quotes.</div>`;
+    html+=`<div style="margin-top:16px"><button class="btn-back" onclick="step=0;Object.assign(p,{country:'CA',province:'ON',usState:'CA',city:'',age:'',marital:'single',yearsLic:'',newToCountry:false,vYear:new Date().getFullYear(),vMake:'',vModel:'',vValue:30000,vUse:'personal',financed:false,leased:false,parking:'driveway',km:15000,atFault:0,tickets:0,dui:false,lapse:0,coverage:'full',liability:'1M',ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false});render()">Start over</button></div>`;
+  }
+
+  if(step<STEPS.length-1){
+    html+=`<div class="nav">`;
+    if(step>0)html+=`<button class="btn-back" onclick="step--;render()">Back</button>`;
+    else html+=`<div></div>`;
+    var nextLabel=step===STEPS.length-2?"See my results":"Next";
+    html+=`<button class="btn-next" onclick="step++;render()">${nextLabel}</button>`;
+    html+=`</div>`;
+  }
+
+  html+=`<div class="footer-note">Premium estimates are approximate. Actual rates depend on your address, vehicle, and insurer. Always get quotes from licensed professionals. Some links are affiliate links.</div>`;
+  document.getElementById("step-content").innerHTML=html;
+  window.scrollTo(0,0);
+}
+
+render();
+</script>
+</body>
+</html>
