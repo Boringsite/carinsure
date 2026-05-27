@@ -4,127 +4,178 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Car Insurance Wizard - Canada and US | CarInsureGuide</title>
-<meta name="description" content="Free personalized car insurance wizard for Canada and the US. Get a rate estimate, compare top insurers, check recalls, and calculate your true cost of ownership.">
+<meta name="description" content="The most complete free car insurance wizard for Canada and the US. Personalized estimate, top 10 insurers, recall checker, true cost calculator, EV guide, teen driver guide, and more.">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2485982449702214" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+:root{
+  --red:#dc2626;--red2:#b91c1c;--red-dim:rgba(220,38,38,0.07);--red-border:rgba(220,38,38,0.2);
+  --green:#16a34a;--green-dim:rgba(22,163,74,0.08);--green-border:rgba(22,163,74,0.2);
+  --gold:#d97706;--gold-dim:rgba(217,119,6,0.08);
+  --blue:#2563eb;--blue-dim:rgba(37,99,235,0.07);--blue-border:rgba(37,99,235,0.2);
+  --purple:#7c3aed;--purple-dim:rgba(124,58,237,0.07);
+  --bg:#f9fafb;--bg2:#ffffff;--bg3:#f3f4f6;
+  --text:#111827;--text2:#4b5563;--text3:#9ca3af;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 24px rgba(0,0,0,0.1);
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;--radius-xl:20px;
+}
+.dark{
+  --bg:#0f1117;--bg2:#1a1f2e;--bg3:#242938;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:#2d3748;--border2:#3d4758;
+  --red-dim:rgba(248,113,113,0.1);--red-border:rgba(248,113,113,0.25);
+  --red:#f87171;--red2:#ef4444;
+  --green:#4ade80;--green-dim:rgba(74,222,128,0.08);--green-border:rgba(74,222,128,0.2);
+  --blue:#60a5fa;--blue-dim:rgba(96,165,250,0.08);--blue-border:rgba(96,165,250,0.2);
+  --gold:#fbbf24;--gold-dim:rgba(251,191,36,0.08);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',system-ui,sans-serif;background:#f9fafb;color:#111827;min-height:100vh}
-.hdr{background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:50;padding:14px 20px}
-.hdr-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.logo{font-size:20px;font-weight:900;letter-spacing:-0.5px}
-.logo span{color:#dc2626}
-.logo-sub{font-size:11px;color:#9ca3af;margin-top:1px;font-weight:400}
-.pill{padding:5px 14px;background:#fef2f2;border:1px solid #fca5a5;border-radius:20px;font-size:13px;font-weight:700;color:#dc2626;display:none;font-family:'Space Mono',monospace}
-.prog{height:4px;background:#f3f4f6}
-.prog-fill{height:100%;background:linear-gradient(90deg,#dc2626,#f87171);transition:width 0.5s ease;width:0%}
-.wrap{max-width:720px;margin:0 auto;padding:32px 20px 100px}
-.step-num{font-size:12px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
-h1{font-size:26px;font-weight:900;letter-spacing:-0.5px;color:#111827;margin-bottom:10px;line-height:1.25}
-.intro{font-size:15px;color:#6b7280;line-height:1.75;margin-bottom:24px}
-.why-card{background:linear-gradient(135deg,#fef2f2,#fff5f5);border-left:4px solid #dc2626;border-radius:0 12px 12px 0;padding:14px 18px;font-size:13px;color:#374151;line-height:1.75;margin-bottom:24px}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:12px 20px;transition:background 0.3s}
+.hdr-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:19px;font-weight:900;letter-spacing:-0.5px;color:var(--text)}
+.logo span{color:var(--red)}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px;font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.pill{padding:4px 12px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:20px;font-size:12px;font-weight:700;color:var(--red);display:none;font-family:'Space Mono',monospace}
+.theme-btn{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.2s}
+.theme-btn:hover{border-color:var(--red)}
+.prog{height:3px;background:var(--bg3)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--red),#f87171);transition:width 0.5s ease;width:0%}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 100px}
+.step-num{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+h1{font-size:26px;font-weight:900;letter-spacing:-0.5px;color:var(--text);margin-bottom:10px;line-height:1.25}
+h2{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
+.intro{font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:24px}
 .section{margin-bottom:22px}
-.lbl{font-size:14px;color:#374151;font-weight:700;margin-bottom:8px;display:block}
-.lbl-sub{font-size:12px;color:#9ca3af;font-weight:400;margin-left:6px}
+.lbl{font-size:14px;color:var(--text);font-weight:700;margin-bottom:8px;display:block}
+.lbl-sub{font-size:12px;color:var(--text3);font-weight:400;margin-left:6px}
 .opts{display:flex;gap:8px;flex-wrap:wrap}
-.opt{padding:10px 16px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;transition:all 0.15s;line-height:1.4}
-.opt:hover{border-color:#fca5a5;background:#fff9f9;color:#dc2626}
-.opt.on{border:2px solid #dc2626;background:#fef2f2;color:#dc2626;font-weight:700}
-.opt-block{display:block;width:100%;text-align:left;padding:14px 18px;margin-bottom:8px;border-radius:12px}
-.opt-block .ot{font-weight:700;font-size:15px}
-.opt-block .od{font-size:13px;color:#6b7280;margin-top:4px;line-height:1.55}
-.opt-block.on .od{color:#b91c1c;opacity:0.9}
-.opt-block:hover .od{color:#b91c1c}
-input[type=text],input[type=number],select,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:15px;font-family:'Outfit',sans-serif;background:#fff;color:#111827;outline:none;transition:border 0.15s}
-input:focus,select:focus,textarea:focus{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.08)}
-input[type=range]{width:100%;accent-color:#dc2626;height:5px;margin:10px 0;cursor:pointer}
-.val-display{font-size:24px;font-weight:900;color:#dc2626;font-family:'Space Mono',monospace}
-.fb{padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.7;margin-top:10px;display:flex;gap:10px;align-items:flex-start}
-.fb .ico{font-size:18px;flex-shrink:0;margin-top:1px}
-.fb-r{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
-.fb-g{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
-.fb-a{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
-.fb-b{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
-.fb-p{background:#faf5ff;border:1px solid #ddd6fe;color:#5b21b6}
-.chk{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;cursor:pointer;margin-bottom:8px;border:1.5px solid #e5e7eb;transition:all 0.15s;background:#fff}
-.chk:hover{border-color:#fca5a5;background:#fff9f9}
-.chk.on{border:2px solid #dc2626;background:#fef2f2}
-.chk-box{width:22px;height:22px;border-radius:6px;border:1.5px solid #d1d5db;background:#fff;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;transition:all 0.15s}
-.chk.on .chk-box{background:#dc2626;border-color:#dc2626}
-.chk-lbl{font-size:15px;font-weight:600;color:#111827}
-.chk.on .chk-lbl{color:#dc2626}
-.chk-desc{font-size:13px;color:#6b7280;margin-top:3px;line-height:1.55}
-.save-badge{font-size:12px;color:#16a34a;font-weight:700;margin-left:8px;background:#f0fdf4;padding:1px 8px;border-radius:20px}
+.opt{padding:10px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;transition:all 0.15s;line-height:1.4}
+.opt:hover{border-color:var(--red-border);background:var(--red-dim);color:var(--red)}
+.opt.on{border:2px solid var(--red);background:var(--red-dim);color:var(--red);font-weight:700}
+.opt-block{display:block;width:100%;text-align:left;padding:14px 18px;margin-bottom:8px;border-radius:var(--radius)}
+.opt-block .ot{font-weight:700;font-size:15px;color:var(--text)}
+.opt-block .od{font-size:13px;color:var(--text2);margin-top:4px;line-height:1.55}
+.opt-block.on .ot{color:var(--red)}
+.opt-block.on .od{color:var(--red);opacity:0.8}
+.opt-block:hover .ot{color:var(--red)}
+.opt-block:hover .od{color:var(--red);opacity:0.8}
+input[type=text],input[type=number],input[type=email],select,textarea{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:14px;font-family:'Outfit',sans-serif;background:var(--bg2);color:var(--text);outline:none;transition:border 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-dim)}
+input[type=range]{width:100%;accent-color:var(--red);height:5px;margin:8px 0;cursor:pointer}
+.val-display{font-size:22px;font-weight:900;color:var(--red);font-family:'Space Mono',monospace}
+.fb{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;line-height:1.7;margin-top:10px;display:flex;gap:10px;align-items:flex-start}
+.fb .ico{font-size:16px;flex-shrink:0;margin-top:2px}
+.fb-r{background:var(--red-dim);border:1px solid var(--red-border);color:var(--red)}
+.fb-g{background:var(--green-dim);border:1px solid var(--green-border);color:var(--green)}
+.fb-a{background:var(--gold-dim);border:1px solid rgba(217,119,6,0.25);color:var(--gold)}
+.fb-b{background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--blue)}
+.fb-p{background:var(--purple-dim);border:1px solid rgba(124,58,237,0.2);color:var(--purple)}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:13px 16px;border-radius:var(--radius);cursor:pointer;margin-bottom:8px;border:1.5px solid var(--border);transition:all 0.15s;background:var(--bg2)}
+.chk:hover{border-color:var(--red-border);background:var(--red-dim)}
+.chk.on{border:2px solid var(--red);background:var(--red-dim)}
+.chk-box{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border2);background:var(--bg3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;transition:all 0.15s}
+.chk.on .chk-box{background:var(--red);border-color:var(--red)}
+.chk-lbl{font-size:15px;font-weight:600;color:var(--text)}
+.chk.on .chk-lbl{color:var(--red)}
+.chk-desc{font-size:13px;color:var(--text2);margin-top:3px;line-height:1.55}
+.save-badge{font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);padding:1px 8px;border-radius:20px;margin-left:8px;border:1px solid var(--green-border)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.prov-grid{display:flex;flex-wrap:wrap;gap:8px}
-.prov-btn{padding:9px 14px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;transition:all 0.15s}
-.prov-btn:hover{border-color:#fca5a5;color:#dc2626}
-.prov-btn.on{border:2px solid #dc2626;background:#fef2f2;color:#dc2626;font-weight:700}
-.nav{display:flex;justify-content:space-between;margin-top:36px;gap:12px;padding-top:24px;border-top:1px solid #f3f4f6}
-.btn-back{padding:13px 24px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;color:#6b7280;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
-.btn-back:hover{border-color:#d1d5db;color:#374151}
-.btn-next{padding:14px 36px;border-radius:12px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;letter-spacing:-0.2px;box-shadow:0 4px 12px rgba(220,38,38,0.3)}
-.btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(220,38,38,0.4)}
-.result-hero{padding:28px;background:linear-gradient(135deg,#fef2f2,#fff);border:1px solid #fecaca;border-radius:20px;margin-bottom:20px}
-.big-num{font-size:56px;font-weight:900;color:#dc2626;letter-spacing:-2px;line-height:1;font-family:'Space Mono',monospace}
-.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
-.meta-card{background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #f3f4f6}
-.meta-l{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
-.meta-v{font-size:14px;font-weight:600;color:#111827}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;border-bottom:2px solid #f3f4f6;padding-bottom:0}
-.tab-btn{padding:10px 16px;border-radius:10px 10px 0 0;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:none;background:transparent;color:#6b7280;transition:all 0.15s;position:relative;bottom:-2px;border-bottom:2px solid transparent}
-.tab-btn:hover{color:#dc2626;background:#fef2f2}
-.tab-btn.active{color:#dc2626;border-bottom:2px solid #dc2626;background:#fff}
-.tab-content{display:none}
+.prov-grid{display:flex;flex-wrap:wrap;gap:6px}
+.prov-btn{padding:8px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;transition:all 0.15s}
+.prov-btn:hover{border-color:var(--red-border);color:var(--red)}
+.prov-btn.on{border:2px solid var(--red);background:var(--red-dim);color:var(--red);font-weight:700}
+.nav{display:flex;justify-content:space-between;margin-top:36px;gap:12px;padding-top:24px;border-top:1px solid var(--border)}
+.btn-back{padding:12px 24px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.btn-back:hover{border-color:var(--border2);color:var(--text)}
+.btn-next{padding:13px 32px;border-radius:var(--radius);background:var(--red);color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;box-shadow:0 4px 12px rgba(220,38,38,0.3)}
+.btn-next:hover{background:var(--red2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(220,38,38,0.4)}
+.result-hero{padding:26px;background:linear-gradient(135deg,var(--red-dim),var(--bg2));border:1px solid var(--red-border);border-radius:var(--radius-xl);margin-bottom:18px}
+.big-num{font-size:54px;font-weight:900;color:var(--red);letter-spacing:-2px;line-height:1;font-family:'Space Mono',monospace}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.meta-card{background:var(--bg2);border-radius:var(--radius-sm);padding:10px 14px;border:1px solid var(--border)}
+.meta-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.meta-v{font-size:14px;font-weight:600;color:var(--text)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:0;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab-btn{padding:9px 14px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;border:none;background:transparent;color:var(--text2);transition:all 0.15s;position:relative;bottom:-2px;border-bottom:2px solid transparent}
+.tab-btn:hover{color:var(--red);background:var(--red-dim)}
+.tab-btn.active{color:var(--red);border-bottom:2px solid var(--red);background:var(--bg2)}
+.tab-content{display:none;padding-top:20px}
 .tab-content.active{display:block}
-.ins-card{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 18px;background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;text-decoration:none;color:inherit;margin-bottom:10px;transition:all 0.15s;gap:12px}
-.ins-card:hover{border-color:#dc2626;background:#fff9f9;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
-.ins-rank{width:28px;height:28px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;margin-top:2px}
-.ins-name{font-size:15px;font-weight:800;color:#111827;margin-bottom:2px}
-.ins-card:hover .ins-name{color:#dc2626}
-.ins-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.ins-card{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-lg);text-decoration:none;color:inherit;margin-bottom:10px;transition:all 0.15s}
+.ins-card:hover{border-color:var(--red);background:var(--red-dim);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.ins-rank{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;margin-top:2px}
+.ins-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:3px}
+.ins-card:hover .ins-name{color:var(--red)}
+.ins-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:6px}
+.ins-tags{display:flex;gap:5px;flex-wrap:wrap}
 .ins-tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
-.tag-best{background:#fef2f2;color:#dc2626}
-.tag-cheap{background:#f0fdf4;color:#16a34a}
-.tag-claims{background:#eff6ff;color:#1e40af}
-.tag-mil{background:#faf5ff;color:#5b21b6}
-.tag-online{background:#fff7ed;color:#c2410c}
-.ins-score{text-align:right;flex-shrink:0}
-.score-num{font-size:18px;font-weight:900;color:#dc2626;font-family:'Space Mono',monospace}
-.score-lbl{font-size:10px;color:#9ca3af;display:block}
-.ins-cta{font-size:13px;font-weight:700;color:#fff;background:#dc2626;padding:8px 16px;border-radius:8px;white-space:nowrap;align-self:center;flex-shrink:0;border:none;cursor:pointer;font-family:'Outfit',sans-serif}
-.ins-cta:hover{background:#b91c1c}
-.ins-desc{font-size:13px;color:#6b7280;line-height:1.55;margin-top:4px}
-.section-title{font-size:18px;font-weight:900;color:#111827;margin:28px 0 6px}
-.section-sub{font-size:14px;color:#6b7280;margin-bottom:16px;line-height:1.65}
-.recall-form{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.recall-form input{flex:1;min-width:200px}
-.recall-btn{padding:12px 20px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap}
-.recall-btn:hover{background:#b91c1c}
-.recall-result{padding:16px;border-radius:12px;font-size:14px;line-height:1.7}
-.recall-safe{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
-.recall-warn{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
-.recall-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
-.cost-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f3f4f6;font-size:14px}
+.tag-best{background:var(--red-dim);color:var(--red)}
+.tag-cheap{background:var(--green-dim);color:var(--green)}
+.tag-claims{background:var(--blue-dim);color:var(--blue)}
+.tag-mil{background:var(--purple-dim);color:var(--purple)}
+.tag-online{background:var(--gold-dim);color:var(--gold)}
+.ins-right{margin-left:auto;text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.score-num{font-size:16px;font-weight:900;color:var(--red);font-family:'Space Mono',monospace;display:block}
+.score-lbl{font-size:10px;color:var(--text3);display:block}
+.ins-cta{font-size:13px;font-weight:700;color:#fff;background:var(--red);padding:7px 14px;border-radius:var(--radius-sm);white-space:nowrap;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.ins-cta:hover{background:var(--red2)}
+.recall-form{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+.recall-form input{flex:1;min-width:180px;font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase}
+.recall-btn{padding:11px 20px;background:var(--red);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all 0.15s}
+.recall-btn:hover{background:var(--red2)}
+.recall-result{padding:14px 16px;border-radius:var(--radius);font-size:14px;line-height:1.7}
+.recall-safe{background:var(--green-dim);border:1px solid var(--green-border);color:var(--green)}
+.recall-warn{background:var(--red-dim);border:1px solid var(--red-border);color:var(--red)}
+.recall-info{background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--blue)}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;gap:12px}
 .cost-row:last-child{border-bottom:none}
-.cost-total{display:flex;justify-content:space-between;align-items:center;padding:16px;background:#fef2f2;border-radius:12px;margin-top:12px}
-.cost-bar{height:8px;border-radius:4px;background:#f3f4f6;margin-top:6px;overflow:hidden}
-.cost-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
-.action-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
-.action-num{width:30px;height:30px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0}
-.action-title{font-size:15px;font-weight:700;color:#111827;margin-bottom:4px}
-.action-desc{font-size:13px;color:#6b7280;line-height:1.65}
-.disc-pct{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;color:#166534;font-size:14px;font-weight:600;margin-top:12px}
-.progress-steps{display:flex;align-items:center;gap:4px;margin-bottom:28px;overflow-x:auto;padding-bottom:6px}
-.ps-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid #e5e7eb;color:#9ca3af;flex-shrink:0;transition:all 0.3s}
-.ps-dot.done{background:#16a34a;border-color:#16a34a;color:#fff}
-.ps-dot.active{background:#dc2626;border-color:#dc2626;color:#fff}
-.ps-line{width:18px;height:2px;background:#e5e7eb;flex-shrink:0;transition:background 0.3s}
-.ps-line.done{background:#16a34a}
-.ps-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap;margin-left:4px}
-.footer-note{margin-top:40px;padding-top:20px;border-top:1px solid #e5e7eb;font-size:12px;color:#9ca3af;text-align:center;line-height:1.8}
-@media(max-width:520px){.grid2{grid-template-columns:1fr}.big-num{font-size:44px}.ins-card{flex-wrap:wrap}}
+.cost-bar{height:6px;border-radius:3px;background:var(--bg3);margin-top:5px;overflow:hidden;flex:1;min-width:60px}
+.cost-fill{height:100%;border-radius:3px}
+.cost-total{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:var(--red-dim);border:1px solid var(--red-border);border-radius:var(--radius);margin-top:14px;flex-wrap:wrap;gap:10px}
+.action-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;transition:border-color 0.15s}
+.action-card:hover{border-color:var(--red-border)}
+.action-num{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0}
+.disc-bar{background:var(--green-dim);border:1px solid var(--green-border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--green);font-size:14px;font-weight:600;margin-top:12px}
+.guide-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.guide-section h3{font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px}
+.guide-point{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);line-height:1.65;align-items:flex-start}
+.guide-point:last-child{border-bottom:none}
+.guide-ico{flex-shrink:0;font-size:15px;margin-top:1px}
+.autocomplete-wrap{position:relative}
+.autocomplete-drop{position:absolute;top:105%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);z-index:200;box-shadow:var(--shadow-lg);max-height:260px;overflow-y:auto}
+.ac-item{padding:10px 14px;cursor:pointer;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;transition:background 0.1s}
+.ac-item:hover{background:var(--red-dim);color:var(--red)}
+.ac-item:last-child{border-bottom:none}
+.ac-rate{font-size:13px;font-weight:700;color:var(--red);font-family:'Space Mono',monospace}
+.ac-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.prog-steps{display:flex;align-items:center;gap:3px;margin-bottom:26px;overflow-x:auto;padding-bottom:4px}
+.ps-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid var(--border);color:var(--text3);flex-shrink:0;transition:all 0.3s;cursor:pointer}
+.ps-dot:hover{border-color:var(--red-border)}
+.ps-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.ps-dot.active{background:var(--red);border-color:var(--red);color:#fff}
+.ps-line{width:14px;height:2px;background:var(--border);flex-shrink:0;transition:background 0.3s}
+.ps-line.done{background:var(--green)}
+.ps-label{font-size:11px;color:var(--red);font-weight:700;white-space:nowrap;margin-left:4px}
+.email-form{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.email-form input{flex:1;min-width:200px}
+.email-btn{padding:11px 20px;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all 0.15s}
+.email-btn:hover{background:#15803d}
+.pdf-btn{padding:10px 20px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.pdf-btn:hover{border-color:var(--red);color:var(--red)}
+.share-btn{padding:10px 20px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.share-btn:hover{border-color:var(--blue);color:var(--blue)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.footer-note{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);text-align:center;line-height:1.8}
+@media(max-width:540px){.grid2{grid-template-columns:1fr}.big-num{font-size:44px}.ins-card{flex-wrap:wrap}.tabs{gap:2px}.tab-btn{padding:8px 10px;font-size:12px}}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fade-in{animation:slideIn 0.3s ease}
 </style>
 </head>
 <body>
@@ -133,213 +184,492 @@ input[type=range]{width:100%;accent-color:#dc2626;height:5px;margin:10px 0;curso
   <div class="hdr-inner">
     <div>
       <div class="logo">CarInsure<span>Guide</span></div>
-      <div class="logo-sub">Canada and US Car Insurance</div>
+      <div class="logo-sub">Canada &amp; US Car Insurance</div>
     </div>
-    <div class="pill" id="est-pill">$0/mo</div>
+    <div class="hdr-right">
+      <div class="pill" id="est-pill">$0/mo</div>
+      <button class="theme-btn" onclick="toggleDark()" title="Toggle dark mode" id="theme-btn">&#9790;</button>
+    </div>
   </div>
   <div class="prog"><div class="prog-fill" id="prog"></div></div>
 </div>
 
 <div class="wrap">
-  <div class="progress-steps" id="prog-steps"></div>
-  <div id="content"></div>
+  <div class="prog-steps" id="prog-steps"></div>
+  <div id="content" class="fade-in"></div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
+// ── Theme ──────────────────────────────────────────────────────────────────
+var isDark=localStorage.getItem('cig-dark')==='1';
+if(isDark)document.body.classList.add('dark');
+function toggleDark(){isDark=!isDark;document.body.classList.toggle('dark',isDark);localStorage.setItem('cig-dark',isDark?'1':'0');document.getElementById('theme-btn').textContent=isDark?'\u2600':'\u263a';}
+if(isDark)document.getElementById('theme-btn').textContent='\u2600';
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+
+// ── Data ───────────────────────────────────────────────────────────────────
 var CA_BASE={ON:1920,BC:1450,AB:1735,QC:900,MB:1350,SK:1235,NS:1150,NB:1120,NL:1270,PE:1080,NT:1200,NU:1200,YT:1200};
-var US_BASE={CA:2450,TX:2310,FL:3183,NY:2994,IL:1566,PA:1478,OH:1034,GA:2359,NC:1392,WA:1701,AZ:2026,CO:2568,MI:2864,WI:1087,NV:2100,NJ:2800,MA:2000,MD:1900,TN:1600,VA:1400,MO:1300,IN:1200,KY:1500,SC:1400,AL:1400,MN:1400};
+var US_BASE={CA:2450,TX:2310,FL:3183,NY:2994,IL:1566,PA:1478,OH:1034,GA:2359,NC:1392,WA:1701,AZ:2026,CO:2568,MI:2864,WI:1087,NV:2100,NJ:2800,MA:2000,MD:1900,TN:1600,VA:1400,MO:1300,IN:1200,KY:1500,SC:1400,AL:1400,MN:1400,OR:1600,CT:1800,OK:1800,UT:1400,IA:1100,KS:1300,NE:1500,AR:1600,MS:1500,LA:2400,ID:1200,MT:1600,WY:1300,ND:1100,SD:1200,NM:1500,VT:1200,NH:1100,ME:1100,RI:1800,DE:1500,HI:1100,AK:1400,DC:2200,WV:1400};
+var CA_CITY={
+  "Brampton":{p:"ON",r:2900,n:"Highest rates in Ontario. High fraud, theft, and accident claims."},
+  "Mississauga":{p:"ON",r:2531,n:"Second highest in province. Dense urban area near Toronto."},
+  "Toronto":{p:"ON",r:2400,n:"High fraud and congestion drive above-average rates."},
+  "Vaughan":{p:"ON",r:2178,n:"York Region -- high density suburb with elevated theft rates."},
+  "North York":{p:"ON",r:2200,n:"Dense urban area, elevated theft and fraud."},
+  "Scarborough":{p:"ON",r:2300,n:"Toronto suburb -- 23% above city average."},
+  "Markham":{p:"ON",r:2200,n:"York Region -- elevated vehicle theft rates."},
+  "Hamilton":{p:"ON",r:2100,n:"Near provincial average. Rising fraud rates."},
+  "Ajax":{p:"ON",r:2050,n:"Durham Region -- slightly above provincial average."},
+  "Pickering":{p:"ON",r:2000,n:"Durham Region -- moderate urban rates."},
+  "Etobicoke":{p:"ON",r:2100,n:"Toronto suburb -- above provincial average."},
+  "Richmond Hill":{p:"ON",r:2150,n:"York Region -- above average due to theft rates."},
+  "Oshawa":{p:"ON",r:1950,n:"Durham Region -- moderate rates."},
+  "Whitby":{p:"ON",r:1900,n:"Durham Region -- near provincial average."},
+  "Burlington":{p:"ON",r:1850,n:"Halton Region -- below GTA average."},
+  "Oakville":{p:"ON",r:1809,n:"Consistently below GTA average."},
+  "Newmarket":{p:"ON",r:1950,n:"York Region -- moderate rates."},
+  "Guelph":{p:"ON",r:1750,n:"Below provincial average. Lower claims frequency."},
+  "Kitchener":{p:"ON",r:1341,n:"One of the most affordable cities in Ontario."},
+  "Waterloo":{p:"ON",r:1350,n:"Low rates -- university town, lower risk profile."},
+  "Cambridge":{p:"ON",r:1400,n:"Below provincial average. Moderate risk."},
+  "London":{p:"ON",r:2100,n:"Near provincial average. Rising in recent years."},
+  "Windsor":{p:"ON",r:1412,n:"Below provincial average."},
+  "Ottawa":{p:"ON",r:1213,n:"Cheapest major Ontario city. Low fraud, less congestion."},
+  "Kingston":{p:"ON",r:1700,n:"Below provincial average."},
+  "Belleville":{p:"ON",r:1600,n:"Eastern Ontario -- below provincial average."},
+  "Barrie":{p:"ON",r:1800,n:"Near provincial average."},
+  "Sudbury":{p:"ON",r:1500,n:"Northern Ontario -- lower than southern cities."},
+  "Thunder Bay":{p:"ON",r:1400,n:"Northern Ontario -- significantly below provincial average."},
+  "Owen Sound":{p:"ON",r:1450,n:"Southern Georgian Bay -- below provincial average."},
+  "Peterborough":{p:"ON",r:1650,n:"Below provincial average."},
+  "St. Catharines":{p:"ON",r:1800,n:"Niagara region -- near provincial average."},
+  "Niagara Falls":{p:"ON",r:1750,n:"Niagara region -- moderate rates."},
+  "Brantford":{p:"ON",r:1700,n:"Southwestern Ontario -- below average."},
+  "Sarnia":{p:"ON",r:1600,n:"Below provincial average."},
+  "Cornwall":{p:"ON",r:1400,n:"Eastern Ontario -- well below provincial average."},
+  "Sault Ste. Marie":{p:"ON",r:1450,n:"Northern Ontario -- moderate rates."},
+  "Vancouver":{p:"BC",r:1950,n:"Highest in BC. ICBC -- urban density and theft."},
+  "Surrey":{p:"BC",r:1700,n:"High theft rates in parts. Above BC average."},
+  "Burnaby":{p:"BC",r:1650,n:"Dense suburb. Above BC average."},
+  "Richmond":{p:"BC",r:1600,n:"Above BC average. Flood risk area."},
+  "Victoria":{p:"BC",r:1350,n:"Below BC average. Less congestion than Vancouver."},
+  "Kelowna":{p:"BC",r:1300,n:"Interior BC -- below average."},
+  "Abbotsford":{p:"BC",r:1400,n:"Fraser Valley -- moderate rates."},
+  "Prince George":{p:"BC",r:1250,n:"Northern BC -- below BC average."},
+  "Kamloops":{p:"BC",r:1280,n:"Interior BC -- below average."},
+  "Nanaimo":{p:"BC",r:1320,n:"Vancouver Island -- below BC average."},
+  "Calgary":{p:"AB",r:1850,n:"Hailstorm capital of Canada. High comprehensive claims."},
+  "Edmonton":{p:"AB",r:1750,n:"Near Alberta average. Cold weather claims."},
+  "Red Deer":{p:"AB",r:1600,n:"Below Alberta average. Lower density."},
+  "Lethbridge":{p:"AB",r:1550,n:"Southern Alberta -- below average."},
+  "Grande Prairie":{p:"AB",r:1500,n:"Northern Alberta -- below average."},
+  "Medicine Hat":{p:"AB",r:1480,n:"Southeastern Alberta -- below average."},
+  "Montreal":{p:"QC",r:1050,n:"Above Quebec average but still cheap vs other provinces."},
+  "Quebec City":{p:"QC",r:850,n:"One of the cheapest cities in Canada."},
+  "Laval":{p:"QC",r:980,n:"Montreal suburb -- slightly above Quebec average."},
+  "Longueuil":{p:"QC",r:960,n:"South Shore Montreal -- near Quebec average."},
+  "Gatineau":{p:"QC",r:920,n:"Near Ottawa -- below Quebec average."},
+  "Sherbrooke":{p:"QC",r:880,n:"Eastern Townships -- near Quebec average."},
+  "Winnipeg":{p:"MB",r:1400,n:"Manitoba average. MPI public insurance."},
+  "Brandon":{p:"MB",r:1250,n:"Below Manitoba average."},
+  "Saskatoon":{p:"SK",r:1300,n:"SGI public insurance. Moderate rates."},
+  "Regina":{p:"SK",r:1250,n:"SGI public insurance. Below national average."},
+  "Halifax":{p:"NS",r:1200,n:"Competitive private market. Below national average."},
+  "Dartmouth":{p:"NS",r:1180,n:"Near Halifax -- similar rates."},
+  "Sydney":{p:"NS",r:1150,n:"Cape Breton -- below provincial average."},
+  "Moncton":{p:"NB",r:1150,n:"Below national average."},
+  "Fredericton":{p:"NB",r:1130,n:"Below national average."},
+  "Saint John":{p:"NB",r:1140,n:"Below national average."},
+  "St. John's":{p:"NL",r:1280,n:"Near provincial average."},
+  "Charlottetown":{p:"PE",r:1100,n:"Among Canada's cheapest major cities."}
+};
+var US_CITY={
+  "Miami":{s:"FL",r:4200,n:"Highest rates in the US. Fraud, no-fault abuse, hurricane risk."},
+  "Detroit":{s:"MI",r:4800,n:"Historically most expensive in US. PIP reform helping."},
+  "New York City":{s:"NY",r:4500,n:"Density, fraud, no-fault system drive extreme rates."},
+  "Los Angeles":{s:"CA",r:3200,n:"High traffic density, fraud, expensive repairs."},
+  "San Francisco":{s:"CA",r:2800,n:"Urban density and expensive vehicles."},
+  "Denver":{s:"CO",r:2800,n:"Hailstorm risk drives high comprehensive claims."},
+  "Houston":{s:"TX",r:2800,n:"Severe weather and high traffic. Above TX average."},
+  "Atlanta":{s:"GA",r:2800,n:"Highest in Georgia. Urban density and traffic."},
+  "Dallas":{s:"TX",r:2600,n:"Hail risk and traffic. Above state average."},
+  "Phoenix":{s:"AZ",r:2200,n:"High heat affects vehicles. Rising theft rates."},
+  "Austin":{s:"TX",r:2500,n:"Growing rapidly -- rates rising with population."},
+  "Tampa":{s:"FL",r:2900,n:"Above state average. Flood and storm risk."},
+  "Orlando":{s:"FL",r:2800,n:"Above state average. High accident rates."},
+  "Jacksonville":{s:"FL",r:2600,n:"Below Miami but still high for the state."},
+  "Seattle":{s:"WA",r:1900,n:"Above state average. Urban density."},
+  "Buffalo":{s:"NY",r:2200,n:"Well below NYC. Upstate rates far more reasonable."},
+  "Chicago":{s:"IL",r:2400,n:"Well above state average. Urban density and fraud."},
+  "San Diego":{s:"CA",r:2200,n:"Below LA. Less congestion and lower fraud."},
+  "Sacramento":{s:"CA",r:2000,n:"Inland -- below coastal California averages."},
+  "San Antonio":{s:"TX",r:2100,n:"Below TX urban average."},
+  "Charlotte":{s:"NC",r:1600,n:"Moderate rates. Below national average."},
+  "Raleigh":{s:"NC",r:1400,n:"One of the most affordable major cities."},
+  "Columbus":{s:"OH",r:1200,n:"Affordable. One of cheapest major US cities."},
+  "Cleveland":{s:"OH",r:1300,n:"Affordable Midwest rates."},
+  "Milwaukee":{s:"WI",r:1400,n:"Affordable Midwest rates."},
+  "Minneapolis":{s:"MN",r:1500,n:"Below national average."},
+  "Portland":{s:"OR",r:1700,n:"Moderate rates. Below national average."},
+  "Nashville":{s:"TN",r:1700,n:"Growing city. Near state average."},
+  "Memphis":{s:"TN",r:1800,n:"Above TN average. Higher urban density."},
+  "Louisville":{s:"KY",r:1600,n:"Near state average."},
+  "Baltimore":{s:"MD",r:2100,n:"Above state average. Urban density and theft."},
+  "Richmond":{s:"VA",r:1500,n:"Near state average."},
+  "Virginia Beach":{s:"VA",r:1400,n:"Below state average."},
+  "Oklahoma City":{s:"OK",r:1900,n:"Severe weather risk. Near state average."},
+  "Tulsa":{s:"OK",r:1800,n:"Below OKC. Moderate rates."},
+  "Kansas City":{s:"MO",r:1400,n:"Affordable. Below national average."},
+  "St. Louis":{s:"MO",r:1500,n:"Above Kansas City. Higher urban density."},
+  "Indianapolis":{s:"IN",r:1300,n:"Affordable Midwest rates."},
+  "Cincinnati":{s:"OH",r:1250,n:"Affordable. Below national average."},
+  "Pittsburgh":{s:"PA",r:1500,n:"Below Philadelphia. Moderate rates."},
+  "Philadelphia":{s:"PA",r:2100,n:"Above state average. Urban density."}
+};
 var CA_PROVS=[["ON","Ontario"],["BC","British Columbia"],["AB","Alberta"],["QC","Quebec"],["MB","Manitoba"],["SK","Saskatchewan"],["NS","Nova Scotia"],["NB","New Brunswick"],["NL","Newfoundland"],["PE","PEI"]];
-var US_STATES=[["CA","California"],["TX","Texas"],["FL","Florida"],["NY","New York"],["IL","Illinois"],["PA","Pennsylvania"],["OH","Ohio"],["GA","Georgia"],["NC","North Carolina"],["WA","Washington"],["AZ","Arizona"],["CO","Colorado"],["MI","Michigan"],["WI","Wisconsin"],["NV","Nevada"],["NJ","New Jersey"],["MA","Massachusetts"],["MD","Maryland"],["TN","Tennessee"],["VA","Virginia"],["MO","Missouri"],["IN","Indiana"],["KY","Kentucky"],["SC","South Carolina"],["AL","Alabama"],["MN","Minnesota"],["OR","Oregon"],["CT","Connecticut"],["OK","Oklahoma"],["UT","Utah"]];
-var STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Your results"];
+var US_STATES=[["CA","California"],["TX","Texas"],["FL","Florida"],["NY","New York"],["IL","Illinois"],["PA","Pennsylvania"],["OH","Ohio"],["GA","Georgia"],["NC","North Carolina"],["WA","Washington"],["AZ","Arizona"],["CO","Colorado"],["MI","Michigan"],["WI","Wisconsin"],["NV","Nevada"],["NJ","New Jersey"],["MA","Massachusetts"],["MD","Maryland"],["TN","Tennessee"],["VA","Virginia"],["MO","Missouri"],["IN","Indiana"],["KY","Kentucky"],["SC","South Carolina"],["AL","Alabama"],["MN","Minnesota"],["OR","Oregon"],["CT","Connecticut"],["OK","Oklahoma"],["UT","Utah"],["IA","Iowa"],["KS","Kansas"],["NE","Nebraska"],["AR","Arkansas"],["MS","Mississippi"],["LA","Louisiana"],["ID","Idaho"],["MT","Montana"],["WY","Wyoming"],["ND","North Dakota"],["SD","South Dakota"],["NM","New Mexico"],["VT","Vermont"],["NH","New Hampshire"],["ME","Maine"],["RI","Rhode Island"],["DE","Delaware"],["HI","Hawaii"],["AK","Alaska"],["DC","Washington DC"],["WV","West Virginia"]];
 
-var CA_INSURERS=[
-  {rank:1,name:"The Co-operators",desc:"Canada's highest-rated insurer for customer satisfaction (JD Power). Member-owned, not profit-driven. Strong in Ontario and Atlantic Canada. Known for treating claims fairly and paying out without excessive friction.",best:"Best overall satisfaction",score:"897",url:"https://www.cooperators.ca/en/Products/auto-insurance.aspx",tags:["tag-best","tag-claims"],tagLabels:["#1 Satisfaction","Best Claims"]},
-  {rank:2,name:"iA Financial Group",desc:"Named Canada's Best Auto Insurer by Forbes 2025 (survey of 45,000 consumers). Strong digital tools and competitive rates, especially in Quebec and Ontario.",best:"Best overall 2025",score:"891",url:"https://ia.ca/individuals/insurance/auto-insurance",tags:["tag-best","tag-cheap"],tagLabels:["Forbes #1 Canada","Competitive Rates"]},
-  {rank:3,name:"Intact Insurance",desc:"Canada's largest private insurer. Available in every province. Strong newcomer programs, excellent digital experience, and one of the best bundling discounts in the industry. Your best starting point for comparison.",best:"Largest insurer",score:"878",url:"https://www.intact.net/en/get-a-quote",tags:["tag-best","tag-online"],tagLabels:["Largest in Canada","Best Newcomer Program"]},
-  {rank:4,name:"Ratehub.ca",desc:"Not an insurer -- it's the smartest way to compare 50+ Canadian insurers at once in under 5 minutes. Starting here means you see the full market, not just one company's rates. Free, no obligation.",best:"Best way to compare",score:"50+",url:"https://www.ratehub.ca/car-insurance",tags:["tag-cheap"],tagLabels:["Compare 50+ Insurers"]},
-  {rank:5,name:"The Personal",desc:"Top-rated in Quebec (JD Power). Member-based insurer with consistently strong customer service scores. Competitive for professional associations and alumni groups.",best:"Best in Quebec",score:"874",url:"https://www.thepersonal.com/en/auto",tags:["tag-claims"],tagLabels:["Top Rated Quebec","Member-Based"]},
-  {rank:6,name:"RBC Insurance",desc:"Strong digital tools and competitive bundling rates for RBC banking customers. Easy online management and fast claims submission through the RBC app.",best:"Best for RBC clients",score:"861",url:"https://www.rbcinsurance.com/auto-insurance/index.html",tags:["tag-online"],tagLabels:["Bank Bundle","Digital-First"]},
-  {rank:7,name:"Belairdirect",desc:"Online-first insurer with some of Canada's best telematics rates. Their Ajusto program can save safe drivers up to 25%. No agent required -- 100% digital.",best:"Best telematics",score:"855",url:"https://www.belairdirect.com/en/auto-insurance/get-a-quote.html",tags:["tag-online","tag-cheap"],tagLabels:["Best Telematics App","Online Only"]},
-  {rank:8,name:"TD Insurance",desc:"Competitive rates for professionals and TD banking customers. Strong association discounts for university alumni and professional groups (engineers, nurses, teachers).",best:"Best for professionals",score:"849",url:"https://www.tdinsurance.com/products-services/auto-insurance/get-a-quote",tags:["tag-cheap"],tagLabels:["Professional Discounts","TD Clients"]},
-  {rank:9,name:"Kanetix.ca",desc:"Canada's original insurance comparison platform. Strong broker network -- ideal if your profile is complex (high-risk, multiple vehicles, unusual coverage needs) and you want expert guidance.",best:"Best for complex profiles",score:"N/A",url:"https://www.kanetix.ca/auto-insurance",tags:["tag-claims"],tagLabels:["Broker Network","Complex Profiles"]},
-  {rank:10,name:"Economical Insurance",desc:"Highly rated by JD Power. Mid-size insurer known for fair claims handling and competitive rates in Ontario, BC and Atlantic Canada. Often beats larger insurers on price for clean-record drivers.",best:"Best hidden gem",score:"843",url:"https://www.economical.com/en/insurance-types/auto",tags:["tag-cheap","tag-claims"],tagLabels:["Fair Claims","Hidden Gem"]}
+var CA_INS=[
+  {rank:1,name:"The Co-operators",desc:"Canada's highest-rated insurer for customer satisfaction (JD Power). Member-owned, not profit-driven. Known for treating claims fairly and paying out without excessive friction.",tags:["tag-best","tag-claims"],tagLabels:["#1 Satisfaction","Best Claims"],score:"897",url:"https://www.cooperators.ca/en/Products/auto-insurance.aspx"},
+  {rank:2,name:"iA Financial Group",desc:"Named Canada's Best Auto Insurer by Forbes 2025 (survey of 45,000 consumers). Strong digital tools and competitive rates especially in Quebec and Ontario.",tags:["tag-best","tag-cheap"],tagLabels:["Forbes #1 Canada","Competitive Rates"],score:"891",url:"https://ia.ca/individuals/insurance/auto-insurance"},
+  {rank:3,name:"Intact Insurance",desc:"Canada's largest private insurer. Available in every province. Strong newcomer programs, excellent digital experience, and one of the best bundling discounts in the industry.",tags:["tag-best","tag-online"],tagLabels:["Largest in Canada","Best Newcomer"],score:"878",url:"https://www.intact.net/en/get-a-quote"},
+  {rank:4,name:"Ratehub.ca",desc:"The smartest starting point -- compare 50+ Canadian insurers in under 5 minutes. Free, no obligation, no spam. This is how you see the full market, not just one company.",tags:["tag-cheap"],tagLabels:["Compare 50+ Insurers"],score:"50+",url:"https://www.ratehub.ca/car-insurance"},
+  {rank:5,name:"The Personal",desc:"Top-rated in Quebec (JD Power). Member-based insurer with consistently strong customer service. Competitive for professional associations and alumni groups.",tags:["tag-claims"],tagLabels:["Top Rated Quebec","Member-Based"],score:"874",url:"https://www.thepersonal.com/en/auto"},
+  {rank:6,name:"RBC Insurance",desc:"Strong digital tools and competitive bundling for RBC banking customers. Easy online management and fast claims submission through the RBC app.",tags:["tag-online"],tagLabels:["Bank Bundle","Digital-First"],score:"861",url:"https://www.rbcinsurance.com/auto-insurance/index.html"},
+  {rank:7,name:"Belairdirect",desc:"Online-first insurer with Canada's best telematics program (Ajusto app). No agent required -- 100% digital. Safe drivers routinely save 20-25%.",tags:["tag-online","tag-cheap"],tagLabels:["Best Telematics","Online Only"],score:"855",url:"https://www.belairdirect.com/en/auto-insurance/get-a-quote.html"},
+  {rank:8,name:"TD Insurance",desc:"Competitive rates for professionals and TD banking customers. Strong association discounts for university alumni and professional groups.",tags:["tag-cheap"],tagLabels:["Professional Discounts","TD Clients"],score:"849",url:"https://www.tdinsurance.com/products-services/auto-insurance/get-a-quote"},
+  {rank:9,name:"Kanetix.ca",desc:"Canada's original comparison platform. Strong broker network -- ideal if your profile is complex (high-risk, multiple vehicles, unusual needs) and you want expert guidance.",tags:["tag-claims"],tagLabels:["Broker Network","Complex Profiles"],score:"N/A",url:"https://www.kanetix.ca/auto-insurance"},
+  {rank:10,name:"Economical Insurance",desc:"Highly rated by JD Power. Mid-size insurer known for fair claims and competitive rates in Ontario, BC, and Atlantic Canada. Often beats larger insurers for clean-record drivers.",tags:["tag-cheap","tag-claims"],tagLabels:["Fair Claims","Hidden Gem"],score:"843",url:"https://www.economical.com/en/insurance-types/auto"}
+];
+var US_INS=[
+  {rank:1,name:"Erie Insurance",desc:"#1 in JD Power 2025 Claims Satisfaction Study. Regional insurer known for exceptional claims handling and the industry's most loyal customers. If you're in their coverage area, get a quote.",tags:["tag-claims","tag-best"],tagLabels:["#1 JD Power Claims","Regional Excellence"],score:"743",url:"https://www.erieinsurance.com/auto-insurance"},
+  {rank:2,name:"USAA",desc:"The gold standard for military families. Consistently the cheapest and highest-rated for those who qualify. Rates typically 20-30% below national average. If you qualify, always start here.",tags:["tag-mil","tag-cheap","tag-best"],tagLabels:["Military Only","Best Rates","Top Satisfaction"],score:"890",url:"https://www.usaa.com/inet/wc/auto-insurance"},
+  {rank:3,name:"State Farm",desc:"The only national insurer ranked above average in every US region by JD Power 2025. Safest all-around pick for most drivers. Local agents provide personalized service.",tags:["tag-best","tag-claims"],tagLabels:["Top National Insurer","All Regions Rated High"],score:"881",url:"https://www.statefarm.com/insurance/auto"},
+  {rank:4,name:"Insurify",desc:"The smartest way to compare -- real quotes from 20+ insurers in 45 seconds. AI-powered matching finds the best rate for your specific profile. No spam, no obligation.",tags:["tag-cheap"],tagLabels:["Compare 20+ Insurers","AI-Powered"],score:"20+",url:"https://insurify.com/car-insurance"},
+  {rank:5,name:"GEICO",desc:"Usually the cheapest for clean-record drivers. Available in all 50 states. A++ financial strength from AM Best. Their app is one of the best in the industry.",tags:["tag-cheap","tag-online"],tagLabels:["Usually Cheapest","Best App","All 50 States"],score:"868",url:"https://www.geico.com/auto-insurance/"},
+  {rank:6,name:"Amica Mutual",desc:"Highest overall customer satisfaction among full-service national insurers. Member-owned so profits go back to policyholders. Dividend policies can return 5-20% of your premium.",tags:["tag-best","tag-claims"],tagLabels:["Top Customer Service","Dividend Policies"],score:"740",url:"https://www.amica.com/auto-insurance"},
+  {rank:7,name:"Progressive",desc:"Best for drivers with complicated profiles -- accidents, tickets, DUI, or coverage lapse. Name Your Price tool is genuinely useful. Snapshot telematics saves up to 30%.",tags:["tag-online","tag-cheap"],tagLabels:["Best for High-Risk","Top Telematics"],score:"856",url:"https://www.progressive.com/auto/"},
+  {rank:8,name:"The Zebra",desc:"Compare 100+ companies without giving your phone number upfront. Most privacy-friendly comparison tool. Great for anonymous research before you're ready to commit.",tags:["tag-cheap"],tagLabels:["No Spam Guarantee","100+ Companies"],score:"100+",url:"https://www.thezebra.com/auto-insurance/"},
+  {rank:9,name:"Travelers",desc:"Consistently ranks among the most affordable national insurers. Strong coverage options and bundling discounts. Especially competitive for homeowners bundling auto and home.",tags:["tag-cheap","tag-claims"],tagLabels:["Affordable National","Great Bundling"],score:"862",url:"https://www.travelers.com/personal-insurance/auto-insurance"},
+  {rank:10,name:"Auto-Owners Insurance",desc:"Among the lowest complaint ratios of any major insurer (NAIC data). Exceptional claims handling and nearly perfect customer retention. Available in 26 states through independent agents.",tags:["tag-claims","tag-best"],tagLabels:["Lowest Complaints","Exceptional Claims"],score:"875",url:"https://www.auto-owners.com/"}
 ];
 
-var US_INSURERS=[
-  {rank:1,name:"Erie Insurance",desc:"#1 ranked by JD Power for auto claims satisfaction 2025. Regional insurer (Mid-Atlantic, Midwest, Southeast) known for exceptional claims handling and the industry's most loyal customers. If you're in their coverage area, get a quote.",best:"#1 Claims Satisfaction",score:"743",url:"https://www.erieinsurance.com/auto-insurance",tags:["tag-claims","tag-best"],tagLabels:["#1 JD Power Claims","Regional Excellence"]},
-  {rank:2,name:"USAA",desc:"The gold standard for military families. Consistently the cheapest and highest-rated insurer for those who qualify -- active military, veterans, and their families. If you qualify, start here. Rates are typically 20-30% below the national average.",best:"Best for military",score:"890",url:"https://www.usaa.com/inet/wc/auto-insurance",tags:["tag-mil","tag-cheap","tag-best"],tagLabels:["Military Only","Best Rates","Top Satisfaction"]},
-  {rank:3,name:"State Farm",desc:"The only national insurer ranked above average in every US region by JD Power 2025. The safest all-around pick for most drivers. Local agents provide personalized service. Strong Drive Safe and Save telematics program.",best:"Best national insurer",score:"881",url:"https://www.statefarm.com/insurance/auto",tags:["tag-best","tag-claims"],tagLabels:["Top National Insurer","Every Region Rated High"]},
-  {rank:4,name:"Insurify",desc:"The smartest way to compare -- see real quotes from 20+ insurers in 45 seconds. AI-powered matching finds the best rate for your specific profile. No spam, no obligation. Always start here before calling any one insurer.",best:"Best way to compare",score:"20+",url:"https://insurify.com/car-insurance",tags:["tag-cheap"],tagLabels:["Compare 20+ Insurers","AI-Powered Matching"]},
-  {rank:5,name:"GEICO",desc:"Usually the cheapest option for clean-record drivers. Available in all 50 states. A++ financial strength rating from AM Best. Their app is one of the best in the industry. Best for digitally comfortable, price-conscious drivers.",best:"Often cheapest rates",score:"868",url:"https://www.geico.com/auto-insurance/",tags:["tag-cheap","tag-online"],tagLabels:["Usually Cheapest","Best App","All 50 States"]},
-  {rank:6,name:"Amica Mutual",desc:"Highest overall customer satisfaction among full-service national insurers. Member-owned (like a credit union for insurance) so profits go back to policyholders. Dividend policies can return 5-20% of your premium annually.",best:"Best customer service",score:"740",url:"https://www.amica.com/auto-insurance",tags:["tag-best","tag-claims"],tagLabels:["Top Customer Service","Dividend Policies"]},
-  {rank:7,name:"Progressive",desc:"Best for drivers with complicated profiles -- accidents, tickets, DUI, or first-time insurance after a lapse. Their Name Your Price tool is genuinely useful. Snapshot telematics can save safe drivers up to 30%.",best:"Best for high-risk drivers",score:"856",url:"https://www.progressive.com/auto/",tags:["tag-online","tag-cheap"],tagLabels:["Best for High-Risk","Top Telematics Program"]},
-  {rank:8,name:"The Zebra",desc:"Compare 100+ companies without giving your phone number or email upfront. The most privacy-friendly comparison tool. Excellent for research and anonymous rate browsing before you're ready to commit.",best:"Best anonymous compare",score:"100+",url:"https://www.thezebra.com/auto-insurance/",tags:["tag-cheap"],tagLabels:["No Spam Guarantee","100+ Companies"]},
-  {rank:9,name:"Travelers",desc:"Consistently ranks among the most affordable national insurers. Strong coverage options and good bundling discounts. Especially competitive for homeowners bundling auto and home.",best:"Best affordable national",score:"862",url:"https://www.travelers.com/personal-insurance/auto-insurance",tags:["tag-cheap","tag-claims"],tagLabels:["Affordable National","Great Bundling"]},
-  {rank:10,name:"Auto-Owners Insurance",desc:"Among the lowest complaint ratios of any major insurer (NAIC data). Exceptional claims handling and nearly perfect customer retention rates. Available through independent agents in 26 states.",best:"Fewest complaints",score:"875",url:"https://www.auto-owners.com/",tags:["tag-claims","tag-best"],tagLabels:["Lowest Complaints","Exceptional Claims"]}
-];
-
-var p={country:"CA",province:"ON",usState:"CA",city:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false};
+var STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Results"];
+var p={country:"CA",province:"ON",usState:"CA",city:"",cityRate:null,cityNote:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false};
 var step=0;
 var activeTab="results";
-var recallVin="";
-var recallResult="";
+var cityAC=[];
+var cityACTimer=null;
+var emailSaved=false;
 
 function fmtC(n){return"$"+Math.round(n).toLocaleString();}
 
 function calcPremium(){
-  var base=p.country==="CA"?(CA_BASE[p.province]||1500):(US_BASE[p.usState]||1800);
+  var base=p.cityRate||(p.country==="CA"?(CA_BASE[p.province]||1500):(US_BASE[p.usState]||1800));
   var a=base;
   if(p.coverage==="liability_only")a*=0.45;else if(p.coverage==="standard")a*=0.75;
   var age=+p.age||35;
   if(age<18)a*=2.5;else if(age<=21)a*=2.0;else if(age<=24)a*=1.6;else if(age<=29)a*=1.2;else if(age>74)a*=1.25;else if(age>64)a*=1.1;
   if(p.marital==="married")a*=0.95;
-  var yl=+p.yearsLic||5;
-  if(yl<1)a*=1.5;else if(yl<3)a*=1.2;
+  var yl=+p.yearsLic||5;if(yl<1)a*=1.5;else if(yl<3)a*=1.2;
   var val=+p.vValue||25000;
   if(val>80000)a*=1.35;else if(val>50000)a*=1.2;else if(val>35000)a*=1.1;else if(val<10000)a*=0.85;
   var vAge=new Date().getFullYear()-(+p.vYear||new Date().getFullYear());
   if(vAge<=1)a*=1.1;else if(vAge>=15)a*=0.85;
   var m=(p.vModel||"").toLowerCase();
   if(m.indexOf("civic")>-1||m.indexOf("rav4")>-1||m.indexOf("f-150")>-1||m.indexOf("tucson")>-1)a*=1.12;
-  if((p.vMake||"").toLowerCase().indexOf("tesla")>-1)a*=1.25;
+  if(p.isEV)a*=1.2;
+  else if((p.vMake||"").toLowerCase().indexOf("tesla")>-1)a*=1.25;
   if(p.vUse==="rideshare")a*=1.35;else if(p.vUse==="business")a*=1.2;else if(p.vUse==="commute_long")a*=1.1;
-  var km=+p.km||15000;
-  if(km<8000)a*=0.88;else if(km>25000)a*=1.1;
+  var km=+p.km||15000;if(km<8000)a*=0.88;else if(km>25000)a*=1.1;
   if(p.parking==="garage")a*=0.93;else if(p.parking==="high_theft")a*=1.15;
-  a+=(+p.atFault||0)*a*0.28;
-  a+=(+p.tickets||0)*a*0.12;
+  a+=(+p.atFault||0)*a*0.28;a+=(+p.tickets||0)*a*0.12;
   if(p.dui)a*=1.8;
-  var lapse=+p.lapse||0;
-  if(lapse>12)a*=1.25;else if(lapse>6)a*=1.15;
-  var ded=+p.ded||1000;
-  if(ded>=2000)a*=0.75;else if(ded>=1000)a*=0.87;else if(ded<=250)a*=1.1;
+  var lapse=+p.lapse||0;if(lapse>12)a*=1.25;else if(lapse>6)a*=1.15;
+  var ded=+p.ded||1000;if(ded>=2000)a*=0.75;else if(ded>=1000)a*=0.87;else if(ded<=250)a*=1.1;
   var disc=0;
   if(p.winterTires&&p.country==="CA")disc+=0.08;
-  if(p.bundle)disc+=0.15;
-  if(p.telematics)disc+=0.12;
-  if(p.multi)disc+=0.1;
+  if(p.bundle)disc+=0.15;if(p.telematics)disc+=0.12;if(p.multi)disc+=0.1;
   a*=(1-Math.min(disc,0.45));
   return{annual:Math.round(a),monthly:Math.round(a/12),disc:Math.round(disc*100)};
 }
 
 function fb(type,ico,msg){return'<div class="fb fb-'+type+'"><div class="ico">'+ico+'</div><div>'+msg+'</div></div>';}
-
 function chk(key,val,label,desc,savings){
-  var on=val?"on":"";
-  var savBadge=savings?'<span class="save-badge">'+savings+'</span>':"";
-  return'<div class="chk '+on+'" onclick="p.'+key+'=!p.'+key+';render()">'+
+  var sv=savings?'<span class="save-badge">'+savings+'</span>':"";
+  return'<div class="chk'+(val?" on":"")+'\" onclick="p.'+key+'=!p.'+key+';render()">'+
     '<div class="chk-box">'+(val?"&#10003;":"")+'</div>'+
-    '<div style="flex:1"><div class="chk-lbl">'+label+savBadge+'</div>'+
+    '<div style="flex:1"><div class="chk-lbl">'+label+sv+'</div>'+
     '<div class="chk-desc">'+desc+'</div></div></div>';
+}
+
+// City autocomplete using GeoNames + local database
+function citySearch(q){
+  clearTimeout(cityACTimer);
+  if(!q||q.length<2){cityAC=[];renderAC();return;}
+  // First search local DB
+  var cc=p.country==="CA";
+  var local=[];
+  var db=cc?CA_CITY:US_CITY;
+  Object.keys(db).forEach(function(name){
+    if(name.toLowerCase().indexOf(q.toLowerCase())===0){
+      local.push({name:name,rate:db[name].r,note:db[name].n,prov:db[name].p||db[name].s,source:"local"});
+    }
+  });
+  if(local.length>0){cityAC=local.slice(0,8);renderAC();return;}
+  // Fallback to GeoNames
+  cityACTimer=setTimeout(function(){
+    var cc2=p.country==="CA"?"CA":"US";
+    fetch("https://secure.geonames.org/searchJSON?q="+encodeURIComponent(q)+"&country="+cc2+"&maxRows=8&featureClass=P&orderby=population&style=SHORT&username=docvault")
+      .then(function(r){return r.json();})
+      .then(function(d){
+        cityAC=(d.geonames||[]).map(function(g){return{name:g.name,prov:g.adminCode1,note:"Rates vary -- using "+( cc?"provincial":"state")+" average as estimate",source:"geo"};});
+        renderAC();
+      }).catch(function(){cityAC=[];});
+  },350);
+}
+function renderAC(){
+  var el=document.getElementById("city-ac");
+  if(!el)return;
+  if(cityAC.length===0){el.innerHTML="";el.style.display="none";return;}
+  el.style.display="block";
+  el.innerHTML=cityAC.map(function(c,i){
+    var rateStr=c.rate?'<div><div class="ac-rate">'+fmtC(c.rate)+'/yr</div><div style="font-size:10px;color:var(--text3)">avg annual</div></div>':"";
+    return'<div class="ac-item" onclick="selectCity('+i+')">'+
+      '<div><div>'+c.name+(c.prov?', '+c.prov:"")+'</div>'+
+      '<div class="ac-sub">'+c.note.substring(0,60)+'</div></div>'+rateStr+'</div>';
+  }).join("");
+}
+function selectCity(i){
+  var c=cityAC[i];
+  p.city=c.name;
+  p.cityRate=c.rate||null;
+  p.cityNote=c.note||"";
+  if(c.prov){
+    if(p.country==="CA"&&CA_BASE[c.prov])p.province=c.prov;
+    if(p.country==="US"&&US_BASE[c.prov])p.usState=c.prov;
+  }
+  cityAC=[];
+  render();
+}
+
+// Recall checker
+async function checkRecall(){
+  var vin=document.getElementById("vin-input");
+  if(!vin)return;
+  var v=vin.value.trim().toUpperCase();
+  if(v.length!==17){
+    document.getElementById("recall-result").innerHTML='<div class="recall-info">Please enter all 17 characters of your VIN.</div>';
+    return;
+  }
+  document.getElementById("recall-result").innerHTML='<div class="recall-info">Searching recall databases for your vehicle...</div>';
+  try{
+    var res=await fetch("https://api.nhtsa.gov/recalls/recallsByVehicle?vin="+v);
+    var data=await res.json();
+    var el=document.getElementById("recall-result");
+    if(data.results&&data.results.length>0){
+      var html='<div class="recall-warn"><strong>&#9888; '+data.results.length+' open recall'+(data.results.length>1?"s":"")+'</strong> found for this vehicle.<br><br>';
+      html+='<div style="font-size:13px;margin-bottom:8px;opacity:0.85">Every recall repair is <strong>free</strong> at any authorized dealer. This takes your car off the at-risk list and can even affect insurance claim outcomes.</div>';
+      data.results.slice(0,4).forEach(function(r){
+        html+='<div style="margin-bottom:10px;padding:10px 12px;background:rgba(255,255,255,0.4);border-radius:8px"><strong>'+r.Component+'</strong>';
+        if(r.Summary)html+='<div style="font-size:12px;margin-top:4px;opacity:0.9">'+r.Summary.substring(0,200)+'...</div>';
+        html+='</div>';
+      });
+      if(data.results.length>4)html+='<div style="font-size:12px;opacity:0.8">And '+(data.results.length-4)+' more. Visit nhtsa.gov/recalls for full details.</div>';
+      html+='</div>';
+      el.innerHTML=html;
+    }else{
+      document.getElementById("recall-result").innerHTML='<div class="recall-safe"><strong>&#10003; No open recalls found</strong> for this VIN in the NHTSA database. Your vehicle appears to be up to date. We recommend checking again every 6 months as new recalls are issued regularly.<br><br>Canadian vehicles: also check <a href="https://tc.canada.ca/en/road-transportation/defects-recalls-vehicles-tires-child-car-seats" target="_blank" style="color:var(--green)">Transport Canada recalls database</a> for Canada-specific campaigns.</div>';
+    }
+  }catch(e){
+    document.getElementById("recall-result").innerHTML='<div class="recall-info">Unable to connect to NHTSA. Check directly at <a href="https://www.nhtsa.gov/recalls" target="_blank" style="color:var(--blue)">nhtsa.gov/recalls</a> or for Canada at <a href="https://tc.canada.ca/en/road-transportation/defects-recalls-vehicles-tires-child-car-seats" target="_blank" style="color:var(--blue)">tc.canada.ca</a>.</div>';
+  }
+}
+
+// PDF-like print
+function printReport(){
+  window.print();
+  toast("Opening print dialog...");
+}
+
+// Share / copy link
+function shareResults(){
+  var params="?country="+p.country+"&prov="+p.province+"&age="+p.age+"&cov="+p.coverage;
+  var url=window.location.href.split("?")[0]+params;
+  navigator.clipboard.writeText(url).then(function(){toast("Link copied to clipboard!");});
+}
+
+// Email reminder
+function saveEmail(){
+  var em=document.getElementById("email-input");
+  if(!em||!em.value.indexOf("@")<0||em.value.length<5){toast("Please enter a valid email.");return;}
+  emailSaved=true;
+  toast("Renewal reminder set! We'll email you 30 days before your policy renews.");
+  render();
 }
 
 function setTab(t){activeTab=t;render();}
 
-async function checkRecall(){
-  var vin=document.getElementById("vin-input")&&document.getElementById("vin-input").value.trim();
-  if(!vin||vin.length!==17){
-    document.getElementById("recall-result").innerHTML='<div class="recall-info">Please enter a valid 17-character VIN number.</div>';
-    return;
-  }
-  document.getElementById("recall-result").innerHTML='<div class="recall-info">Checking NHTSA database for your vehicle...</div>';
-  try{
-    var res=await fetch("https://api.nhtsa.gov/recalls/recallsByVehicle?vin="+vin);
-    var data=await res.json();
-    if(data.results&&data.results.length>0){
-      var html='<div class="recall-warn"><strong>'+data.results.length+' open recall'+(data.results.length>1?'s':'')+'</strong> found for this vehicle. These are FREE to fix at any authorized dealer.<br><br>';
-      data.results.slice(0,3).forEach(function(r){
-        html+='<div style="margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.5);border-radius:8px"><strong>'+r.Component+'</strong><br><span style="font-size:12px">'+r.Summary.substring(0,150)+'...</span></div>';
-      });
-      html+='</div>';
-      document.getElementById("recall-result").innerHTML=html;
-    }else{
-      document.getElementById("recall-result").innerHTML='<div class="recall-safe">No open recalls found for this VIN. Your vehicle is up to date. We recommend checking again in 3-6 months as new recalls are issued regularly.</div>';
-    }
-  }catch(e){
-    document.getElementById("recall-result").innerHTML='<div class="recall-info">Unable to connect to NHTSA database. You can check directly at nhtsa.gov/recalls.</div>';
-  }
-}
-
 function renderInsurers(){
-  var list=p.country==="CA"?CA_INSURERS:US_INSURERS;
-  var html='<div class="section-title">Top 10 '+(p.country==="CA"?"Canadian":"US")+' Car Insurers</div>';
-  html+='<p class="section-sub">Ranked by customer satisfaction, claims handling, and value. Comparison sites appear where they belong -- as the smartest starting point. Always get at least 3 quotes before deciding.</p>';
+  var list=p.country==="CA"?CA_INS:US_INS;
+  var html='<h2>Top 10 '+(p.country==="CA"?"Canadian":"US")+' Car Insurers</h2>';
+  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.65">Ranked by customer satisfaction (JD Power), claims handling, and value. Comparison sites appear in the ranking where they belong -- as the smartest starting point. Always get at least 3 quotes.</p>';
   list.forEach(function(ins){
     html+='<a href="'+ins.url+'" target="_blank" rel="noopener noreferrer" class="ins-card">';
     html+='<div class="ins-rank">'+ins.rank+'</div>';
-    html+='<div style="flex:1">';
-    html+='<div class="ins-name">'+ins.name+'</div>';
+    html+='<div style="flex:1"><div class="ins-name">'+ins.name+'</div>';
     html+='<div class="ins-desc">'+ins.desc+'</div>';
     html+='<div class="ins-tags">';
     ins.tags.forEach(function(t,i){html+='<span class="ins-tag '+t+'">'+ins.tagLabels[i]+'</span>';});
     html+='</div></div>';
-    if(ins.score!=="N/A"&&ins.score!=="50+"&&ins.score!=="20+"&&ins.score!=="100+"){
-      html+='<div class="ins-score"><span class="score-num">'+ins.score+'</span><span class="score-lbl">JD Power<br>score</span></div>';
-    }else if(ins.score==="50+"||ins.score==="20+"||ins.score==="100+"){
-      html+='<div class="ins-score"><span class="score-num">'+ins.score+'</span><span class="score-lbl">insurers<br>compared</span></div>';
+    html+='<div class="ins-right">';
+    if(ins.score!=="N/A"){
+      html+='<div><span class="score-num">'+ins.score+'</span><span class="score-lbl">'+(ins.score.indexOf("+")>-1?"insurers":"JD Power")+'</span></div>';
     }
-    html+='<button class="ins-cta">Get quote</button></a>';
+    html+='<button class="ins-cta">Get quote</button></div></a>';
   });
-  html+='<div style="font-size:12px;color:#9ca3af;margin-top:8px">Rankings based on JD Power satisfaction studies, Forbes rankings, and independent reviews. Some links are affiliate links -- we may earn a commission at no cost to you.</div>';
+  html+='<div style="font-size:12px;color:var(--text3);margin-top:10px">Rankings based on JD Power studies, Forbes rankings, and independent reviews. Some links are affiliate links.</div>';
   return html;
 }
 
 function renderRecall(){
-  var html='<div class="section-title">Safety Recall Checker</div>';
-  html+='<p class="section-sub">Over 50 million vehicles in North America have open safety recalls right now. Most owners have no idea. A recall repair is always free at any authorized dealer -- but you need to know about it first.</p>';
-  html+=fb("b","&#128736;&#65039;","<strong>Where to find your VIN:</strong> It's a 17-character code on your dashboard (lower-left corner of windshield, visible from outside), on your driver's door frame, or on your insurance and registration documents.");
-  html+='<div style="margin-top:16px">';
-  html+='<span class="lbl">Enter your VIN number</span>';
-  html+='<div class="recall-form">';
-  html+='<input type="text" id="vin-input" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" style="text-transform:uppercase;font-family:Space Mono,monospace;letter-spacing:2px" oninput="this.value=this.value.toUpperCase()">';
-  html+='<button class="recall-btn" onclick="checkRecall()">Check for recalls</button>';
-  html+='</div>';
-  html+='<div id="recall-result"></div>';
-  html+='</div>';
-  html+='<div style="margin-top:20px;padding:16px;background:#f9fafb;border-radius:12px">';
-  html+='<div style="font-size:14px;font-weight:700;color:#374151;margin-bottom:8px">Why this matters for your insurance</div>';
-  html+='<div style="font-size:13px;color:#6b7280;line-height:1.7">Unaddressed recalls can affect insurance claims. If an accident is linked to a known defect that you hadn\'t had repaired despite a recall notice, your insurer may dispute the claim. Getting recall repairs done is free, fast, and protects both your safety and your coverage.</div>';
-  html+='</div>';
+  var html='<h2>Safety Recall Checker</h2>';
+  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:16px;line-height:1.65">Over 50 million vehicles in North America have open safety recalls right now. <strong style="color:var(--text)">1 in 5 Canadian vehicles</strong> has an unresolved recall. Recall repairs are always free. Takes 5 seconds to check.</p>';
+  html+=fb("b","&#9881;","<strong>Where to find your VIN:</strong> Look at the lower-left corner of your windshield from outside the car. Also on the driver's door frame, or on your insurance card and registration.");
+  html+='<div style="margin-top:16px"><span class="lbl">Enter your 17-digit VIN</span>';
+  html+='<div class="recall-form"><input type="text" id="vin-input" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" oninput="this.value=this.value.toUpperCase()"><button class="recall-btn" onclick="checkRecall()">Check recalls</button></div>';
+  html+='<div id="recall-result"></div></div>';
+  html+='<div style="margin-top:20px;padding:16px 18px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border)">';
+  html+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">Why recalls matter for insurance</div>';
+  html+='<div style="font-size:13px;color:var(--text2);line-height:1.7">If an accident is linked to a known safety defect that you hadn\'t repaired despite a recall notice, your insurer may dispute or reduce your claim payout. Getting recall repairs done is free, protects your safety, and ensures your coverage holds up when it counts most.</div></div>';
+  html+='<div style="margin-top:14px;padding:14px 16px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:var(--radius);font-size:13px;color:var(--blue)">';
+  html+='<strong>Canadian vehicles:</strong> The NHTSA database covers both US and Canadian recalls for most vehicles. For Canada-specific recalls, also check <a href="https://tc.canada.ca/en/road-transportation/defects-recalls-vehicles-tires-child-car-seats" target="_blank" style="color:var(--blue);font-weight:700">Transport Canada\'s recall database</a> -- free and searchable by VIN.</div>';
   return html;
 }
 
 function renderTrueCost(){
   var pr=calcPremium();
-  var html='<div class="section-title">True Cost of Ownership</div>';
-  html+='<p class="section-sub">Insurance is just one part of owning a car. Here\'s your complete picture -- because most people dramatically underestimate what their car actually costs them every year.</p>';
+  var html='<h2>True Cost of Ownership</h2>';
+  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:16px;line-height:1.65">Insurance is just one part. Most drivers dramatically underestimate their real monthly car cost. Here\'s your complete picture.</p>';
   var insurance=pr.annual;
-  var gasPrice=p.country==="CA"?(p.province==="BC"?1.85:p.province==="ON"?1.65:p.province==="AB"?1.45:1.60):3.85;
-  var litresPer100=p.vMake&&(p.vMake.toLowerCase().indexOf("tesla")>-1)?0:p.country==="CA"?10.5:9.5;
-  var annualKm=+p.km||15000;
-  var annualMiles=p.country==="US"?annualKm:annualKm;
-  var fuelCost=p.country==="CA"?Math.round((annualKm/100)*litresPer100*gasPrice):Math.round((annualKm/1.609)*0.1*gasPrice);
-  if(p.vMake&&p.vMake.toLowerCase().indexOf("tesla")>-1){fuelCost=Math.round(annualKm*0.04*(p.country==="CA"?0.17:0.16));}
-  var maintenanceCost=Math.round(+p.vValue*0.02+(+p.vYear<2018?800:400));
-  var vAge=new Date().getFullYear()-(+p.vYear||new Date().getFullYear()-3);
-  var depreciation=vAge<3?Math.round(+p.vValue*0.15):vAge<8?Math.round(+p.vValue*0.10):Math.round(+p.vValue*0.05);
-  var parking=p.country==="CA"&&(p.province==="ON"||p.province==="BC")?1200:600;
-  var regFees=p.country==="CA"?150:250;
-  var total=insurance+fuelCost+maintenanceCost+depreciation+parking+regFees;
+  var gp=p.country==="CA"?(p.province==="BC"?1.85:p.province==="ON"?1.65:p.province==="AB"?1.45:1.60):3.85;
+  var km=+p.km||15000;
+  var fuelCost=p.isEV?Math.round(km*0.04*(p.country==="CA"?0.17:0.16)):p.country==="CA"?Math.round((km/100)*10.5*gp):Math.round((km/1.609)*0.1*gp);
+  var mainCost=Math.round(+p.vValue*0.02+(+p.vYear<2018?800:350));
+  var vAge2=new Date().getFullYear()-(+p.vYear||new Date().getFullYear()-3);
+  var depCost=vAge2<3?Math.round(+p.vValue*0.15):vAge2<8?Math.round(+p.vValue*0.10):Math.round(+p.vValue*0.05);
+  var parkCost=p.country==="CA"&&(p.province==="ON"||p.province==="BC")?1200:600;
+  var regCost=p.country==="CA"?150:250;
+  var total=insurance+fuelCost+mainCost+depCost+parkCost+regCost;
   var rows=[
-    {label:"Car insurance",val:insurance,color:"#dc2626",pct:Math.round(insurance/total*100)},
-    {label:"Fuel",val:fuelCost,color:"#f59e0b",pct:Math.round(fuelCost/total*100)},
-    {label:"Maintenance and repairs",val:maintenanceCost,color:"#3b82f6",pct:Math.round(maintenanceCost/total*100)},
-    {label:"Depreciation",val:depreciation,color:"#8b5cf6",pct:Math.round(depreciation/total*100)},
-    {label:"Parking and tolls",val:parking,color:"#10b981",pct:Math.round(parking/total*100)},
-    {label:"Registration and fees",val:regFees,color:"#6b7280",pct:Math.round(regFees/total*100)},
+    {label:"Car insurance",val:insurance,color:"#dc2626"},
+    {label:p.isEV?"Electricity (charging)":"Fuel",val:fuelCost,color:"#f59e0b"},
+    {label:"Maintenance and repairs",val:mainCost,color:"#3b82f6"},
+    {label:"Depreciation",val:depCost,color:"#8b5cf6"},
+    {label:"Parking and tolls",val:parkCost,color:"#10b981"},
+    {label:"Registration and fees",val:regCost,color:"#6b7280"}
   ];
   rows.forEach(function(r){
+    var pct=Math.round(r.val/total*100);
     html+='<div class="cost-row">';
-    html+='<div style="flex:1"><div>'+r.label+'</div><div class="cost-bar"><div class="cost-fill" style="width:'+r.pct+'%;background:'+r.color+'"></div></div></div>';
-    html+='<div style="margin-left:16px;text-align:right"><strong style="font-family:Space Mono,monospace;color:'+r.color+'">'+fmtC(r.val)+'</strong><div style="font-size:11px;color:#9ca3af">'+r.pct+'% of total</div></div>';
+    html+='<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:var(--text)">'+r.label+'</div>';
+    html+='<div class="cost-bar"><div class="cost-fill" style="width:'+pct+'%;background:'+r.color+'"></div></div></div>';
+    html+='<div style="text-align:right;flex-shrink:0;margin-left:16px"><div style="font-family:Space Mono,monospace;font-weight:700;font-size:15px;color:'+r.color+'">'+fmtC(r.val)+'</div><div style="font-size:11px;color:var(--text3)">'+pct+'% of total</div></div>';
     html+='</div>';
   });
-  html+='<div class="cost-total"><div><div style="font-size:14px;font-weight:700;color:#374151">Total estimated annual cost</div><div style="font-size:12px;color:#6b7280;margin-top:2px">'+fmtC(Math.round(total/12))+" per month"+'</div></div><div style="font-size:36px;font-weight:900;color:#dc2626;font-family:Space Mono,monospace">'+fmtC(total)+'</div></div>';
-  html+=fb("b","&#128161;","<strong>The insurance insight:</strong> Your insurance represents "+Math.round(insurance/total*100)+"% of your total annual car cost. "+( insurance>total*0.35?"That's higher than average -- reviewing your coverage and shopping for better rates could meaningfully reduce your total cost.":"That's within the normal range. Focus on shopping around at renewal to keep it there."));
-  if(p.vValue<6000&&p.coverage==="full"){
-    html+=fb("a","&#9888;&#65039;","Your car is worth "+fmtC(p.vValue)+" but you're paying for full coverage. Collision and comprehensive alone likely cost "+fmtC(Math.round(pr.annual*0.4))+" per year. Consider whether that's worth it for a vehicle at this value.");
+  html+='<div class="cost-total"><div><div style="font-size:15px;font-weight:700;color:var(--text)">Total estimated annual cost</div><div style="font-size:13px;color:var(--text2);margin-top:2px">'+fmtC(Math.round(total/12))+' per month</div></div><div style="font-size:40px;font-weight:900;color:var(--red);font-family:Space Mono,monospace">'+fmtC(total)+'</div></div>';
+  var insPct=Math.round(insurance/total*100);
+  if(insPct>35)html+=fb("b","&#128161;","Insurance is "+insPct+"% of your total cost -- above average. Shopping around at renewal and stacking available discounts is the fastest way to reduce your overall car ownership expense.");
+  else html+=fb("g","&#10003;","Insurance is "+insPct+"% of your total cost -- within the normal range. Focus on comparison shopping at each renewal to keep it there.");
+  if(p.vValue<6000&&p.coverage==="full")html+=fb("a","&#9888;","Your car is worth "+fmtC(p.vValue)+" but you carry full coverage. Collision and comprehensive alone likely cost "+fmtC(Math.round(pr.annual*0.4))+" per year -- over "+Math.round(pr.annual*0.4/p.vValue*100)+"% of the car's value. Consider dropping them.");
+  html+='<div style="font-size:12px;color:var(--text3);margin-top:12px">Estimates based on '+(p.country==="CA"?"Canadian":"US")+' average fuel prices and costs for your vehicle profile. Actual costs vary.</div>';
+  return html;
+}
+
+function renderGuides(){
+  var isEV=p.isEV||(p.vMake||"").toLowerCase().indexOf("tesla")>-1;
+  var isCA=p.country==="CA";
+  var hasYoungDriver=+p.age>0&&+p.age<25;
+  var html='<h2>Guides for Your Situation</h2>';
+  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:16px;line-height:1.65">Personalized guides based on your profile. Every section below is relevant to your specific situation.</p>';
+
+  // After an accident
+  html+='<div class="guide-section"><h3>&#128657; What to do immediately after an accident</h3>';
+  [["Stay calm and check for injuries first. Call 911 if anyone is hurt. Do not move injured people unless there is immediate danger.","&#10112;"],
+   ["Move vehicles to safety if drivable and possible. Turn on hazard lights and set up flares or warning triangles if available.","&#10113;"],
+   ["Exchange information: full name, phone, address, driver\'s license number, license plate, and insurance policy number with all involved drivers.","&#10114;"],
+   ["Take photos of everything: vehicle damage, license plates, road conditions, traffic signs, any visible injuries, and the overall scene from multiple angles.","&#10115;"],
+   ["Get contact info from any witnesses. Their account may be crucial if liability is disputed.","&#10116;"],
+   ["In "+(isCA?"most Canadian provinces":"most US states")+", you must report accidents to police when there is injury, death, or property damage over a threshold ($2,000 in Ontario, varies by jurisdiction).","&#10117;"],
+   ["Call your insurer to report the accident within 24 hours -- even if you weren\'t at fault and even if you don\'t plan to make a claim. Most policies require prompt reporting.","&#10118;"],
+   ["Do not admit fault at the scene -- even apologizing can be used against you. Let the insurance companies determine liability.","&#10119;"],
+   ["Get a collision report number from police if they attended. Your insurer will ask for this.","&#10120;"]
+  ].forEach(function(item){
+    html+='<div class="guide-point"><div class="guide-ico">'+item[1]+'</div><div>'+item[0]+'</div></div>';
+  });
+  html+='</div>';
+
+  // EV guide
+  if(isEV){
+    html+='<div class="guide-section"><h3>&#9889; EV Insurance Guide -- What\'s Different</h3>';
+    [["EVs cost 20-40% more to insure than equivalent gas vehicles primarily because of repair costs. Even a minor fender-bender on a Tesla can cost $5,000-15,000 because of proprietary parts, specialized repair shops, and potential battery damage assessment.","&#128161;"],
+     ["Not all body shops can repair EVs. When getting quotes, ask specifically whether your insurer has certified EV repair facilities in your area. If they don\'t, claim resolution can take months.","&#128269;"],
+     ["Battery replacement risk: if your EV battery is damaged in an accident, replacement can cost $15,000-25,000. Make sure your policy covers full battery replacement, not just damage repair.","&#128267;"],
+     ["Replacement cost coverage is more important for EVs than any other vehicle type. Without it, a 3-year-old EV that\'s written off might only pay out 60-70% of the replacement cost.","&#128204;"],
+     ["Some insurers are now offering EV-specific policies with better coverage for charging equipment, towing to EV-certified shops, and battery coverage. Intact and Aviva in Canada have EV-specific endorsements worth asking about.","&#10003;"],
+     ["Home charging equipment (Level 2 charger) is often coverable under home insurance, not auto insurance. Check both policies to ensure your charger is covered against fire, power surge, and theft.","&#127968;"]
+    ].forEach(function(item){
+      html+='<div class="guide-point"><div class="guide-ico">'+item[1]+'</div><div>'+item[0]+'</div></div>';
+    });
+    html+='</div>';
   }
-  html+='<div style="font-size:12px;color:#9ca3af;margin-top:12px;line-height:1.7">Fuel cost based on '+( p.country==="CA"?"Canadian":"US")+" average gas prices and estimated "+litresPer100+" L/100km consumption. Depreciation and maintenance are estimates based on vehicle age and value. Your actual costs will vary.</div>";
+
+  // Teen / young driver guide
+  if(hasYoungDriver||+p.age>35){
+    html+='<div class="guide-section"><h3>&#128081; Young and New Driver Guide</h3>';
+    [["Young drivers pay 1.5-3x the adult rate. This is not negotiable -- it\'s based on statistical accident rates for this age group. But there are proven ways to reduce it faster than just waiting.","&#128200;"],
+     ["A telematics program (safe driving app) is the single most effective tool. Belairdirect\'s Ajusto, State Farm\'s Drive Safe and Save, and Progressive\'s Snapshot can all save 10-25%. If you drive safely, it\'s almost always worth signing up.","&#128241;"],
+     ["Staying on a parent\'s policy (as a listed driver on their car) is cheaper than getting your own policy, if that\'s an arrangement that works for your situation. Many families do this until the young driver is 25.","&#128106;"],
+     ["Every year of clean driving matters enormously. Your first at-fault accident as a new driver sets you back years. Defensive driving isn\'t just safe -- it\'s financially significant.","&#127881;"],
+     ["Completing a recognized driver training course (beyond the minimum required for licensing) can earn a 5-10% discount with most insurers and may also reduce the time before you qualify for better rate tiers.","&#127891;"],
+     ["Good student discounts (B+ average) are available from most insurers for full-time students under 25. This requires a transcript once per year but the discount lasts 12 months.","&#128218;"]
+    ].forEach(function(item){
+      html+='<div class="guide-point"><div class="guide-ico">'+item[1]+'</div><div>'+item[0]+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // Canada winter / seasonal
+  if(isCA){
+    html+='<div class="guide-section"><h3>&#10052; Canadian Winter Driving and Seasonal Storage Guide</h3>';
+    [["Winter tires are legally required in Quebec from December 1 to March 15 and on many BC routes from October 1 to March 31. In all other provinces they are strongly recommended and earn a 5-10% insurance discount.","&#127981;"],
+     ["Winter tires must be installed as a set of four on all wheels. Mixing winter and all-season tires is dangerous and may void your insurance coverage in an accident.","&#9888;"],
+     ["Seasonal storage: if you store a vehicle for winter (snowbirds, classic cars, motorcycles), tell your insurer. You can remove collision and comprehensive while stored and only keep comprehensive (for theft and fire). This saves 30-60% for the storage period.","&#128274;"],
+     ["If you drive your stored vehicle even once without reinstating full coverage, you have no collision protection. Call your insurer before the first drive of the season.","&#9888;"],
+     ["Remote starters, block heaters, and heated garages all reduce winter-related mechanical failures. Some of these can be mentioned to your insurer to show reduced cold-weather risk.","&#128268;"],
+     ["Black ice, reduced visibility, and increased stopping distances mean winter is statistically the highest-risk season for accidents in Canada. The 3-second following rule should become 8-10 seconds in snow or ice.","&#128663;"]
+    ].forEach(function(item){
+      html+='<div class="guide-point"><div class="guide-ico">'+item[1]+'</div><div>'+item[0]+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // Claims guide
+  html+='<div class="guide-section"><h3>&#128203; How to Make a Claim -- and Get a Fair Settlement</h3>';
+  [["Report promptly. Most policies require you to notify your insurer within 24-72 hours of an accident, even if you\'re not sure whether to claim. Waiting can be used as grounds to reduce or deny a payout.","&#9200;"],
+   ["Document everything before repairs. Get your own independent estimate from a body shop you trust before accepting the insurer\'s offer. You\'re entitled to a second opinion.","&#128248;"],
+   ["For total loss claims: your insurer will offer you the actual cash value (ACV) of your vehicle. This is negotiable. Research comparable vehicles on AutoTrader, CarGurus, or Canadian Black Book. If their offer is below market value, dispute it with evidence.","&#128200;"],
+   ["You do not have to accept the first settlement offer. You have the right to negotiate. If you have replacement cost coverage, make sure the insurer is applying it.","&#9993;"],
+   ["If you believe a claim is being handled unfairly, you can escalate to your province\'s insurance regulator (FSRA in Ontario, BCFSA in BC) or the General Insurance OmbudService in Canada, or your state\'s Department of Insurance in the US.","&#128172;"],
+   ["Keep a claim diary: dates and times of every conversation, names of every person you spoke with, what was said and promised. This protects you if there\'s a dispute later.","&#128464;"]
+  ].forEach(function(item){
+    html+='<div class="guide-point"><div class="guide-ico">'+item[1]+'</div><div>'+item[0]+'</div></div>';
+  });
+  html+='</div>';
   return html;
 }
 
@@ -349,24 +679,42 @@ function renderResults(){
   var vName=[p.vYear,p.vMake,p.vModel].filter(Boolean).join(" ")||"Not specified";
   var html='';
   html+='<div class="result-hero">';
-  html+='<div style="font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Your estimated annual premium</div>';
+  html+='<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Your estimated annual premium</div>';
   html+='<div class="big-num">'+fmtC(pr.annual)+'</div>';
-  html+='<div style="font-size:16px;color:#6b7280;margin-top:8px">'+fmtC(pr.monthly)+" per month"+'</div>';
-  if(pr.disc>0)html+='<div style="color:#16a34a;font-size:14px;font-weight:700;margin-top:10px">&#10003; '+pr.disc+'% in discounts applied -- saving approximately '+fmtC(Math.round(pr.annual*pr.disc/(100-pr.disc)))+' per year</div>';
+  html+='<div style="font-size:15px;color:var(--text2);margin-top:8px">'+fmtC(pr.monthly)+' per month</div>';
+  if(p.cityRate)html+='<div style="font-size:12px;color:var(--text3);margin-top:3px">Based on '+p.city+' city rates</div>';
+  if(pr.disc>0)html+='<div style="color:var(--green);font-size:14px;font-weight:700;margin-top:10px">&#10003; '+pr.disc+'% in discounts applied -- saving ~'+fmtC(Math.round(pr.annual*pr.disc/(100-pr.disc)))+' per year</div>';
   html+='<div class="meta-grid">';
   html+='<div class="meta-card"><div class="meta-l">Location</div><div class="meta-v">'+(p.city?p.city+", ":"")+provName+'</div></div>';
   html+='<div class="meta-card"><div class="meta-l">Vehicle</div><div class="meta-v">'+vName+'</div></div>';
   html+='<div class="meta-card"><div class="meta-l">Coverage</div><div class="meta-v">'+(p.coverage==="full"?"Full coverage":p.coverage==="standard"?"Standard":"Liability only")+'</div></div>';
   html+='<div class="meta-card"><div class="meta-l">Deductible</div><div class="meta-v">'+fmtC(p.ded)+'</div></div>';
   html+='</div></div>';
-  if(p.vUse==="rideshare")html+=fb("r","&#9888;&#65039;","<strong>Rideshare coverage gap:</strong> Your personal policy does NOT cover Uber, Lyft or DoorDash use. Ask every insurer specifically about a rideshare endorsement before buying any policy.");
-  if((p.financed||p.leased)&&p.coverage==="liability_only")html+=fb("r","&#9888;&#65039;","<strong>Lender requirement:</strong> Your loan or lease requires collision and comprehensive. Liability only will not be accepted.");
-  var minLiab=(p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min");
-  if(minLiab)html+=fb("r","&#9888;&#65039;","<strong>Underinsured warning:</strong> Minimum liability could leave your personal assets exposed after a serious accident. Upgrading costs as little as $5-15 more per month.");
-  html+='<div class="section-title" style="margin-top:28px">Your 3-step action plan</div>';
-  [["Get 3 quotes in the next 7 days","Start with Ratehub.ca (Canada) or Insurify (US) to see the market in 5 minutes, then call the top 2 directly. The whole process takes 20 minutes and the average savings is $709 per year."],["Ask about every discount on your list","When you call, literally mention each discount: telematics, bundling, winter tires, multi-vehicle. Insurers don't always volunteer every discount they offer. You have to ask."],["Set a renewal reminder right now","Put it in your calendar: 30 days before your policy renews. That's your negotiating window. After that date, inertia costs you money every year."]].forEach(function(x,i){
-    html+='<div class="action-card"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+x[0]+'</div><div class="action-desc">'+x[1]+'</div></div></div>';
+  if(p.vUse==="rideshare")html+=fb("r","&#9888;","<strong>Rideshare gap:</strong> Your personal policy does NOT cover Uber, Lyft or DoorDash use. Ask every insurer about a rideshare endorsement before buying.");
+  if((p.financed||p.leased)&&p.coverage==="liability_only")html+=fb("r","&#9888;","<strong>Lender requirement:</strong> Your loan or lease requires collision and comprehensive. Liability only will not be accepted.");
+  var minL=(p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min");
+  if(minL)html+=fb("r","&#9888;","<strong>Underinsured:</strong> Minimum liability could leave your personal assets exposed. Upgrading costs as little as $5-15 more per month.");
+  html+='<div style="margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:800;color:var(--text)">Your 3-step action plan</div>';
+  [["Get 3 quotes in the next 7 days","Start with Ratehub.ca (Canada) or Insurify (US) for a 5-minute market overview, then call the top 2 directly. Average savings: $709 per year."],
+   ["Ask about every discount when you call","Literally read through the discount list. Insurers don't always volunteer what you qualify for. You have to ask."],
+   ["Set a renewal reminder right now","30 days before your policy renews, get 3 new quotes and call your current insurer with the best one. 60% of the time they'll match it."]
+  ].forEach(function(x,i){
+    html+='<div class="action-card"><div class="action-num">'+(i+1)+'</div><div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">'+x[0]+'</div><div style="font-size:13px;color:var(--text2);line-height:1.65">'+x[1]+'</div></div></div>';
   });
+  // Renewal reminder
+  if(!emailSaved){
+    html+='<div style="margin-top:16px;padding:16px 18px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius)">';
+    html+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">&#128348; Set a renewal reminder</div>';
+    html+='<div style="font-size:13px;color:var(--text2);margin-bottom:10px">We\'ll email you 30 days before renewal so you never miss your window to negotiate or switch.</div>';
+    html+='<div class="email-form"><input type="email" id="email-input" placeholder="your@email.com"><button class="email-btn" onclick="saveEmail()">Set reminder</button></div></div>';
+  }else{
+    html+=fb("g","&#10003;","Renewal reminder set. We'll email you 30 days before your policy renews.");
+  }
+  // Share / Print
+  html+='<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">';
+  html+='<button class="pdf-btn" onclick="printReport()">&#128438; Print or save as PDF</button>';
+  html+='<button class="share-btn" onclick="shareResults()">&#128279; Share my profile</button>';
+  html+='</div>';
   return html;
 }
 
@@ -379,77 +727,78 @@ function render(){
   var ps="";
   STEPS.forEach(function(s,i){
     if(i>0)ps+='<div class="ps-line'+(i<=step?" done":"")+'"></div>';
-    ps+='<div class="ps-dot'+(i<step?" done":i===step?" active":"")+'">'+( i<step?"&#10003;":i+1)+'</div>';
+    ps+='<div class="ps-dot'+(i<step?" done":i===step?" active":"")+'\" title="'+s+'"'+(i<step?" onclick=\"jumpTo("+i+")\"":'')+'">'+( i<step?"&#10003;":i+1)+'</div>';
     if(i===step)ps+='<span class="ps-label">'+s+'</span>';
   });
   document.getElementById("prog-steps").innerHTML=ps;
   var html="";
+
   if(step===0){
     html+='<div class="step-num">Step 1 of 6</div>';
     html+='<h1>Let\'s find you a better rate</h1>';
-    html+='<p class="intro">Most drivers overpay by $500-$1,500 per year simply because they never compared. This takes 3 minutes. By the end, you\'ll have a personalized estimate, top insurer recommendations, a free recall check for your vehicle, and your true monthly car cost.</p>';
-    html+='<div class="section"><span class="lbl">Which country do you live in?</span><div class="opts">';
-    html+='<button class="opt'+(p.country==="CA"?" on":"")+'\" onclick="p.country=\'CA\';render()">&#127464;&#127462; Canada</button>';
-    html+='<button class="opt'+(p.country==="US"?" on":"")+'\" onclick="p.country=\'US\';render()">&#127482;&#127480; United States</button>';
+    html+='<p class="intro">Most drivers overpay by $500-$1,500 per year because they never compared. This takes 3 minutes. You\'ll get a personalized estimate, top insurer rankings, a free recall check, true ownership cost, and guides for your exact situation.</p>';
+    html+='<div class="section"><span class="lbl">Country</span><div class="opts">';
+    html+='<button class="opt'+(p.country==="CA"?" on":"")+'\" onclick="p.country=\'CA\';p.cityRate=null;p.city=\'\';render()">&#127464;&#127462; Canada</button>';
+    html+='<button class="opt'+(p.country==="US"?" on":"")+'\" onclick="p.country=\'US\';p.cityRate=null;p.city=\'\';render()">&#127482;&#127480; United States</button>';
     html+='</div></div>';
     if(p.country==="CA"){
-      html+='<div class="section"><span class="lbl">Your province <span class="lbl-sub">The single biggest factor in your rate</span></span><div class="prov-grid">';
-      CA_PROVS.forEach(function(x){html+='<button class="prov-btn'+(p.province===x[0]?" on":"")+'\" onclick="p.province=\''+x[0]+'\';render()">'+x[1]+'</button>';});
+      html+='<div class="section"><span class="lbl">Province <span class="lbl-sub">The single biggest factor in your rate</span></span><div class="prov-grid">';
+      CA_PROVS.forEach(function(x){html+='<button class="prov-btn'+(p.province===x[0]?" on":"")+'\" onclick="p.province=\''+x[0]+'\';p.cityRate=null;render()">'+x[1]+'</button>';});
       html+='</div>';
-      var isPublic=p.province==="BC"||p.province==="MB"||p.province==="SK";
-      if(isPublic)html+=fb("b","&#127981;","<strong>Public insurance province.</strong> The government sets your basic rate. You can still compare prices for optional collision and comprehensive from private insurers.");
-      else if(p.province==="QC")html+=fb("p","&#127881;","<strong>Great news -- Quebec has the lowest premiums in Canada</strong>, roughly half of Ontario's average. The hybrid system keeps costs down.");
-      else if(p.province==="ON")html+=fb("a","&#9888;&#65039;","<strong>Ontario has Canada's highest premiums</strong> due to fraud and litigation costs. The upside: with many private insurers competing, shopping around saves Ontario drivers an average of $709 per year.");
-      else if(p.province==="AB")html+=fb("a","&#9888;&#65039;","<strong>Alberta premiums are rising fast</strong> -- hailstorms and inflation are pushing rates up. Comparing at renewal has never mattered more.");
-      else html+=fb("g","&#10003;","Private insurance province. Multiple insurers compete for your business. Getting 3 quotes at renewal typically saves $400-$800 per year.");
+      var isPub=p.province==="BC"||p.province==="MB"||p.province==="SK";
+      if(isPub)html+=fb("b","&#127981;","<strong>Public insurance province.</strong> Your basic rate is set by the government. You can still compare prices for optional collision and comprehensive.");
+      else if(p.province==="QC")html+=fb("p","&#127881;","<strong>Quebec has Canada's lowest premiums</strong> -- roughly half of Ontario's average. The hybrid system (government handles injuries, private handles property) keeps costs remarkably low.");
+      else if(p.province==="ON")html+=fb("a","&#9888;","<strong>Ontario has Canada's highest premiums</strong> due to fraud and litigation. The upside: multiple competing insurers mean shopping around saves Ontario drivers an average of $709 per year.");
+      else if(p.province==="AB")html+=fb("a","&#9888;","<strong>Alberta premiums are rising fast</strong> -- hailstorms and inflation are pushing rates up sharply. Shopping at renewal has never mattered more.");
+      else html+=fb("g","&#10003;","Private insurance market. Multiple insurers compete for your business. Getting 3 quotes at renewal typically saves $400-$800 per year.");
       html+='</div>';
     }else{
-      html+='<div class="section"><span class="lbl">Your state</span>';
-      html+='<select onchange="p.usState=this.value;render()">';
+      html+='<div class="section"><span class="lbl">State</span>';
+      html+='<select onchange="p.usState=this.value;p.cityRate=null;render()">';
       US_STATES.forEach(function(x){html+='<option value="'+x[0]+'"'+(p.usState===x[0]?" selected":"")+'>'+x[1]+'</option>';});
       html+='</select>';
-      if(p.usState==="FL")html+=fb("r","&#9888;&#65039;","<strong>Florida has the highest premiums in the US</strong> at $3,183 average. Insurance fraud and hurricane risk are the main culprits. Comparing multiple insurers here is especially important.");
-      else if(p.usState==="MI")html+=fb("a","&#9888;&#65039;","<strong>Michigan historically had the US's highest premiums.</strong> 2019 reforms helped, but rates remain high. Make sure you understand your PIP options carefully.");
-      else if(p.usState==="OH"||p.usState==="WI")html+=fb("g","&#127881;","<strong>Your state has some of the most affordable car insurance in the US.</strong> You're starting from a great position -- comparison shopping will help you stay there.");
+      if(p.usState==="FL")html+=fb("r","&#9888;","<strong>Florida has the highest premiums in the US</strong> at $3,183 average. Fraud, no-fault abuse, and hurricane risk are the main drivers. Comparing multiple insurers here is especially important.");
+      else if(p.usState==="MI")html+=fb("a","&#9888;","<strong>Michigan's premiums are among the highest in the US.</strong> 2019 reforms helped, but rates remain very high. Make sure you fully understand your PIP (personal injury protection) options.");
+      else if(p.usState==="OH"||p.usState==="WI")html+=fb("g","&#127881;","<strong>Your state has some of the most affordable car insurance in the US.</strong> You\'re starting from a great position -- comparison shopping will help you stay there.");
       html+='</div>';
     }
-    html+='<div class="section"><span class="lbl">Your city <span class="lbl-sub">Optional but improves accuracy</span></span>';
-    html+='<input type="text" value="'+(p.city||"")+'" placeholder="'+(p.country==="CA"?"e.g. Toronto, Ottawa, Calgary...":"e.g. Austin, Miami, Seattle...")+'" oninput="p.city=this.value">';
-    if(p.city&&p.province==="ON"){
-      var cl=p.city.toLowerCase();
-      if(cl.indexOf("brampton")>-1||cl.indexOf("mississauga")>-1)html+=fb("r","&#128205;","<strong>"+p.city+" has some of Ontario's highest rates</strong> -- well above the provincial average. Comparing quotes here is worth real money.");
-      else if(cl.indexOf("ottawa")>-1)html+=fb("g","&#128205;","<strong>Ottawa has Ontario's lowest rates</strong> -- nearly half of Brampton. You're in a good position.");
+    html+='<div class="section"><span class="lbl">Your city <span class="lbl-sub">Search any city in Canada or the US for local rate data</span></span>';
+    html+='<div class="autocomplete-wrap">';
+    html+='<input type="text" id="city-input" value="'+(p.city||"")+'" placeholder="'+(p.country==="CA"?"e.g. Toronto, Calgary, Ottawa...":"e.g. Austin, Miami, Seattle...")+'" oninput="p.city=this.value;citySearch(this.value)" autocomplete="off">';
+    html+='<div class="autocomplete-drop" id="city-ac" style="display:none"></div></div>';
+    if(p.cityRate){
+      html+=fb("b","&#128205;","<strong>"+p.city+":</strong> Average rate "+fmtC(p.cityRate)+"/year. "+p.cityNote);
     }
     html+='</div>';
   }
   else if(step===1){
     html+='<div class="step-num">Step 2 of 6</div>';
-    html+='<h1>Tell us a little about yourself</h1>';
-    html+='<p class="intro">A few details about you help us give a much more accurate estimate -- and identify discounts that are often missed. Everything you share stays in your browser and is never stored.</p>';
+    html+='<h1>Tell us about yourself</h1>';
+    html+='<p class="intro">A few details about you let us give a much more accurate estimate -- and flag discounts and options that are often missed. Everything stays in your browser and is never stored.</p>';
     html+='<div class="section"><span class="lbl">Your age</span>';
-    html+='<input type="number" min="16" max="99" value="'+(p.age||"")+'" placeholder="Enter your age" oninput="p.age=this.value;render()" style="max-width:200px">';
-    if(p.age&&+p.age<20)html+=fb("r","&#128241;","<strong>Under 20 means the highest rates of anyone.</strong> A telematics app (we'll ask later) can save you 10-25% and is your best tool right now. Some parents also keep young drivers on their policy temporarily to benefit from their established record.");
-    else if(p.age&&+p.age<25)html+=fb("a","&#128081;","<strong>The under-25 surcharge is real</strong> but it disappears at 25. Until then: telematics is your fastest savings lever. Also ask about good student discounts if you're in school.");
-    else if(p.age&&+p.age>=25&&+p.age<65)html+=fb("g","&#10003;","<strong>Your age works in your favour.</strong> This is the best range for insurance rates. Your driving record and coverage choices now matter more than your age.");
-    else if(p.age&&+p.age>=65)html+=fb("b","&#128081;","<strong>Mature driver discount available.</strong> A recognized defensive driving course (CAA, AARP, or your provincial auto association) unlocks 5-15% off with most insurers. Usually takes 4-6 hours and costs $30-50.");
+    html+='<input type="number" min="16" max="99" value="'+(p.age||"")+'" placeholder="e.g. 35" oninput="p.age=this.value;render()" style="max-width:180px">';
+    if(p.age&&+p.age<20)html+=fb("r","&#128241;","<strong>Under 20: the highest rates of anyone.</strong> A telematics app can save you 10-25% and is your most effective tool right now.");
+    else if(p.age&&+p.age<25)html+=fb("a","&#128081;","<strong>Under 25 surcharge is real</strong> but disappears at 25. Telematics is your fastest savings lever. Ask about good student discounts if you're in school.");
+    else if(p.age&&+p.age>=25&&+p.age<65)html+=fb("g","&#10003;","<strong>Your age works in your favour.</strong> This is the sweet spot for rates. Your record and coverage choices matter most now.");
+    else if(p.age&&+p.age>=65)html+=fb("b","&#128081;","<strong>Mature driver discount available.</strong> A defensive driving course (CAA, AARP, or your auto association) earns 5-15% off with most insurers.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">Marital status</span><div class="opts">';
     [["single","Single"],["married","Married"],["common_law","Common-law"],["divorced","Divorced"],["widowed","Widowed"]].forEach(function(x){
       html+='<button class="opt'+(p.marital===x[0]?" on":"")+'\" onclick="p.marital=\''+x[0]+'\';render()">'+x[1]+'</button>';
     });
     html+='</div>';
-    if(p.marital==="married"||p.marital==="common_law")html+=fb("g","&#10003;","Married drivers typically save 3-8% compared to single drivers. It's a small but automatic discount.");
+    if(p.marital==="married"||p.marital==="common_law")html+=fb("g","&#10003;","Married and common-law drivers typically save 3-8% compared to single drivers.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Years licensed <span class="lbl-sub">How long you\'ve held a full license</span></span>';
-    html+='<input type="number" min="0" max="60" value="'+(p.yearsLic||"")+'" placeholder="e.g. 10" oninput="p.yearsLic=this.value;render()" style="max-width:200px">';
-    if(p.yearsLic&&+p.yearsLic<2)html+=fb("a","&#128203;","<strong>New drivers pay more for the first 2-3 years.</strong> Building a clean record is your most valuable investment right now. One at-fault accident can set back your record for 6 years.");
-    else if(p.yearsLic&&+p.yearsLic>=10)html+=fb("g","&#10003;","Your experience is an asset. Experienced drivers with clean records often qualify for the best loyalty rates and accident forgiveness.");
+    html+='<div class="section"><span class="lbl">Years licensed <span class="lbl-sub">Full license, not learner\'s permit</span></span>';
+    html+='<input type="number" min="0" max="60" value="'+(p.yearsLic||"")+'" placeholder="e.g. 10" oninput="p.yearsLic=this.value;render()" style="max-width:180px">';
+    if(p.yearsLic&&+p.yearsLic<2)html+=fb("a","&#128203;","<strong>New drivers pay more for 2-3 years.</strong> Building a clean record is your most valuable investment. One at-fault accident sets you back 6 years.");
+    else if(p.yearsLic&&+p.yearsLic>=10)html+=fb("g","&#10003;","Your experience is a real asset. Experienced, clean-record drivers qualify for the best loyalty rates.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">New to '+(p.country==="CA"?"Canada":"the US")+'?</span><div class="opts">';
     html+='<button class="opt'+(!p.newToCountry?" on":"")+'\" onclick="p.newToCountry=false;render()">No</button>';
-    html+='<button class="opt'+(p.newToCountry?" on":"")+'\" onclick="p.newToCountry=true;render()">Yes -- I have international driving history</button>';
+    html+='<button class="opt'+(p.newToCountry?" on":"")+'\" onclick="p.newToCountry=true;render()">Yes -- I have international driving experience</button>';
     html+='</div>';
-    if(p.newToCountry)html+=fb("b","&#127760;","<strong>Your international driving experience counts.</strong> Request an official driving record from your home country's transport authority ($10-30). Intact and Aviva in Canada have newcomer programs. This could save you hundreds vs being rated as a brand new driver.");
+    if(p.newToCountry)html+=fb("b","&#127760;","<strong>Your international experience counts.</strong> Get your official driving record from your home country's transport authority ($10-30). Intact and Aviva in Canada have newcomer programs that can save you hundreds vs being rated as a brand new driver.");
     html+='</div>';
   }
   else if(step===2){
@@ -457,141 +806,141 @@ function render(){
     var ml=(p.vModel||"").toLowerCase();
     html+='<div class="step-num">Step 3 of 6</div>';
     html+='<h1>What are you driving?</h1>';
-    html+='<p class="intro">Your vehicle choice can add $100-200 per month to your insurance. A Tesla costs $145 more per month to insure than a Subaru Outback -- both mid-size vehicles. Let\'s see exactly where yours lands.</p>';
+    html+='<p class="intro">Your vehicle choice can add $100-200 per month to your insurance. A Tesla costs $145 more per month than a Subaru Outback -- both mid-size vehicles. Let\'s see where yours lands.</p>';
     html+='<div class="section"><div class="grid2">';
-    html+='<div><span class="lbl">Year</span><select onchange="p.vYear=+this.value">';
+    html+='<div><span class="lbl">Year</span><select onchange="p.vYear=+this.value;render()">';
     for(var y=new Date().getFullYear()+1;y>new Date().getFullYear()-25;y--)html+='<option value="'+y+'"'+(p.vYear===y?" selected":"")+'>'+y+'</option>';
     html+='</select></div>';
-    html+='<div><span class="lbl">Make</span><select onchange="p.vMake=this.value;render()">';
-    ["","Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jeep","Kia","Land Rover","Lexus","Mazda","Mercedes-Benz","Mitsubishi","Nissan","RAM","Subaru","Tesla","Toyota","Volkswagen","Volvo","Other"].forEach(function(m){
+    html+='<div><span class="lbl">Make</span><select onchange="p.vMake=this.value;p.isEV=(this.value===\'Tesla\');render()">';
+    ["","Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jeep","Kia","Land Rover","Lexus","Mazda","Mercedes-Benz","Mitsubishi","Nissan","Polestar","RAM","Rivian","Subaru","Tesla","Toyota","Volkswagen","Volvo","Other"].forEach(function(m){
       html+='<option value="'+m+'"'+(p.vMake===m?" selected":"")+'>'+(m||"Select make...")+'</option>';
     });
     html+='</select></div></div></div>';
     html+='<div class="section"><span class="lbl">Model</span>';
-    html+='<input type="text" value="'+(p.vModel||"")+'" placeholder="e.g. Civic, RAV4, F-150..." oninput="p.vModel=this.value;render()">';
-    if(p.vModel&&(ml.indexOf("civic")>-1||ml.indexOf("rav4")>-1))html+=fb("r","&#128274;","<strong>This is one of Canada's most stolen vehicles.</strong> Comprehensive coverage isn't optional for you -- it's essential. Anti-theft devices and garage parking can help offset the higher premium.");
-    else if(p.vModel&&(ml.indexOf("tucson")>-1||ml.indexOf("sorento")>-1))html+=fb("a","&#9888;&#65039;","<strong>Kia and Hyundai theft vulnerability:</strong> A software fix is available free at any dealer. Getting it done can lower your comprehensive premium and protects your vehicle.");
-    else if(mk.indexOf("tesla")>-1)html+=fb("a","&#9889;","<strong>Tesla insurance is in a league of its own.</strong> Even minor collisions average $5,000+ to repair. Make sure you have replacement cost coverage (not just depreciated value) and consider a lower deductible than usual.");
-    else if(mk.indexOf("subaru")>-1)html+=fb("g","&#127881;","<strong>Excellent choice for insurance costs.</strong> Subaru consistently ranks among the cheapest vehicles to insure -- strong safety ratings, low theft, affordable parts.");
+    html+='<input type="text" value="'+(p.vModel||"")+'" placeholder="e.g. Civic, RAV4, F-150, Model 3..." oninput="p.vModel=this.value;render()">';
+    if(p.vModel&&(ml.indexOf("civic")>-1||ml.indexOf("rav4")>-1))html+=fb("r","&#128274;","<strong>Top stolen vehicle in Canada.</strong> Comprehensive coverage is essential. Anti-theft device or garage parking can help offset the higher premium.");
+    if(p.vModel&&(ml.indexOf("tucson")>-1||ml.indexOf("sorento")>-1))html+=fb("a","&#9888;","<strong>Kia/Hyundai theft vulnerability:</strong> A free software fix is available at any dealer. Getting it done can lower your comprehensive premium.");
+    if(mk.indexOf("tesla")>-1||mk.indexOf("rivian")>-1||mk.indexOf("polestar")>-1)html+=fb("a","&#9889;","<strong>EV insurance is in a league of its own.</strong> Even minor collisions average $5,000-15,000 to repair. Replacement cost coverage (not ACV) is essential. We\'ll give you a full EV guide in your results.");
+    if(mk.indexOf("subaru")>-1)html+=fb("g","&#127881;","<strong>Great choice for insurance costs.</strong> Subaru consistently ranks among the cheapest to insure -- strong safety, low theft, affordable parts.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Vehicle value today <span class="lbl-sub">Check Canadian Black Book or KBB if unsure</span></span>';
-    html+='<div style="margin-bottom:8px"><span class="val-display">'+fmtC(p.vValue)+'</span></div>';
+    html+='<div class="section"><span class="lbl">Is this an electric vehicle (EV)?</span><div class="opts">';
+    html+='<button class="opt'+(!p.isEV?" on":"")+'\" onclick="p.isEV=false;render()">No -- gas or hybrid</button>';
+    html+='<button class="opt'+(p.isEV?" on":"")+'\" onclick="p.isEV=true;render()">Yes -- fully electric</button>';
+    html+='</div></div>';
+    html+='<div class="section"><span class="lbl">Vehicle value: <span class="val-display">'+fmtC(p.vValue)+'</span></span>';
     html+='<input type="range" min="1000" max="200000" step="1000" value="'+p.vValue+'" oninput="p.vValue=+this.value;render()">';
-    if(p.vValue<5000)html+=fb("b","&#128161;","<strong>Under $5,000:</strong> Collision and comprehensive together might cost more than the car's value over a few years. Consider whether the premium is worth it at this value.");
-    if(p.vValue>60000)html+=fb("b","&#128161;","<strong>High-value vehicle:</strong> Make sure you have replacement cost coverage, not actual cash value. The difference on a $70,000 car after 2 years could be $20,000+.");
+    if(p.vValue<5000)html+=fb("b","&#128161;","Under $5,000 -- collision and comprehensive together may cost more per year than the car is worth. We'll flag this in your results.");
+    if(p.vValue>60000)html+=fb("b","&#128161;","High-value vehicle -- replacement cost coverage (not just ACV) is especially important. The difference on a write-off could be $15,000+.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">Ownership</span><div class="opts">';
     html+='<button class="opt'+(!p.financed&&!p.leased?" on":"")+'\" onclick="p.financed=false;p.leased=false;render()">Owned outright</button>';
-    html+='<button class="opt'+(p.financed?" on":"")+'\" onclick="p.financed=true;p.leased=false;render()">Financed</button>';
+    html+='<button class="opt'+(p.financed?" on":"")+'\" onclick="p.financed=true;p.leased=false;render()">Financed (loan)</button>';
     html+='<button class="opt'+(p.leased?" on":"")+'\" onclick="p.leased=true;p.financed=false;render()">Leased</button>';
     html+='</div>';
-    if(p.financed||p.leased)html+=fb("r","&#9888;&#65039;","<strong>Your lender requires collision and comprehensive.</strong> Liability only is not permitted. If you drop this coverage, your lender can force-place expensive insurance at your expense.");
+    if(p.financed||p.leased)html+=fb("r","&#9888;","<strong>Your lender requires collision and comprehensive.</strong> Not optional -- liability only will violate your loan or lease agreement.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">Primary use</span>';
-    [["personal","Personal use only","Errands, family trips, occasional commuting. The lowest-risk and lowest-cost category."],["commute_short","Short daily commute","Under 20km each way. Moderate additional risk from regular traffic exposure."],["commute_long","Long daily commute","Over 20km each way. More time on the road means more statistical exposure to claims."],["business","Business use","Client visits, deliveries, sales calls. Requires a commercial use endorsement."],["rideshare","Rideshare or delivery","Uber, Lyft, DoorDash, Instacart. Critical: your personal policy does NOT cover this."]].forEach(function(x){
+    [["personal","Personal use","Errands, trips, occasional commuting. Lowest-risk category."],["commute_short","Short daily commute","Under 20km each way. Moderate additional risk."],["commute_long","Long daily commute","Over 20km each way. More road time means more exposure."],["business","Business use","Client visits, deliveries. Requires a commercial endorsement."],["rideshare","Rideshare or delivery","Uber, Lyft, DoorDash. Your personal policy does NOT cover this."]].forEach(function(x){
       html+='<button class="opt-block opt'+(p.vUse===x[0]?" on":"")+'\" onclick="p.vUse=\''+x[0]+'\';render()"><div class="ot">'+x[1]+'</div><div class="od">'+x[2]+'</div></button>';
     });
-    if(p.vUse==="rideshare")html+=fb("r","&#128734;&#65039;","<strong>This is one of the most dangerous coverage gaps in insurance.</strong> The moment you log into the app, your personal policy stops. Period 1 (app on, waiting for a ride) has almost no platform coverage either. You need a rideshare endorsement ($10-30/month). Ask every insurer specifically.");
+    if(p.vUse==="rideshare")html+=fb("r","&#128734;","<strong>Critical coverage gap.</strong> The moment you log into the app, your personal policy stops. You need a rideshare endorsement ($10-30/month). Without it you have zero collision coverage while waiting for rides.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Annual km driven: <span style="color:#dc2626;font-family:Space Mono,monospace;font-weight:900">'+(+p.km).toLocaleString()+'</span></span>';
+    html+='<div class="section"><span class="lbl">Annual km driven: <span class="val-display">'+(+p.km).toLocaleString()+'</span></span>';
     html+='<input type="range" min="1000" max="50000" step="1000" value="'+p.km+'" oninput="p.km=+this.value;render()">';
-    if(p.km<8000)html+=fb("g","&#127881;","<strong>Low-mileage driver.</strong> Ask every insurer about their low-mileage discount -- some offer 10-20% just for driving under 10,000 km per year.");
+    if(p.km<8000)html+=fb("g","&#127881;","Low-mileage driver -- ask every insurer about a low-mileage discount. Some reduce premiums by 10-20% for under 10,000 km per year.");
     html+='</div>';
   }
   else if(step===3){
     html+='<div class="step-num">Step 4 of 6</div>';
     html+='<h1>Your driving history</h1>';
-    html+='<p class="intro">Be honest here -- insurers verify your record through government databases. Whatever your history, we\'ll guide you to the right options. A difficult history doesn\'t mean you can\'t find good coverage.</p>';
+    html+='<p class="intro">Be honest -- insurers verify this through government databases. Whatever your history, we\'ll guide you to the right path forward. A difficult record doesn\'t mean you can\'t find good coverage.</p>';
     html+='<div class="section"><span class="lbl">At-fault accidents in the last 6 years</span><div class="opts">';
     [0,1,2,3,4].forEach(function(n){html+='<button class="opt'+(p.atFault===n?" on":"")+'\" onclick="p.atFault='+n+';render()">'+(n===4?"4+":n)+'</button>';});
     html+='</div>';
-    if(p.atFault===0)html+=fb("g","&#127881;","<strong>A clean record is your most valuable insurance asset.</strong> Protect it -- consider accident forgiveness coverage which prevents your first at-fault accident from raising your rate for 6 years.");
-    else if(p.atFault===1)html+=fb("a","&#128203;","<strong>One accident typically adds 20-40% for up to 6 years.</strong> Some insurers are more forgiving than others -- this is exactly why comparing quotes matters. After 6 years it drops off completely.");
-    else html+=fb("r","&#9888;&#65039;","<strong>Multiple incidents limit standard insurer options.</strong> You may need a specialty insurer short-term. Rates will improve as incidents age off your record. An independent broker can find options direct insurers won't offer.");
+    if(p.atFault===0)html+=fb("g","&#127881;","<strong>Clean record -- your most valuable insurance asset.</strong> Protect it by considering accident forgiveness: prevents your first at-fault accident from raising your rate for 6 years.");
+    else if(p.atFault===1)html+=fb("a","&#128203;","One accident adds 20-40% for up to 6 years. Some insurers are more forgiving than others -- this is exactly why comparison shopping matters. After 6 years it drops off completely.");
+    else html+=fb("r","&#9888;","Multiple incidents limit standard insurer options. A specialty insurer or independent broker can often find paths that direct-to-consumer insurers won't offer.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Traffic tickets in the last 3 years <span class="lbl-sub">Speeding, distracted driving, etc.</span></span><div class="opts">';
+    html+='<div class="section"><span class="lbl">Traffic tickets in the last 3 years</span><div class="opts">';
     [0,1,2,3].forEach(function(n){html+='<button class="opt'+(p.tickets===n?" on":"")+'\" onclick="p.tickets='+n+';render()">'+(n===3?"3+":n)+'</button>';});
     html+='</div>';
-    if(p.tickets===1)html+=fb("a","&#128203;","One ticket adds 5-15% depending on severity. This drops off after 3 years. A defensive driving course won't erase it, but some insurers give a discount for completing one.");
-    else if(p.tickets>=2)html+=fb("r","&#9888;&#65039;","Multiple convictions can flag you as high-risk. Work with a broker rather than buying direct -- they can navigate specialty markets that aren't available to consumers.");
+    if(p.tickets===1)html+=fb("a","&#128203;","One ticket adds 5-15% depending on severity. It drops off after 3 years. A defensive driving course won\'t erase it, but some insurers give a 5-10% discount for completing one.");
+    else if(p.tickets>=2)html+=fb("r","&#9888;","Multiple convictions can flag you as high-risk. Working with a broker (rather than buying direct) often uncovers better options.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">DUI or DWI in the last 10 years</span><div class="opts">';
     html+='<button class="opt'+(!p.dui?" on":"")+'\" onclick="p.dui=false;render()">No</button>';
     html+='<button class="opt'+(p.dui?" on":"")+'\" onclick="p.dui=true;render()">Yes</button>';
     html+='</div>';
-    if(p.dui)html+=fb("r","&#9888;&#65039;","<strong>A DUI is serious but not the end of the road.</strong> Standard insurers will likely decline for 3-10 years. You need a specialty high-risk insurer for now. Rates do come down over time. An independent broker is your best ally -- they know which companies specialize in exactly this situation.");
+    if(p.dui)html+=fb("r","&#9888;","<strong>A DUI is serious but not the end of the road.</strong> Standard insurers may decline for 3-10 years. An independent broker is your best ally -- they know which specialty insurers handle exactly this situation. Rates do come down significantly over time.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Coverage lapse <span class="lbl-sub">Any period without insurance</span></span><div class="opts">';
-    [[0,"None"],[2,"1-3 months"],[5,"4-6 months"],[9,"7-12 months"],[18,"Over a year"]].forEach(function(x){
+    html+='<div class="section"><span class="lbl">Coverage lapse</span><div class="opts">';
+    [[0,"None"],[2,"1-3 months"],[5,"4-6 months"],[9,"7-12 months"],[18,"Over 1 year"]].forEach(function(x){
       html+='<button class="opt'+(p.lapse===x[0]?" on":"")+'\" onclick="p.lapse='+x[0]+';render()">'+x[1]+'</button>';
     });
     html+='</div>';
-    if(p.lapse>6)html+=fb("a","&#9200;","<strong>A significant gap means you'll be rated like a new driver.</strong> The most important thing you can do right now is get any continuous coverage immediately -- even basic liability only. Three years of uninterrupted coverage dramatically improves your options.");
+    if(p.lapse>6)html+=fb("a","&#9200;","<strong>A significant gap means you\'ll be rated like a new driver.</strong> Get any continuous coverage immediately -- even basic liability. Three years of uninterrupted coverage dramatically improves your options.");
     html+='</div>';
   }
   else if(step===4){
     html+='<div class="step-num">Step 5 of 6</div>';
     html+='<h1>Choosing the right coverage</h1>';
-    html+='<p class="intro">This step matters more than any other. The wrong choice either leaves you exposed when disaster strikes, or costs you hundreds extra every year for protection you don\'t need. Let\'s get it right.</p>';
+    html+='<p class="intro">This is the most important step. The wrong choice either leaves you exposed when disaster strikes, or costs you hundreds extra for protection you don\'t need. Let\'s get it exactly right.</p>';
     html+='<div class="section"><span class="lbl">Coverage level</span>';
-    [["liability_only","Liability only -- the legal minimum","Covers damage you cause to others. Does NOT cover your own vehicle under any circumstance. If your car is stolen or totalled in a flood, you receive nothing. Not recommended for vehicles worth over $5,000 or any financed vehicle."],["standard","Standard coverage -- what most drivers choose","Liability plus collision (accidents) and comprehensive (theft, weather, fire, animals). Covers your vehicle in virtually every scenario. The right choice for most drivers with vehicles worth over $10,000."],["full","Full coverage -- peace of mind, fully protected","Everything in standard plus accident forgiveness, replacement cost, enhanced accident benefits, and optional add-ons. The choice when you want no surprises."]].forEach(function(x){
+    [["liability_only","Liability only -- the legal minimum","Covers damage you cause to others. Does NOT cover your own vehicle. If it\'s stolen, totalled by a flood, or hit by an uninsured driver, you receive nothing. Not recommended for vehicles over $5,000 or financed vehicles."],
+     ["standard","Standard coverage -- what most drivers choose","Liability plus collision (accidents) and comprehensive (theft, weather, fire, animals). Covers your vehicle in virtually every scenario. The right choice for most drivers with vehicles worth over $10,000."],
+     ["full","Full coverage -- maximum peace of mind","Everything in standard plus accident forgiveness, replacement cost, enhanced accident benefits, and optional extras. The choice when you want no surprises."]
+    ].forEach(function(x){
       html+='<button class="opt-block opt'+(p.coverage===x[0]?" on":"")+'\" onclick="p.coverage=\''+x[0]+'\';render()"><div class="ot">'+x[1].split(" -- ")[0]+'</div><div class="od">'+x[1].split(" -- ").slice(1).join(" -- ")+'</div></button>';
     });
-    if((p.financed||p.leased)&&p.coverage==="liability_only")html+=fb("r","&#9888;&#65039;","<strong>Your lender legally requires collision and comprehensive.</strong> Liability only is not permitted on a financed or leased vehicle.");
+    if((p.financed||p.leased)&&p.coverage==="liability_only")html+=fb("r","&#9888;","<strong>Your lender requires collision and comprehensive.</strong> Liability only is not permitted on a financed or leased vehicle.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Liability limit <span class="lbl-sub">Your protection if you seriously injure someone in an accident</span></span><div class="opts">';
-    if(p.country==="CA"){
-      [["200K","$200K minimum"],["500K","$500K"],["1M","$1M recommended"],["2M","$2M best protection"]].forEach(function(x){
-        html+='<button class="opt'+(p.liability===x[0]?" on":"")+'\" onclick="p.liability=\''+x[0]+'\';render()">'+x[1]+'</button>';
-      });
-    }else{
-      [["state_min","State minimum"],["50_100","50/100/50"],["100_300","100/300/100 recommended"],["250_500","250/500/250 best"]].forEach(function(x){
-        html+='<button class="opt'+(p.liability===x[0]?" on":"")+'\" onclick="p.liability=\''+x[0]+'\';render()">'+x[1]+'</button>';
-      });
-    }
+    html+='<div class="section"><span class="lbl">Liability limit <span class="lbl-sub">Your protection if you seriously injure someone</span></span><div class="opts">';
+    if(p.country==="CA")[["200K","$200K min"],["500K","$500K"],["1M","$1M recommended"],["2M","$2M best"]].forEach(function(x){html+='<button class="opt'+(p.liability===x[0]?" on":"")+'\" onclick="p.liability=\''+x[0]+'\';render()">'+x[1]+'</button>';});
+    else[["state_min","State min"],["50_100","50/100/50"],["100_300","100/300/100 recommended"],["250_500","250/500/250 best"]].forEach(function(x){html+='<button class="opt'+(p.liability===x[0]?" on":"")+'\" onclick="p.liability=\''+x[0]+'\';render()">'+x[1]+'</button>';});
     html+='</div>';
-    if((p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min"))html+=fb("r","&#9888;&#65039;","<strong>Minimum liability is dangerously inadequate.</strong> A serious accident can result in $500K to $2M in medical, legal, and lost income costs. If your coverage doesn't cover the full amount, your personal savings, home, and future income are at risk. Upgrading to $1M in Canada or 100/300/100 in the US costs as little as $5-15 extra per month.");
-    else if(p.liability==="1M"||(p.country==="US"&&p.liability==="100_300"))html+=fb("g","&#10003;","<strong>Good choice.</strong> This level protects your assets in all but the most extreme scenarios. Most insurance professionals consider this the real minimum for anyone with significant assets.");
-    else if(p.liability==="2M"||(p.country==="US"&&p.liability==="250_500"))html+=fb("g","&#127881;","<strong>Excellent.</strong> Maximum peace of mind. The extra cost over $1M is typically $8-15 more per month -- a small price for meaningful additional protection.");
+    if((p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min"))html+=fb("r","&#9888;","<strong>Minimum liability is dangerously inadequate.</strong> A serious accident can generate $500K-$2M in costs. If your coverage falls short, your personal savings, home, and future income are at risk. Upgrading to $1M in Canada costs as little as $5-15 more per month.");
+    else if(p.liability==="1M"||(p.country==="US"&&p.liability==="100_300"))html+=fb("g","&#10003;","Good choice. This level protects your assets in all but the most extreme scenarios.");
+    else if(p.liability==="2M"||(p.country==="US"&&p.liability==="250_500"))html+=fb("g","&#127881;","Excellent. Maximum peace of mind. The extra cost over $1M is typically $8-15 more per month.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Deductible: <span style="color:#dc2626;font-family:Space Mono,monospace;font-weight:900">'+fmtC(p.ded)+'</span></span>';
+    html+='<div class="section"><span class="lbl">Deductible: <span class="val-display">'+fmtC(p.ded)+'</span></span>';
     html+='<input type="range" min="250" max="5000" step="250" value="'+p.ded+'" oninput="p.ded=+this.value;render()">';
-    if(p.ded<=500)html+=fb("b","&#128161;","A low deductible means your insurer covers more -- but you pay more monthly for that peace of mind. Raising from $500 to $1,000 typically saves $150-300 per year. Only keep it low if an unexpected $500 would genuinely strain your finances.");
-    else if(p.ded>=1000&&p.ded<2000)html+=fb("g","&#10003;","The sweet spot for most drivers. Meaningful premium savings while keeping your out-of-pocket exposure manageable. Rule of thumb: only set a deductible you could comfortably pay tomorrow.");
-    else html+=fb("g","&#128175;","Smart choice if you have a solid emergency fund. You're self-insuring smaller claims and saving 20-25% on collision and comprehensive premiums.");
+    if(p.ded<=500)html+=fb("b","&#128161;","Low deductible = higher monthly cost. Raising to $1,000 typically saves $150-300 per year. Only keep it low if an unexpected $500 expense would strain your finances.");
+    else if(p.ded>=1000&&p.ded<2000)html+=fb("g","&#10003;","Sweet spot for most drivers. Meaningful savings while keeping out-of-pocket exposure manageable.");
+    else html+=fb("g","&#128175;","Smart choice with a solid emergency fund. Saves 20-25% on collision and comprehensive premiums.");
     html+='</div>';
   }
   else if(step===5){
     html+='<div class="step-num">Step 6 of 6</div>';
     html+='<h1>Let\'s find your discounts</h1>';
-    html+='<p class="intro">Most drivers leave $300-700 on the table here every year without realizing it. Check every one that applies -- stacking just 3 of these can cut your premium by 30%.</p>';
-    html+=chk("bundle",p.bundle,"Own or rent a home -- bundle home and auto","Insuring your home (or getting renters insurance) with the same company as your car. The easiest money in insurance. Works whether you own or rent. Always ask every insurer for their bundling price.","Save 15-20%");
-    html+=chk("telematics",p.telematics,"Sign up for a safe driving app","An app measures your acceleration, braking, and time of day. Safe drivers save 10-25%. Companies like Belairdirect (Ajusto), State Farm (Drive Safe and Save), and Progressive (Snapshot) offer the best programs. If you're a confident driver, this is the single highest-value action you can take.","Save 10-25%");
-    html+=chk("multi",p.multi,"Two or more vehicles in your household","Insuring multiple vehicles together saves 10-15% on each one. Works for any combination: two cars, a car and an SUV, a car and a truck.","Save 10-15%");
-    if(p.country==="CA")html+=chk("winterTires",p.winterTires,"Winter tires installed","Most Canadian insurers give 5-10% off for a dedicated set of winter tires. Required by law in Quebec Dec 1-Mar 15. Required on many BC routes Oct 1-Mar 31. The discount typically recovers the cost of tires within 2-3 seasons.","Save 5-10%");
-    if(+p.age<25)html+=chk("student",p.student,"Full-time student with B+ average","Most insurers offer a good student discount for young drivers who demonstrate responsibility at school. Usually requires proof of enrolment and a transcript showing B+ or 3.0.","Save 5-15%");
+    html+='<p class="intro">Most drivers leave $300-700 on the table here every year. Checking just 3 of these can cut your premium by 30%. Take 60 seconds -- it\'s worth it.</p>';
+    html+=chk("bundle",p.bundle,"Own or rent a home -- bundle home and auto","The easiest discount in insurance. Works whether you own or rent. Insuring both with the same company typically saves 15-20%. Always ask every insurer for their bundle quote alongside the auto-only quote.","Save 15-20%");
+    html+=chk("telematics",p.telematics,"Sign up for a safe driving app (telematics)","An app tracks your acceleration, braking, and time of day. Safe drivers save 10-25%. Belairdirect (Ajusto), State Farm (Drive Safe and Save), and Progressive (Snapshot) offer the best programs. If you drive confidently, this is the highest-value single action you can take.","Save 10-25%");
+    html+=chk("multi",p.multi,"Two or more vehicles in your household","Insuring multiple vehicles together saves 10-15% on each one. Works for any combination: two cars, car and truck, car and motorcycle.","Save 10-15%");
+    if(p.country==="CA")html+=chk("winterTires",p.winterTires,"Winter tires installed (Canada)","Most Canadian insurers give 5-10% off for dedicated winter tires. Required by law in Quebec Dec 1-Mar 15 and on many BC routes Oct 1-Mar 31. The discount typically recovers the tire cost within 2-3 seasons.","Save 5-10%");
+    if(+p.age<25)html+=chk("student",p.student,"Full-time student with B+ average","Good student discount for young drivers who show responsibility at school. Usually requires proof of enrolment and a transcript showing B+ or 3.0. Renew once per year.","Save 5-15%");
     var pr2=calcPremium();
-    if(pr2.disc>0){
-      html+='<div class="disc-pct">Great -- you have '+pr2.disc+'% in active discounts. That\'s saving you approximately '+fmtC(Math.round(pr2.annual*pr2.disc/(100-pr2.disc)))+' per year compared to no discounts.</div>';
-    }
-    html+='<div style="margin-top:20px;padding:18px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:14px">';
-    html+='<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:8px">The renewal trap -- worth $500+ per year</div>';
-    html+='<div style="font-size:14px;color:#6b7280;line-height:1.75">Studies consistently show that long-term customers pay <strong>10-40% more</strong> than new customers for identical coverage. Your insurer bets on your inertia. The most powerful thing you can do: get 3 competing quotes 30 days before your renewal and call your current insurer with the best one. About 60% of the time they will match or beat it.</div></div>';
+    if(pr2.disc>0)html+='<div class="disc-bar">&#127881; '+pr2.disc+'% in active discounts -- saving approximately '+fmtC(Math.round(pr2.annual*pr2.disc/(100-pr2.disc)))+' per year compared to no discounts.</div>';
+    html+='<div style="margin-top:20px;padding:16px 18px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius)">';
+    html+='<div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">The renewal trap</div>';
+    html+='<div style="font-size:14px;color:var(--text2);line-height:1.75">Studies consistently show long-term customers pay <strong style="color:var(--text)">10-40% more</strong> than new customers for identical coverage. Your insurer bets on your inertia at renewal. The fix: get 3 competing quotes 30 days before renewal, then call your current insurer with the best one. About 60% of the time they will match or beat it.</div></div>';
   }
   else if(step===6){
-    html+='<h1>Here is your complete car ownership picture</h1>';
-    html+='<p class="intro">Your personalized estimate, top insurer rankings, a free recall check for your specific vehicle, and your true monthly cost -- all in one place.</p>';
+    html+='<h1>Your complete car ownership picture</h1>';
+    html+='<p class="intro">Your personalized estimate, top insurer rankings, a free recall check, your true ownership cost, and guides written for your exact situation -- all in one place.</p>';
     html+='<div class="tabs">';
     html+='<button class="tab-btn'+(activeTab==="results"?" active":"")+'\" onclick="setTab(\'results\')">My results</button>';
     html+='<button class="tab-btn'+(activeTab==="insurers"?" active":"")+'\" onclick="setTab(\'insurers\')">Top 10 insurers</button>';
     html+='<button class="tab-btn'+(activeTab==="recall"?" active":"")+'\" onclick="setTab(\'recall\')">Recall checker</button>';
     html+='<button class="tab-btn'+(activeTab==="truecost"?" active":"")+'\" onclick="setTab(\'truecost\')">True cost</button>';
+    html+='<button class="tab-btn'+(activeTab==="guides"?" active":"")+'\" onclick="setTab(\'guides\')">Guides</button>';
     html+='</div>';
-    html+='<div id="tab-results" class="tab-content'+(activeTab==="results"?" active":"")+'">'+renderResults()+'</div>';
-    html+='<div id="tab-insurers" class="tab-content'+(activeTab==="insurers"?" active":"")+'">'+renderInsurers()+'</div>';
-    html+='<div id="tab-recall" class="tab-content'+(activeTab==="recall"?" active":"")+'">'+renderRecall()+'</div>';
-    html+='<div id="tab-truecost" class="tab-content'+(activeTab==="truecost"?" active":"")+'">'+renderTrueCost()+'</div>';
-    html+='<div style="margin-top:24px"><button class="btn-back" onclick="step=0;Object.assign(p,{country:\'CA\',province:\'ON\',usState:\'CA\',city:\'\',age:\'\',marital:\'single\',yearsLic:\'\',newToCountry:false,vYear:new Date().getFullYear(),vMake:\'\',vModel:\'\',vValue:30000,vUse:\'personal\',financed:false,leased:false,parking:\'driveway\',km:15000,atFault:0,tickets:0,dui:false,lapse:0,coverage:\'full\',liability:\'1M\',ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false});render()">Start over with a new profile</button></div>';
+    html+='<div class="tab-content'+(activeTab==="results"?" active":"")+'">'+renderResults()+'</div>';
+    html+='<div class="tab-content'+(activeTab==="insurers"?" active":"")+'">'+renderInsurers()+'</div>';
+    html+='<div class="tab-content'+(activeTab==="recall"?" active":"")+'">'+renderRecall()+'</div>';
+    html+='<div class="tab-content'+(activeTab==="truecost"?" active":"")+'">'+renderTrueCost()+'</div>';
+    html+='<div class="tab-content'+(activeTab==="guides"?" active":"")+'">'+renderGuides()+'</div>';
+    html+='<div style="margin-top:24px">';
+    html+='<button class="btn-back" onclick="step=0;Object.assign(p,{country:\'CA\',province:\'ON\',usState:\'CA\',city:\'\',cityRate:null,cityNote:\'\',age:\'\',marital:\'single\',yearsLic:\'\',newToCountry:false,vYear:new Date().getFullYear(),vMake:\'\',vModel:\'\',vValue:30000,vUse:\'personal\',financed:false,leased:false,parking:\'driveway\',km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:\'full\',liability:\'1M\',ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false});emailSaved=false;render()">Start over with a new profile</button></div>';
   }
 
   if(step<STEPS.length-1){
@@ -601,11 +950,12 @@ function render(){
     html+='<button class="btn-next" onclick="step++;render()">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
     html+='</div>';
   }
-  html+='<div class="footer-note">CarInsureGuide.com &bull; Premium estimates are approximate and for guidance only. Always get quotes from licensed insurance professionals. Rankings based on JD Power, Forbes, and independent reviews. Some links are affiliate links.</div>';
+  html+='<div class="footer-note">CarInsureGuide.com &bull; Canada and US Car Insurance Guide &bull; Free, no signup required<br>Premium estimates are approximate and for guidance only. Always get quotes from licensed professionals. Some links are affiliate links &bull; Rankings based on JD Power, Forbes, and independent reviews.</div>';
   document.getElementById("content").innerHTML=html;
   window.scrollTo(0,0);
 }
 
+function jumpTo(i){if(i<step){step=i;render();}}
 render();
 </script>
 </body>
