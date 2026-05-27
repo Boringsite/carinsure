@@ -90,6 +90,10 @@ export default function InsuranceWizard() {
   const upd = (k, v) => setP(prev => ({ ...prev, [k]: v }));
   const pr = calcPremium(p);
   const progress = (step / (STEPS.length - 1)) * 100;
+  const vModelLower = (p.vModel || "").toLowerCase();
+  const vMakeLower = (p.vMake || "").toLowerCase();
+  const isHighTheft = vModelLower.indexOf("civic")>-1 || vModelLower.indexOf("rav4")>-1 || vModelLower.indexOf("f-150")>-1 || vModelLower.indexOf("f150")>-1 || vModelLower.indexOf("tucson")>-1 || vModelLower.indexOf("sorento")>-1 || vModelLower.indexOf("ram")>-1;
+  const isTesla = vMakeLower.indexOf("tesla") > -1;
 
   const provName = p.country === "CA"
     ? (CA_PROVS.find(x => x[0] === p.province) || ["",""])[1]
@@ -170,8 +174,8 @@ export default function InsuranceWizard() {
               <input value={p.city} onChange={e => upd("city",e.target.value)}
                 placeholder={p.country==="CA" ? "e.g. Toronto, Ottawa..." : "e.g. Austin, Miami..."}
                 style={{ width:"100%", padding:"9px 12px", borderRadius:8, border:"1px solid #d1d5db", fontSize:14, fontFamily:"inherit" }} />
-              <W type="b" style={{ marginTop:8 }}>
-                {p.country==="CA" && ["BC","MB","SK"].includes(p.province)
+              <W type="b">
+                {(p.country==="CA" && (p.province==="BC"||p.province==="MB"||p.province==="SK"))
                   ? "Public insurance province -- you cannot shop around for basic coverage, but can for optional collision and comprehensive."
                   : "Private insurance market -- shopping around is essential. Rates vary up to 40% between insurers for identical coverage."}
               </W>
@@ -240,10 +244,10 @@ export default function InsuranceWizard() {
               <input value={p.vModel} onChange={e => upd("vModel",e.target.value)}
                 placeholder="e.g. Civic, RAV4, F-150..."
                 style={{ width:"100%", padding:"9px 12px", borderRadius:8, border:"1px solid #d1d5db", fontSize:14, fontFamily:"inherit" }} />
-              {p.vModel && ["civic","rav4","f-150","f150","tucson","sorento"].some(m => p.vModel.toLowerCase().includes(m)) && (
+              {p.vModel && isHighTheft && (
                 <W type="r">This vehicle is on Canada's top stolen list. Comprehensive coverage is essential.</W>
               )}
-              {(p.vMake||"").toLowerCase().includes("tesla") && (
+              {isTesla && (
                 <W type="a">Tesla repairs average 3-4x higher. Ensure your coverage reflects replacement cost.</W>
               )}
 
