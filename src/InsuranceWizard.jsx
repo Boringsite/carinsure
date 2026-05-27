@@ -1,3 +1,4 @@
+// v2
 import { useState } from "react";
 
 const CA_BASE={ON:1920,BC:1450,AB:1735,QC:900,MB:1350,SK:1235,NS:1150,NB:1120,NL:1270,PE:1080,NT:1200,NU:1200,YT:1200};
@@ -100,8 +101,8 @@ export default function InsuranceWizard() {
     : (US_STATES_L.find(x => x[0] === p.usState) || ["",""])[1];
 
   return (
-    <div style={{ fontFamily:"'Outfit',system-ui,sans-serif", background:"#f9fafb", minHeight:"100vh" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap'); *{box-sizing:border-box}`}</style>
+    <div style={{ boxSizing:"border-box", fontFamily:"'Outfit',system-ui,sans-serif", background:"#f9fafb", minHeight:"100vh" }}>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" />
 
       <div style={{ background:"white", borderBottom:"1px solid #e5e7eb", position:"sticky", top:0, zIndex:50 }}>
         <div style={{ maxWidth:640, margin:"0 auto", padding:"12px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
