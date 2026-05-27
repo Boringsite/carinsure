@@ -694,7 +694,22 @@ function renderResults(){
   if((p.financed||p.leased)&&p.coverage==="liability_only")html+=fb("r","&#9888;","<strong>Lender requirement:</strong> Your loan or lease requires collision and comprehensive. Liability only will not be accepted.");
   var minL=(p.country==="CA"&&p.liability==="200K")||(p.country==="US"&&p.liability==="state_min");
   if(minL)html+=fb("r","&#9888;","<strong>Underinsured:</strong> Minimum liability could leave your personal assets exposed. Upgrading costs as little as $5-15 more per month.");
-  html+='<div style="margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:800;color:var(--text)">Your 3-step action plan</div>';
+  // Matched insurers
+  var matched=matchInsurers();
+  html+='<div style="margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:800;color:var(--text)">Your 3 best-matched insurers</div>';
+  html+='<p style="font-size:13px;color:var(--text2);margin-bottom:12px">Matched to your profile: '+(p.vUse==="rideshare"?"rideshare driver, ":"")+(p.telematics?"telematics user, ":"")+(p.bundle?"home bundler, ":"")+(+p.age<25?"young driver, ":"")+(p.atFault>0||p.dui?"high-risk profile, ":"clean record, ")+(p.newToCountry?"newcomer to "+( p.country==="CA"?"Canada":"US")+", ":"")+''+p.country+" driver."+'</p>';
+  matched.forEach(function(ins){
+    html+='<a href="'+ins.url+'" target="_blank" rel="noopener noreferrer" class="ins-card" style="margin-bottom:8px">';
+    html+='<div class="ins-rank">'+ins.rank+'</div>';
+    html+='<div style="flex:1"><div class="ins-name">'+ins.name+'</div>';
+    html+='<div class="ins-desc">'+ins.desc+'</div>';
+    html+='<div class="ins-tags">';
+    ins.tags.forEach(function(t,i){html+='<span class="ins-tag '+t+'">'+ins.tagLabels[i]+'</span>';});
+    html+='</div></div>';
+    html+='<button class="ins-cta">Get quote</button></a>';
+  });
+  html+='<div style="font-size:12px;color:var(--text3);margin-bottom:16px">See all 10 ranked insurers in the "Top 10 insurers" tab above.</div>';
+  html+='<div style="margin-bottom:8px;font-size:16px;font-weight:800;color:var(--text)">Your 3-step action plan</div>';
   [["Get 3 quotes in the next 7 days","Start with Ratehub.ca (Canada) or Insurify (US) for a 5-minute market overview, then call the top 2 directly. Average savings: $709 per year."],
    ["Ask about every discount when you call","Literally read through the discount list. Insurers don't always volunteer what you qualify for. You have to ask."],
    ["Set a renewal reminder right now","30 days before your policy renews, get 3 new quotes and call your current insurer with the best one. 60% of the time they'll match it."]
@@ -764,7 +779,7 @@ function render(){
     }
     html+='<div class="section"><span class="lbl">Your city <span class="lbl-sub">Search any city in Canada or the US for local rate data</span></span>';
     html+='<div class="autocomplete-wrap">';
-    html+='<input type="text" id="city-input" value="'+(p.city||"")+'" placeholder="'+(p.country==="CA"?"e.g. Toronto, Calgary, Ottawa...":"e.g. Austin, Miami, Seattle...")+'" oninput="p.city=this.value;citySearch(this.value)" autocomplete="off">';
+    html+='<input type="text" id="city-input" value="'+(p.city||"")+'" placeholder="'+(p.country==="CA"?"e.g. Toronto, Calgary, Ottawa...":"e.g. Austin, Miami, Seattle...")+'" oninput="citySearch(this.value)" onchange="p.city=this.value" autocomplete="off">';
     html+='<div class="autocomplete-drop" id="city-ac" style="display:none"></div></div>';
     if(p.cityRate){
       html+=fb("b","&#128205;","<strong>"+p.city+":</strong> Average rate "+fmtC(p.cityRate)+"/year. "+p.cityNote);
@@ -776,7 +791,7 @@ function render(){
     html+='<h1>Tell us about yourself</h1>';
     html+='<p class="intro">A few details about you let us give a much more accurate estimate -- and flag discounts and options that are often missed. Everything stays in your browser and is never stored.</p>';
     html+='<div class="section"><span class="lbl">Your age</span>';
-    html+='<input type="number" min="16" max="99" value="'+(p.age||"")+'" placeholder="e.g. 35" oninput="p.age=this.value;render()" style="max-width:180px">';
+    html+='<input type="number" min="16" max="99" value="'+(p.age||"")+'" placeholder="e.g. 35" onchange="p.age=this.value;render()" onblur="p.age=this.value;render()" style="max-width:180px">';
     if(p.age&&+p.age<20)html+=fb("r","&#128241;","<strong>Under 20: the highest rates of anyone.</strong> A telematics app can save you 10-25% and is your most effective tool right now.");
     else if(p.age&&+p.age<25)html+=fb("a","&#128081;","<strong>Under 25 surcharge is real</strong> but disappears at 25. Telematics is your fastest savings lever. Ask about good student discounts if you're in school.");
     else if(p.age&&+p.age>=25&&+p.age<65)html+=fb("g","&#10003;","<strong>Your age works in your favour.</strong> This is the sweet spot for rates. Your record and coverage choices matter most now.");
@@ -790,7 +805,7 @@ function render(){
     if(p.marital==="married"||p.marital==="common_law")html+=fb("g","&#10003;","Married and common-law drivers typically save 3-8% compared to single drivers.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">Years licensed <span class="lbl-sub">Full license, not learner\'s permit</span></span>';
-    html+='<input type="number" min="0" max="60" value="'+(p.yearsLic||"")+'" placeholder="e.g. 10" oninput="p.yearsLic=this.value;render()" style="max-width:180px">';
+    html+='<input type="number" min="0" max="60" value="'+(p.yearsLic||"")+'" placeholder="e.g. 10" onchange="p.yearsLic=this.value;render()" onblur="p.yearsLic=this.value;render()" style="max-width:180px">';
     if(p.yearsLic&&+p.yearsLic<2)html+=fb("a","&#128203;","<strong>New drivers pay more for 2-3 years.</strong> Building a clean record is your most valuable investment. One at-fault accident sets you back 6 years.");
     else if(p.yearsLic&&+p.yearsLic>=10)html+=fb("g","&#10003;","Your experience is a real asset. Experienced, clean-record drivers qualify for the best loyalty rates.");
     html+='</div>';
@@ -817,7 +832,7 @@ function render(){
     });
     html+='</select></div></div></div>';
     html+='<div class="section"><span class="lbl">Model</span>';
-    html+='<input type="text" value="'+(p.vModel||"")+'" placeholder="e.g. Civic, RAV4, F-150, Model 3..." oninput="p.vModel=this.value;render()">';
+    html+='<input type="text" value="'+(p.vModel||"")+'" placeholder="e.g. Civic, RAV4, F-150, Model 3..." onchange="p.vModel=this.value;render()" onblur="p.vModel=this.value;render()">';
     if(p.vModel&&(ml.indexOf("civic")>-1||ml.indexOf("rav4")>-1))html+=fb("r","&#128274;","<strong>Top stolen vehicle in Canada.</strong> Comprehensive coverage is essential. Anti-theft device or garage parking can help offset the higher premium.");
     if(p.vModel&&(ml.indexOf("tucson")>-1||ml.indexOf("sorento")>-1))html+=fb("a","&#9888;","<strong>Kia/Hyundai theft vulnerability:</strong> A free software fix is available at any dealer. Getting it done can lower your comprehensive premium.");
     if(mk.indexOf("tesla")>-1||mk.indexOf("rivian")>-1||mk.indexOf("polestar")>-1)html+=fb("a","&#9889;","<strong>EV insurance is in a league of its own.</strong> Even minor collisions average $5,000-15,000 to repair. Replacement cost coverage (not ACV) is essential. We\'ll give you a full EV guide in your results.");
@@ -828,7 +843,7 @@ function render(){
     html+='<button class="opt'+(p.isEV?" on":"")+'\" onclick="p.isEV=true;render()">Yes -- fully electric</button>';
     html+='</div></div>';
     html+='<div class="section"><span class="lbl">Vehicle value: <span class="val-display">'+fmtC(p.vValue)+'</span></span>';
-    html+='<input type="range" min="1000" max="200000" step="1000" value="'+p.vValue+'" oninput="p.vValue=+this.value;render()">';
+    html+='<input type="number" min="1000" max="200000" step="1000" value="'+p.vValue+'" placeholder="e.g. 30000" onchange="p.vValue=+this.value;render()" onblur="p.vValue=+this.value;render()" style="max-width:220px;font-family:Space Mono,monospace">';
     if(p.vValue<5000)html+=fb("b","&#128161;","Under $5,000 -- collision and comprehensive together may cost more per year than the car is worth. We'll flag this in your results.");
     if(p.vValue>60000)html+=fb("b","&#128161;","High-value vehicle -- replacement cost coverage (not just ACV) is especially important. The difference on a write-off could be $15,000+.");
     html+='</div>';
@@ -846,7 +861,7 @@ function render(){
     if(p.vUse==="rideshare")html+=fb("r","&#128734;","<strong>Critical coverage gap.</strong> The moment you log into the app, your personal policy stops. You need a rideshare endorsement ($10-30/month). Without it you have zero collision coverage while waiting for rides.");
     html+='</div>';
     html+='<div class="section"><span class="lbl">Annual km driven: <span class="val-display">'+(+p.km).toLocaleString()+'</span></span>';
-    html+='<input type="range" min="1000" max="50000" step="1000" value="'+p.km+'" oninput="p.km=+this.value;render()">';
+    html+='<input type="number" min="1000" max="50000" step="500" value="'+p.km+'" placeholder="e.g. 15000" onchange="p.km=+this.value;render()" onblur="p.km=+this.value;render()" style="max-width:220px;font-family:Space Mono,monospace">';
     if(p.km<8000)html+=fb("g","&#127881;","Low-mileage driver -- ask every insurer about a low-mileage discount. Some reduce premiums by 10-20% for under 10,000 km per year.");
     html+='</div>';
   }
@@ -902,8 +917,10 @@ function render(){
     else if(p.liability==="1M"||(p.country==="US"&&p.liability==="100_300"))html+=fb("g","&#10003;","Good choice. This level protects your assets in all but the most extreme scenarios.");
     else if(p.liability==="2M"||(p.country==="US"&&p.liability==="250_500"))html+=fb("g","&#127881;","Excellent. Maximum peace of mind. The extra cost over $1M is typically $8-15 more per month.");
     html+='</div>';
-    html+='<div class="section"><span class="lbl">Deductible: <span class="val-display">'+fmtC(p.ded)+'</span></span>';
-    html+='<input type="range" min="250" max="5000" step="250" value="'+p.ded+'" oninput="p.ded=+this.value;render()">';
+    html+='<div class="section"><span class="lbl">Deductible <span class="lbl-sub">Amount you pay out of pocket before insurance kicks in</span></span>';
+    html+='<div class="opts">';
+    [[250,"$250"],[500,"$500"],[1000,"$1,000"],[1500,"$1,500"],[2000,"$2,000"],[3000,"$3,000"],[5000,"$5,000"]].forEach(function(x){html+='<button class="opt'+(p.ded===x[0]?" on":"")+'" onclick="p.ded='+x[0]+';render()">'+x[1]+'</button>';});
+    html+="</div>";
     if(p.ded<=500)html+=fb("b","&#128161;","Low deductible = higher monthly cost. Raising to $1,000 typically saves $150-300 per year. Only keep it low if an unexpected $500 expense would strain your finances.");
     else if(p.ded>=1000&&p.ded<2000)html+=fb("g","&#10003;","Sweet spot for most drivers. Meaningful savings while keeping out-of-pocket exposure manageable.");
     else html+=fb("g","&#128175;","Smart choice with a solid emergency fund. Saves 20-25% on collision and comprehensive premiums.");
@@ -953,6 +970,54 @@ function render(){
   html+='<div class="footer-note">CarInsureGuide.com &bull; Canada and US Car Insurance Guide &bull; Free, no signup required<br>Premium estimates are approximate and for guidance only. Always get quotes from licensed professionals. Some links are affiliate links &bull; Rankings based on JD Power, Forbes, and independent reviews.</div>';
   document.getElementById("content").innerHTML=html;
   window.scrollTo(0,0);
+}
+
+
+// Smart insurer matching based on profile
+function matchInsurers(){
+  var isCA=p.country==="CA";
+  var list=isCA?CA_INS:US_INS;
+  var scored=list.map(function(ins){
+    var score=ins.rank===4||ins.rank===8?80:50; // comparison sites always high
+    // High risk profile -> Progressive or broker
+    if(p.atFault>=2||p.dui||p.lapse>6){
+      if(ins.name==="Progressive"||ins.name==="Kanetix.ca")score+=40;
+      if(ins.name==="Belairdirect"||ins.name==="GEICO")score-=10;
+    }
+    // Rideshare -> those with rideshare programs
+    if(p.vUse==="rideshare"){
+      if(ins.name==="Progressive"||ins.name==="Intact Insurance")score+=25;
+    }
+    // Telematics -> telematics-focused
+    if(p.telematics){
+      if(ins.name==="Belairdirect"||ins.name==="Progressive"||ins.name==="State Farm")score+=25;
+    }
+    // Bundle -> bundling leaders
+    if(p.bundle){
+      if(ins.name==="Intact Insurance"||ins.name==="Travelers"||ins.name==="State Farm")score+=20;
+    }
+    // Military US
+    if(p.country==="US"&&p.military&&ins.name==="USAA")score+=60;
+    // New to country
+    if(p.newToCountry&&ins.name==="Intact Insurance")score+=20;
+    // Young driver
+    if(+p.age<25){
+      if(ins.name==="Progressive"||ins.name==="Belairdirect")score+=15;
+    }
+    // Clean record -> premium insurers
+    if(p.atFault===0&&p.tickets===0&&!p.dui){
+      if(ins.name==="The Co-operators"||ins.name==="Amica Mutual"||ins.name==="Erie Insurance")score+=20;
+    }
+    // EV
+    if(p.isEV||((p.vMake||"").toLowerCase().indexOf("tesla")>-1)){
+      if(ins.name==="Intact Insurance"||ins.name==="State Farm")score+=15;
+    }
+    // Comparison sites always useful
+    if(ins.rank===4||ins.rank===8)score+=30;
+    return{ins:ins,score:score};
+  });
+  scored.sort(function(a,b){return b.score-a.score;});
+  return scored.slice(0,3).map(function(x){return x.ins;});
 }
 
 function jumpTo(i){if(i<step){step=i;render();}}
