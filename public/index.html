@@ -1075,14 +1075,14 @@ function render(){
   if(step<STEPS.length-1){
     html+='<div id="step-errors" style="display:none;color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:12px"></div>';
     html+='<div class="nav">';
-    if(step>0)html+='<button class="btn-back" onclick="collectInputs();stepDir='back';step--;render();window.scrollTo(0,0);">Back</button>';
+    if(step>0)html+='<button class="btn-back" onclick="collectInputs();stepDir='bk';step--;render();window.scrollTo(0,0);">Back</button>';
     else html+='<div></div>';
-    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){stepDir='forward';step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
+    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){stepDir='fwd';step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
     html+='</div>';
   }
   html+='<div class="footer-note">CarInsureGuide.com &bull; Canada and US Car Insurance Guide &bull; Free, no signup required<br>Premium estimates are approximate and for guidance only. Always get quotes from licensed professionals. Some links are affiliate links &bull; Rankings based on JD Power, Forbes, and independent reviews.</div>';
   var el=document.getElementById("content");
-  el.className=stepDir==="back"?"fade-back":"fade-in";
+  el.className=stepDir==="bk"?"fade-back":"fade-in";
   el.innerHTML=html;
 }
 
