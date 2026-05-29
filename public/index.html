@@ -399,7 +399,7 @@ var MODELS={
 };
 
 var STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Results"];
-var p={country:"CA",province:"ON",usState:"CA",city:"",cityRate:null,cityNote:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false};
+var p={country:"CA",province:"ON",usState:"CA",city:"",cityRate:null,cityNote:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false,defensiveDriving:false,antiTheft:false,payAnnually:false,groupMember:false,evDiscount:false,lowMileage:false};
 var step=0;
 var activeTab="results";
 var cityAC=[];
@@ -433,8 +433,17 @@ function calcPremium(){
   var ded=+p.ded||1000;if(ded>=2000)a*=0.75;else if(ded>=1000)a*=0.87;else if(ded<=250)a*=1.1;
   var disc=0;
   if(p.winterTires&&p.country==="CA")disc+=0.08;
-  if(p.bundle)disc+=0.15;if(p.telematics)disc+=0.12;if(p.multi)disc+=0.1;
-  a*=(1-Math.min(disc,0.45));
+  if(p.bundle)disc+=0.15;
+  if(p.telematics)disc+=0.12;
+  if(p.multi)disc+=0.1;
+  if(p.student&&+p.age<25)disc+=0.08;
+  if(p.defensiveDriving)disc+=0.07;
+  if(p.antiTheft)disc+=0.05;
+  if(p.payAnnually)disc+=0.05;
+  if(p.groupMember)disc+=0.08;
+  if(p.evDiscount&&(p.isEV||(p.vMake||"").toLowerCase().indexOf("tesla")>-1))disc+=0.07;
+  if(p.lowMileage&&p.km<12000)disc+=0.08;
+  a*=(1-Math.min(disc,0.50));
   return{annual:Math.round(a),monthly:Math.round(a/12),disc:Math.round(disc*100)};
 }
 
@@ -981,7 +990,13 @@ function render(){
     html+=chk("telematics",p.telematics,"Sign up for a safe driving app (telematics)","An app tracks your acceleration, braking, and time of day. Safe drivers save 10-25%. Belairdirect (Ajusto), State Farm (Drive Safe and Save), and Progressive (Snapshot) offer the best programs. If you drive confidently, this is the highest-value single action you can take.","Save 10-25%");
     html+=chk("multi",p.multi,"Two or more vehicles in your household","Insuring multiple vehicles together saves 10-15% on each one. Works for any combination: two cars, car and truck, car and motorcycle.","Save 10-15%");
     if(p.country==="CA")html+=chk("winterTires",p.winterTires,"Winter tires installed (Canada)","Most Canadian insurers give 5-10% off for dedicated winter tires. Required by law in Quebec Dec 1-Mar 15 and on many BC routes Oct 1-Mar 31. The discount typically recovers the tire cost within 2-3 seasons.","Save 5-10%");
-    if(+p.age<25)html+=chk("student",p.student,"Full-time student with B+ average","Good student discount for young drivers who show responsibility at school. Usually requires proof of enrolment and a transcript showing B+ or 3.0. Renew once per year.","Save 5-15%");
+    if(!p.age||+p.age<25)html+=chk("student",p.student,"Full-time student with B+ average","Good student discount: most insurers offer 5-15% for full-time students with a B+ or 3.0 average. Requires proof of enrolment and a transcript. Renews annually.","Save 5-15%");
+    html+=chk("defensiveDriving",p.defensiveDriving,"Completed a defensive driving course","A recognized course (CAA, AMA, or provincial auto association) earns 5-10% with most insurers. It doesn't matter how long you've been driving -- the discount applies at any age. Courses typically cost $30-80 and take 4-6 hours online.","Save 5-10%");
+    html+=chk("antiTheft",p.antiTheft,"Anti-theft device installed","A GPS tracker, immobilizer, steering wheel lock, or alarm system earns a separate discount from your other safety features. Especially valuable if your vehicle is on the high-theft list.","Save 3-8%");
+    html+=chk("payAnnually",p.payAnnually,"You can pay your premium in full (annually)","Paying the full year upfront avoids monthly installment fees that most insurers quietly add -- typically 3-8% extra per year. If you have the funds, paying annually is one of the easiest wins available.","Save 3-8%");
+    html+=chk("groupMember",p.groupMember,"Member of a professional or alumni association","University alumni, professional associations (nurses, engineers, teachers, accountants), CAA/AAA members, credit union members, and many employer group plans unlock exclusive rates of 5-15%. Ask your association if they have an insurance partnership.","Save 5-15%");
+    html+=chk("evDiscount",p.evDiscount,"Electric or hybrid vehicle","Several Canadian insurers including Intact offer specific EV and hybrid discounts of 5-10%. If your vehicle is electric or hybrid, always ask explicitly -- this discount is rarely volunteered.","Save 5-10%");
+    html+=chk("lowMileage",p.lowMileage,"Low annual mileage (under 12,000 km / 7,500 miles)","If you drive less than average, ask every insurer specifically about a low-mileage discount -- separate from telematics. Retired drivers, work-from-home employees, and city dwellers who rarely drive often qualify.","Save 5-15%");
     var pr2=calcPremium();
     if(pr2.disc>0)html+='<div class="disc-bar">&#127881; '+pr2.disc+'% in active discounts -- saving approximately '+fmtC(Math.round(pr2.annual*pr2.disc/(100-pr2.disc)))+' per year compared to no discounts.</div>';
     html+='<div style="margin-top:20px;padding:16px 18px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius)">';
