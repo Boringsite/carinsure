@@ -205,10 +205,8 @@ input[type=range]{width:100%;accent-color:var(--red);height:5px;margin:8px 0;cur
   h1{font-size:20px}
   .big-num{font-size:36px}
 }
-@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideBack{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:slideIn 0.32s cubic-bezier(0.16,1,0.3,1)}
-.fade-back{animation:slideBack 0.32s cubic-bezier(0.16,1,0.3,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeIn 0.3s ease}
 </style>
 
 <!-- Bot prevention -->
@@ -445,7 +443,6 @@ var MODELS={
 var STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Results"];
 var p={country:"CA",province:"ON",usState:"CA",city:"",cityRate:null,cityNote:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false,defensiveDriving:false,antiTheft:false,payAnnually:false,groupMember:false,evDiscount:false,lowMileage:false};
 var step=0;
-var stepDir="forward";
 var activeTab="results";
 var cityAC=[];
 var cityACTimer=null;
@@ -1075,14 +1072,14 @@ function render(){
   if(step<STEPS.length-1){
     html+='<div id="step-errors" style="display:none;color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:12px"></div>';
     html+='<div class="nav">';
-    if(step>0)html+='<button class="btn-back" onclick="collectInputs();stepDir='bk';step--;render();window.scrollTo(0,0);">Back</button>';
+    if(step>0)html+='<button class="btn-back" onclick="collectInputs();step--;render();window.scrollTo(0,0);">Back</button>';
     else html+='<div></div>';
-    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){stepDir='fwd';step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
+    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
     html+='</div>';
   }
   html+='<div class="footer-note">CarInsureGuide.com &bull; Canada and US Car Insurance Guide &bull; Free, no signup required<br>Premium estimates are approximate and for guidance only. Always get quotes from licensed professionals. Some links are affiliate links &bull; Rankings based on JD Power, Forbes, and independent reviews.</div>';
   var el=document.getElementById("content");
-  el.className=stepDir==="bk"?"fade-back":"fade-in";
+  el.className="fade-in";
   el.innerHTML=html;
 }
 
