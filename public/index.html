@@ -173,9 +173,42 @@ input[type=range]{width:100%;accent-color:var(--red);height:5px;margin:8px 0;cur
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
 .footer-note{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);text-align:center;line-height:1.8}
-@media(max-width:540px){.grid2{grid-template-columns:1fr}.big-num{font-size:44px}.ins-card{flex-wrap:wrap}.tabs{gap:2px}.tab-btn{padding:8px 10px;font-size:12px}}
-@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.fade-in{animation:slideIn 0.3s ease}
+@media(max-width:540px){
+  .grid2{grid-template-columns:1fr}
+  .big-num{font-size:40px}
+  .ins-card{flex-wrap:wrap;gap:8px}
+  .ins-right{margin-left:0;flex-direction:row;align-items:center;gap:10px;width:100%}
+  .tabs{gap:2px;padding-bottom:2px}
+  .tab-btn{padding:8px 8px;font-size:11px;letter-spacing:-0.2px}
+  .wrap{padding:20px 14px 80px}
+  h1{font-size:22px}
+  .opt{padding:9px 12px;font-size:13px}
+  .opt-block{padding:12px 14px}
+  .opt-block .ot{font-size:14px}
+  .btn-next{padding:12px 24px;font-size:14px}
+  .btn-back{padding:12px 18px;font-size:14px}
+  .result-hero{padding:18px}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .prov-grid{gap:5px}
+  .prov-btn{padding:7px 10px;font-size:12px}
+  .chk{padding:11px 12px}
+  .chk-lbl{font-size:14px}
+  .disc-bar{font-size:13px}
+  .fb{font-size:12px}
+  .ps-dot{width:22px;height:22px;font-size:10px}
+  .ps-line{width:10px}
+  .hdr{padding:10px 14px}
+  .logo{font-size:17px}
+}
+@media(max-width:380px){
+  .tab-btn{padding:6px 6px;font-size:10px}
+  h1{font-size:20px}
+  .big-num{font-size:36px}
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideBack{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:slideIn 0.32s cubic-bezier(0.16,1,0.3,1)}
+.fade-back{animation:slideBack 0.32s cubic-bezier(0.16,1,0.3,1)}
 </style>
 
 <!-- Bot prevention -->
@@ -202,7 +235,7 @@ input[type=range]{width:100%;accent-color:var(--red);height:5px;margin:8px 0;cur
 
 <div class="wrap">
   <div class="prog-steps" id="prog-steps"></div>
-  <div id="content" class="fade-in"></div>
+  <div id="content"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -349,7 +382,13 @@ var CA_INS=[
   {rank:7,name:"Belairdirect",desc:"Online-first insurer with Canada's best telematics program (Ajusto app). No agent required -- 100% digital. Safe drivers routinely save 20-25%.",tags:["tag-online","tag-cheap"],tagLabels:["Best Telematics","Online Only"],score:"855",url:"https://www.belairdirect.com/en/auto-insurance/get-a-quote.html"},
   {rank:8,name:"TD Insurance",desc:"Competitive rates for professionals and TD banking customers. Strong association discounts for university alumni and professional groups.",tags:["tag-cheap"],tagLabels:["Professional Discounts","TD Clients"],score:"849",url:"https://www.tdinsurance.com/products-services/auto-insurance/get-a-quote"},
   {rank:9,name:"Kanetix.ca",desc:"Canada's original comparison platform. Strong broker network -- ideal if your profile is complex (high-risk, multiple vehicles, unusual needs) and you want expert guidance.",tags:["tag-claims"],tagLabels:["Broker Network","Complex Profiles"],score:"N/A",url:"https://www.kanetix.ca/auto-insurance"},
-  {rank:10,name:"Economical Insurance",desc:"Highly rated by JD Power. Mid-size insurer known for fair claims and competitive rates in Ontario, BC, and Atlantic Canada. Often beats larger insurers for clean-record drivers.",tags:["tag-cheap","tag-claims"],tagLabels:["Fair Claims","Hidden Gem"],score:"843",url:"https://www.economical.com/en/insurance-types/auto"}
+  {rank:10,name:"Economical Insurance",desc:"Highly rated by JD Power. Mid-size insurer known for fair claims and competitive rates in Ontario, BC, and Atlantic Canada. Often beats larger insurers for clean-record drivers.",tags:["tag-cheap","tag-claims"],tagLabels:["Fair Claims","Hidden Gem"],score:"843",url:"https://www.economical.com/en/insurance-types/auto"},
+  {rank:11,name:"Aviva Canada",desc:"Third largest insurer in Canada by market share. Top choice for EV owners -- offers EV-specific coverage and discounts up to 10%. Also offers ride-sharing endorsements (Uber, Lyft) and a disappearing deductible program.",tags:["tag-online","tag-cheap"],tagLabels:["Best for EVs","Rideshare Coverage"],score:"855",url:"https://www.avivacanada.com/get-a-quote"},
+  {rank:12,name:"Wawanesa Insurance",desc:"Founded 1896. Available across Canada through brokers. Known for flexible policies, fair pricing, and loyalty rewards. Especially competitive for seniors and long-term customers. Also covers motorcycles, RVs, and commercial vehicles.",tags:["tag-claims","tag-cheap"],tagLabels:["Broker Only","Loyal Customers"],score:"848",url:"https://www.wawanesa.com/canada/auto-insurance/"},
+  {rank:13,name:"Sonnet Insurance",desc:"100% online insurer (part of Definity/Economical group). Fast digital quoting, competitive urban rates, and their Vroom bundle adds roadside assistance and new vehicle replacement. Best for tech-comfortable urban drivers.",tags:["tag-online"],tagLabels:["Fully Online","Fast Quotes"],score:"841",url:"https://www.sonnet.ca/auto-insurance/get-a-quote"},
+  {rank:14,name:"Desjardins / Certas",desc:"Largest insurance group in Quebec. Strong across Ontario and Atlantic Canada. Member-owned credit union roots mean competitive rates for Desjardins banking customers. Strong bundling and loyalty programs.",tags:["tag-best","tag-cheap"],tagLabels:["Best in Quebec","Credit Union Rates"],score:"852",url:"https://www.desjardins.com/en/insurance/auto-insurance.html"},
+  {rank:15,name:"CAA Insurance",desc:"Exclusive to CAA members. Includes enhanced roadside assistance, strong travel coverage, and loyalty rewards program. If you already pay for CAA membership, this is a natural bundling opportunity.",tags:["tag-claims"],tagLabels:["CAA Members Only","Roadside Included"],score:"844",url:"https://www.caasco.com/insurance/auto"},
+  {rank:16,name:"Costco / Inova (Canada)",desc:"Costco Canada members can access group insurance rates through Inova brokerage. Worth getting a quote if you hold a Costco membership -- group pricing can be competitive especially for Executive members.",tags:["tag-cheap"],tagLabels:["Costco Members","Group Rates"],score:"N/A",url:"https://www.costco.ca/insurance.html"}
 ];
 var US_INS=[
   {rank:1,name:"Erie Insurance",desc:"#1 in JD Power 2025 Claims Satisfaction Study. Regional insurer known for exceptional claims handling and the industry's most loyal customers. If you're in their coverage area, get a quote.",tags:["tag-claims","tag-best"],tagLabels:["#1 JD Power Claims","Regional Excellence"],score:"743",url:"https://www.erieinsurance.com/auto-insurance"},
@@ -361,7 +400,12 @@ var US_INS=[
   {rank:7,name:"Progressive",desc:"Best for drivers with complicated profiles -- accidents, tickets, DUI, or coverage lapse. Name Your Price tool is genuinely useful. Snapshot telematics saves up to 30%.",tags:["tag-online","tag-cheap"],tagLabels:["Best for High-Risk","Top Telematics"],score:"856",url:"https://www.progressive.com/auto/"},
   {rank:8,name:"The Zebra",desc:"Compare 100+ companies without giving your phone number upfront. Most privacy-friendly comparison tool. Great for anonymous research before you're ready to commit.",tags:["tag-cheap"],tagLabels:["No Spam Guarantee","100+ Companies"],score:"100+",url:"https://www.thezebra.com/auto-insurance/"},
   {rank:9,name:"Travelers",desc:"Consistently ranks among the most affordable national insurers. Strong coverage options and bundling discounts. Especially competitive for homeowners bundling auto and home.",tags:["tag-cheap","tag-claims"],tagLabels:["Affordable National","Great Bundling"],score:"862",url:"https://www.travelers.com/personal-insurance/auto-insurance"},
-  {rank:10,name:"Auto-Owners Insurance",desc:"Among the lowest complaint ratios of any major insurer (NAIC data). Exceptional claims handling and nearly perfect customer retention. Available in 26 states through independent agents.",tags:["tag-claims","tag-best"],tagLabels:["Lowest Complaints","Exceptional Claims"],score:"875",url:"https://www.auto-owners.com/"}
+  {rank:10,name:"Auto-Owners Insurance",desc:"Among the lowest complaint ratios of any major insurer (NAIC data). Exceptional claims handling and nearly perfect customer retention. Available in 26 states through independent agents.",tags:["tag-claims","tag-best"],tagLabels:["Lowest Complaints","Exceptional Claims"],score:"875",url:"https://www.auto-owners.com/"},
+  {rank:11,name:"Nationwide",desc:"Available in most US states. Strong vanishing deductible program (deductible drops $100 every year you go claim-free). SmartRide telematics program and excellent bundling discounts. Strong for homeowners bundling auto and home.",tags:["tag-cheap","tag-claims"],tagLabels:["Vanishing Deductible","Good Bundling"],score:"851",url:"https://www.nationwide.com/personal/insurance/auto/"},
+  {rank:12,name:"Farmers Insurance",desc:"Available in most US states through local agents. Strong customizable coverage options. Signal app telematics program. Good for drivers who want a local agent relationship and comprehensive coverage customization.",tags:["tag-online"],tagLabels:["Local Agents","Customizable"],score:"847",url:"https://www.farmers.com/auto/"},
+  {rank:13,name:"American Family / Costco",desc:"American Family underwrites Costco auto insurance (rebranded from CONNECT in December 2025). If you hold a Costco Executive membership, you access exclusive discounts and guaranteed renewability. Worth quoting for members.",tags:["tag-cheap"],tagLabels:["Costco Members","Executive Perks"],score:"842",url:"https://www.amfam.com/insurance/car"},
+  {rank:14,name:"Allstate",desc:"Available nationwide. Drivewise telematics program. Milewise pay-per-mile option is excellent for very low-mileage drivers. Accident forgiveness available. Larger company with a wide agent network.",tags:["tag-online","tag-cheap"],tagLabels:["Pay-Per-Mile Option","Low Mileage"],score:"849",url:"https://www.allstate.com/auto-insurance"},
+  {rank:15,name:"Lemonade Auto",desc:"Fully digital, AI-powered insurer. Fastest quoting and claims experience in the industry. Flat fee model -- leftover premium goes to charity. Best for tech-savvy drivers comfortable with 100% app-based insurance.",tags:["tag-online"],tagLabels:["AI-Powered","Fully Digital"],score:"N/A",url:"https://www.lemonade.com/car"}
 ];
 
 
@@ -401,6 +445,7 @@ var MODELS={
 var STEPS=["Location","About you","Vehicle","History","Coverage","Discounts","Results"];
 var p={country:"CA",province:"ON",usState:"CA",city:"",cityRate:null,cityNote:"",age:"",marital:"single",yearsLic:"",newToCountry:false,vYear:new Date().getFullYear(),vMake:"",vModel:"",vValue:30000,vUse:"personal",financed:false,leased:false,parking:"driveway",km:15000,isEV:false,atFault:0,tickets:0,dui:false,lapse:0,coverage:"full",liability:"1M",ded:1000,winterTires:false,bundle:false,telematics:false,multi:false,student:false,defensiveDriving:false,antiTheft:false,payAnnually:false,groupMember:false,evDiscount:false,lowMileage:false};
 var step=0;
+var stepDir="forward";
 var activeTab="results";
 var cityAC=[];
 var cityACTimer=null;
@@ -566,8 +611,10 @@ function setTab(t){activeTab=t;render();}
 function renderInsurers(){
   var list=p.country==="CA"?CA_INS:US_INS;
   var html='<h2>Top 10 '+(p.country==="CA"?"Canadian":"US")+' Car Insurers</h2>';
-  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.65">Ranked by customer satisfaction (JD Power), claims handling, and value. Comparison sites appear in the ranking where they belong -- as the smartest starting point. Always get at least 3 quotes.</p>';
-  list.forEach(function(ins){
+  html+='<p style="font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.65">Ranked by customer satisfaction (JD Power), claims handling, and value. Always get at least 3 quotes.</p>';
+  var showAll=window._showAllIns||false;
+  var displayList=showAll?list:list.slice(0,10);
+  displayList.forEach(function(ins){
     html+='<a href="'+ins.url+'" target="_blank" rel="noopener noreferrer" class="ins-card">';
     html+='<div class="ins-rank">'+ins.rank+'</div>';
     html+='<div style="flex:1"><div class="ins-name">'+ins.name+'</div>';
@@ -582,6 +629,9 @@ function renderInsurers(){
     html+='<button class="ins-cta">Get quote</button></div></a>';
   });
   html+='<div style="font-size:12px;color:var(--text3);margin-top:10px">Rankings based on JD Power studies, Forbes rankings, and independent reviews. Some links are affiliate links.</div>';
+  if(list.length>10){
+    html+='<button onclick="window._showAllIns=!window._showAllIns;render()" style="margin-top:12px;padding:10px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:Outfit,sans-serif;width:100%">'+(showAll?"Show fewer insurers &#8593;":"Show all "+(list.length)+" insurers &#8595;")+'</button>';
+  }
   return html;
 }
 
@@ -1025,13 +1075,15 @@ function render(){
   if(step<STEPS.length-1){
     html+='<div id="step-errors" style="display:none;color:var(--red);background:var(--red-dim);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-bottom:12px"></div>';
     html+='<div class="nav">';
-    if(step>0)html+='<button class="btn-back" onclick="collectInputs();step--;render();window.scrollTo(0,0);">Back</button>';
+    if(step>0)html+='<button class="btn-back" onclick="collectInputs();stepDir='back';step--;render();window.scrollTo(0,0);">Back</button>';
     else html+='<div></div>';
-    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
+    html+='<button class="btn-next" onclick="collectInputs();if(validateStep()){stepDir='forward';step++;render();window.scrollTo(0,0);}">'+(step===STEPS.length-2?"See my full results &#8594;":"Continue &#8594;")+'</button>';
     html+='</div>';
   }
   html+='<div class="footer-note">CarInsureGuide.com &bull; Canada and US Car Insurance Guide &bull; Free, no signup required<br>Premium estimates are approximate and for guidance only. Always get quotes from licensed professionals. Some links are affiliate links &bull; Rankings based on JD Power, Forbes, and independent reviews.</div>';
-  document.getElementById("content").innerHTML=html;
+  var el=document.getElementById("content");
+  el.className=stepDir==="back"?"fade-back":"fade-in";
+  el.innerHTML=html;
 }
 
 
